@@ -80,3 +80,4 @@ bandit.yaml
 
 # Local settings
 settings_local.py
+*.keys

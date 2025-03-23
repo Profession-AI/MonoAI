@@ -84,7 +84,3 @@ collective_model = CollectiveModel(
 
 response = collective_model.ask("What is the meaning of life?")
 ```
-
----
-
-Let me know if you'd like to add usage tips, error handling, or a section for contributing!

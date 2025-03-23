@@ -1,66 +1,90 @@
 # COICOI
 ### Collective Intelligence via Collaborative Inference
 
-## Usage
+**COICOI** is a framework designed to simplify interaction with modern AI models and harness their collective intelligence through multi-model concurrent inference and cooperation in solving complex tasks.
+---
 
-### Load your API Keys
-Put your providers API Keys in a file providers.keys in the root of your projects
+## Getting Started
+
+### Load Your API Keys
+
+Place your providers’ API keys in a file named `providers.keys` at the root of your project:
 
 ```
 OPENAI = <YOUR OPENAI API KEY>
 DEEPSEEK = <YOUR DEEPSEEK API KEY>
-ANTROPHIC = <YOUR ANTROPHIC API KEY>
+ANTHROPIC = <YOUR ANTHROPIC API KEY>
 GEMINI = <YOUR GEMINI API KEY>
+PERPLEXITY = <YOUR PERPLEXITY API KEY>
 ...
- PERPLEXITY = <YOUR PERPLEXITY API KEY>
 ```
 
-This is all, the correct key is automatically loaded when you invoke the model
+No further configuration is needed—COICOI automatically loads the correct key when a model is invoked.
 
-### Individual Model
+---
+
+## Usage Examples
+
+### Using a Single Model
+
+The `Model` class allows you to interact with a single AI model:
+
 ```python
 from coicoi.models import Model
 
 model = Model(
-        provider_name="openai",
-        model_name="gpt-4o-mini",
-        count_tokens=True,
-        count_cost=True
-    )
+    provider_name="openai",
+    model_name="gpt-4o-mini",
+    count_tokens=True,
+    count_cost=True
+)
 
-result = model.ask("What is the capital of Italy?")
+response = model.ask("What is the capital of Italy?")
 ```
 
+---
 
-### Multiple Models
+### Using Multiple Models
+
+The `MultiModels` class enables concurrent interaction with multiple AI models:
+
 ```python
 from coicoi.models import MultiModels
 
-multi_model = MultiModel(
-  models=[
-    {'provider': 'openai', 'model': 'gpt-4o-mini'},
-    {'provider': 'deepseek', 'model': 'deepseek-chat'},
-  ],
-  count_tokens=True,
-  count_cost=True
+multi_model = MultiModels(
+    models=[
+        {'provider': 'openai', 'model': 'gpt-4o-mini'},
+        {'provider': 'deepseek', 'model': 'deepseek-chat'},
+    ],
+    count_tokens=True,
+    count_cost=True
 )
 
-results = multi_model.ask("What is the meaning of life?")
+responses = multi_model.ask("What is the meaning of life?")
 ```
 
-### Collective Model
+---
+
+### Using Collective Intelligence
+
+The `CollectiveModel` class allows you to query multiple models concurrently and merge their outputs into a unified, detailed response:
+
 ```python
 from coicoi.models import CollectiveModel
 
 collective_model = CollectiveModel(
-  models=[
-    {'provider': 'openai', 'model': 'gpt-4o-mini'},
-    {'provider': 'deepseek', 'model': 'deepseek-chat'},
-  ],
-  aggregator={'provider': 'deepseek', 'model': 'deepseek-chat'},
-  count_tokens=True,
-  count_cost=True
+    models=[
+        {'provider': 'openai', 'model': 'gpt-4o-mini'},
+        {'provider': 'deepseek', 'model': 'deepseek-chat'},
+    ],
+    aggregator={'provider': 'deepseek', 'model': 'deepseek-chat'},
+    count_tokens=True,
+    count_cost=True
 )
 
-results = collective_model.ask("What is the meaning of life?")
+response = collective_model.ask("What is the meaning of life?")
 ```
+
+---
+
+Let me know if you'd like to add usage tips, error handling, or a section for contributing!

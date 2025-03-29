@@ -1,8 +1,15 @@
-from pydantic_ai import Agent
-from keys_manager import load_keys
+from models.model import Model
+from prompts.prompt_chain import PromptChain
+model = Model(
+    provider_name="openai",
+    model_name="gpt-4o-mini",
+    count_tokens=True,
+    count_cost=True)
 
-load_keys()
+chain = PromptChain([
+    "What is the capital of France?",
+    "Given the city name, tell me its population."
+])
 
-agent = Agent("deepseek:deepseek-chat")
-answer = agent.run_sync("What is the capital of France?")
-print(answer)
+result = model.ask(chain)
+print(result)

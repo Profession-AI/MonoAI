@@ -1,21 +1,26 @@
 from pydantic_ai import Agent
-from keys_manager import load_key
-from typing import Sequence, Dict, Optional
-from token_counter import TokenCounter
-from token_cost import TokenCost
+from models._base_model import BaseModel
+from models._keys_manager import load_key
+from models._response_processor import ResponseProcessorMixin
+from models._prompt_executor import PromptExecutorMixin
+from typing import Sequence, Dict, Union
+from tokens.token_counter import TokenCounter
+from tokens.token_cost import TokenCost
+from typing import override
+from prompts.prompt_chain import PromptChain
+from prompts.prompt import Prompt
 
-
-class Model:
+class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
     def __init__(
         self, 
         provider_name: str, 
         model_name: str, 
         system_prompt: str | Sequence[str] = (),
-        count_tokens: bool = False,
+        count_tokens: bool = False, 
         count_cost: bool = False
     ):
         """
-        Initialize Model with provider, model name, and counting preferences.
+        Initialize Model with provider and model name.
         
         Args:
             provider_name: Name of the provider (e.g., 'openai', 'anthropic')
@@ -24,12 +29,54 @@ class Model:
             count_tokens: Whether to count tokens for each request
             count_cost: Whether to calculate costs for each request
         """
+        super().__init__(count_tokens, count_cost)
         load_key(provider_name)
+
         self.provider_name = provider_name
         self.model_name = model_name
-        self._count_tokens = count_tokens
-        self._count_cost = count_cost
         self._agent = Agent(provider_name + ":" + model_name, system_prompt=system_prompt)
+
+    @override
+    async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+        """
+        Ask the model asynchronously.
+        
+        Args:
+            prompt: The prompt or prompt chain to process
+            
+        Returns:
+            Dictionary containing the response and optional stats
+        """
+        response = await self._execute_async(prompt, self._agent)
+        return self._process_response(
+            prompt,
+            response,
+            self.provider_name,
+            self.model_name,
+            self._count_tokens,
+            self._count_cost
+        )
+
+    @override
+    def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+        """
+        Ask the model synchronously.
+        
+        Args:
+            prompt: The prompt or prompt chain to process
+            
+        Returns:
+            Dictionary containing the response and optional stats
+        """
+        response = self._execute(prompt, self._agent)
+        return self._process_response(
+            prompt,
+            response,
+            self.provider_name,
+            self.model_name,
+            self._count_tokens,
+            self._count_cost
+        )
 
     def _post_process_response(self, question: str, answer: str) -> Dict:
         """
@@ -67,32 +114,6 @@ class Model:
                 response["cost"] = cost
                 
         return response
-    
-    async def ask_async(self, question: str) -> Dict:
-        """
-        Ask the model asynchronously.
-        
-        Args:
-            question: The question to ask
-            
-        Returns:
-            Dictionary containing the response and optional stats
-        """
-        answer = await self._agent.run(question)
-        return self._post_process_response(question, answer.data)
-
-    def ask(self, question: str) -> Dict:
-        """
-        Ask the model synchronously.
-        
-        Args:
-            question: The question to ask
-            
-        Returns:
-            Dictionary containing the response and optional stats
-        """
-        answer = self._agent.run_sync(question).data
-        return self._post_process_response(question, answer)
 
 
 if __name__ == "__main__":
@@ -104,21 +125,16 @@ if __name__ == "__main__":
         count_cost=True
     )
     
-    # Get response with stats
+    # Example with simple prompt
     result = model.ask("What is the capital of France?")
+    print("\nSimple prompt result:")
+    print(result)
     
-    # Print results
-    print("\nResponse:")
-    print(result["output"])
-    
-    if "tokens" in result:
-        print("\nToken Count:")
-        print(f"Input tokens: {result['tokens']['input_tokens']:,}")
-        print(f"Output tokens: {result['tokens']['output_tokens']:,}")
-        print(f"Total tokens: {result['tokens']['total_tokens']:,}")
-    
-    if "cost" in result:
-        print("\nCost:")
-        print(f"Input cost: ${result['cost']['input_cost']:.6f}")
-        print(f"Output cost: ${result['cost']['output_cost']:.6f}")
-        print(f"Total cost: ${result['cost']['total_cost']:.6f}")
+    # Example with prompt chain
+    chain = PromptChain([
+        "What is the capital of France?",
+        "Based on the previous answer, what is its population?"
+    ])
+    result = model.ask(chain)
+    print("\nPrompt chain result:")
+    print(result)

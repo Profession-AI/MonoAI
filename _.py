@@ -1,5 +1,6 @@
 from models.model import Model
 from prompts.prompt_chain import PromptChain
+
 model = Model(
     provider_name="openai",
     model_name="gpt-4o-mini",

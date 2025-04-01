@@ -2,7 +2,8 @@
 
 - Memoria dei messaggi
 - Selezione automatica del modello
-- model pipeline
+- models pipeline
+- reasoning models
 - Tecniche anti prompt hacking
 - Tecniche di prompt engineering
 - - Safe prompt: applicare tecniche per evitare prompt injection, si potrebbe applicare sia a livello di prompt che di modello

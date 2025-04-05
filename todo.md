@@ -16,6 +16,7 @@
 - - get youtube video script
 - - wikipedia
 - - websearch: duckduckgo, tavily, google (todo), bing (todo)
+- - read ipynb and colab
 
 
 # Risorse utili

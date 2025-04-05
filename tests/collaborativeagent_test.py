@@ -18,7 +18,7 @@ collaborative_agent = CollaborativeAgent(
         "provider": "openai",
         "model": "gpt-4o-mini"
     },
-    tools=[WebSearch().get_tool()]
+    tools=[WebSearch()]
 )
 
 chain = PromptChain([

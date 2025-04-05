@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coicoi"
+version = "0.0.1"
+description = "Pacchetto COICOI sviluppato da ProfessionAI"
+authors = [
+  { name = "ProfessionAI Tech", email = "tech@profession.ai" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+# 📦 Dipendenze di runtime
+dependencies = [
+  "pydantic-ai",
+]
+
+[project.urls]
+Homepage = "https://github.com/Profession-AI/COICOI"

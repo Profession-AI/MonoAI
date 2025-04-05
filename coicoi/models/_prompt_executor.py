@@ -1,6 +1,6 @@
 from typing import Dict, Union
-from prompts.prompt import Prompt
-from prompts.prompt_chain import PromptChain
+from ..prompts.prompt import Prompt
+from ..prompts.prompt_chain import PromptChain
 from pydantic_ai import Agent
 
 class PromptExecutorMixin:

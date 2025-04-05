@@ -1,5 +1,5 @@
 from typing import Dict
-from tokens.token_pricing import TOKEN_PRICING
+from .token_pricing import TOKEN_PRICING
 
 class TokenCost:
 

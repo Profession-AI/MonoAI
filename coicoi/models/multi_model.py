@@ -1,13 +1,14 @@
-from models._base_model import BaseModel
-from models.model import Model
-from models._prompt_executor import PromptExecutorMixin
+from ._base_model import BaseModel
+from .model import Model
+from ._prompt_executor import PromptExecutorMixin
+from ._response_processor import ResponseProcessorMixin
 from typing import List, Dict, Union
 from typing import override
 import asyncio
-from prompts.prompt_chain import PromptChain
-from prompts.prompt import Prompt
+from ..prompts.prompt_chain import PromptChain
+from ..prompts.prompt import Prompt
 
-class MultiModel(BaseModel, PromptExecutorMixin):
+class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
     def __init__(
         self, 
         models: List[Dict[str, str]], 
@@ -44,7 +45,7 @@ class MultiModel(BaseModel, PromptExecutorMixin):
             Dictionary containing the response and optional stats
         """
         response = await self._execute_async(prompt, model._agent)
-        return self._process_prompt(
+        return self._process_response(
             prompt,
             response,
             model.provider_name,

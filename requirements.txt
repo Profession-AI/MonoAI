@@ -1,1 +1,3 @@
 pydantic-ai
+duckduckgo-search
+tavily-python

@@ -1,5 +1,5 @@
 from typing import List
-from prompts.prompt import Prompt
+from .prompt import Prompt
 
 class PromptChain(Prompt):
 

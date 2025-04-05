@@ -1,5 +1,5 @@
-from models.model import Model
-from models.multi_model import MultiModel
-from models.collective_model import CollectiveModel
+from .model import Model
+from .multi_model import MultiModel
+from .collaborative_model import CollaborativeModel
 
-__all__ = ['Model', 'MultiModel', 'CollectiveModel'] 
+__all__ = ['Model', 'MultiModel', 'CollaborativeModel'] 

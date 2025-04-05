@@ -1,7 +1,8 @@
-from typing import Dict, Optional
-from tokens.token_counter import TokenCounter
-from tokens.token_cost import TokenCost
-from prompts.prompt import Prompt
+from typing import Dict
+from ..tokens.token_counter import TokenCounter
+from ..tokens.token_cost import TokenCost
+from ..prompts.prompt import Prompt
+from pydantic_ai.messages import ModelMessage
 
 class ResponseProcessorMixin:
     def _process_response(
@@ -30,7 +31,8 @@ class ResponseProcessorMixin:
 
         processed_response = {
             "prompt": str(prompt), 
-            "response": response, 
+            "response": response.data,
+            "messages_trace": response.all_messages(),
             "model": {
                 "provider": provider_name, 
                 "name": model_name

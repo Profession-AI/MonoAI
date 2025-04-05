@@ -1,5 +1,5 @@
-from models.model import Model
-from prompts.prompt_chain import PromptChain
+from coicoi.models import Model
+from coicoi.prompts.prompt_chain import PromptChain
 
 model = Model(
     provider_name="openai",

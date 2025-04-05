@@ -15,7 +15,7 @@
 - - get document from drive (word, excel)
 - - get youtube video script
 - - wikipedia
-- - websearch
+- - websearch: duckduckgo, tavily, google (todo), bing (todo)
 
 
 # Risorse utili

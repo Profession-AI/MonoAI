@@ -9,8 +9,8 @@ class ResponseProcessorMixin:
         self,
         prompt: Prompt,
         response: str,
-        provider_name: str,
-        model_name: str,
+        provider: str,
+        model: str,
         count_tokens: bool,
         count_cost: bool
     ) -> Dict:
@@ -20,8 +20,8 @@ class ResponseProcessorMixin:
         Args:
             question: The input question
             answer: The model's answer
-            provider_name: Name of the provider
-            model_name: Name of the model
+            provider: Name of the provider
+            model: Name of the model
             count_tokens: Whether to count tokens
             count_cost: Whether to calculate costs
             
@@ -31,24 +31,24 @@ class ResponseProcessorMixin:
 
         processed_response = {
             "prompt": str(prompt), 
-            "response": response.data,
-            "messages_trace": response.all_messages(),
+            "response": response,
+            #"messages_trace": response.all_messages(),
             "model": {
-                "provider": provider_name, 
-                "name": model_name
+                "provider": provider, 
+                "name": model
             }
         }
         
         if count_tokens or count_cost:
             tokens = None
             if count_tokens:
-                tokens = TokenCounter().count(model_name, str(prompt), response)
+                tokens = TokenCounter().count(model, str(prompt), response)
                 processed_response["tokens"] = tokens
                 
             if count_cost and tokens:
                 cost = TokenCost().compute(
-                    provider_name, 
-                    model_name, 
+                    provider, 
+                    model, 
                     tokens["input_tokens"], 
                     tokens["output_tokens"]
                 )

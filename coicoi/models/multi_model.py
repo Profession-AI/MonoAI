@@ -48,8 +48,8 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
         return self._process_response(
             prompt,
             response,
-            model.provider_name,
-            model.model_name,
+            model.provider,
+            model.model,
             self._count_tokens,
             self._count_cost
         )

@@ -87,8 +87,8 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
         processed_aggregator = self._process_response(
             aggregator_prompt,
             aggregator_response,
-            self._aggregator.provider_name,
-            self._aggregator.model_name,
+            self._aggregator.provider,
+            self._aggregator.model,
             self._count_tokens,
             self._count_cost
         )

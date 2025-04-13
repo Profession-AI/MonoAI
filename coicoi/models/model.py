@@ -14,8 +14,8 @@ from ..prompts.prompt import Prompt
 class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
     def __init__(
         self, 
-        provider_name: str, 
-        model_name: str, 
+        provider: str, 
+        model: str, 
         system_prompt: str | Sequence[str] = (),
         count_tokens: bool = False, 
         count_cost: bool = False
@@ -24,18 +24,18 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         Initialize Model with provider and model name.
         
         Args:
-            provider_name: Name of the provider (e.g., 'openai', 'anthropic')
-            model_name: Name of the model (e.g., 'gpt-4', 'claude-3')
+            provider: Name of the provider (e.g., 'openai', 'anthropic')
+            model: Name of the model (e.g., 'gpt-4', 'claude-3')
             system_prompt: System prompt or sequence of prompts
             count_tokens: Whether to count tokens for each request
             count_cost: Whether to calculate costs for each request
         """
         super().__init__(count_tokens, count_cost)
-        load_key(provider_name)
+        load_key(provider)
 
-        self.provider_name = provider_name
-        self.model_name = model_name
-        self._agent = Agent(provider_name + ":" + model_name, system_prompt=system_prompt)
+        self.provider = provider
+        self.model = model
+        self._agent = Agent(provider + ":" + model, system_prompt=system_prompt)
 
     @override
     async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
@@ -52,8 +52,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         return self._process_response(
             prompt,
             response,
-            self.provider_name,
-            self.model_name,
+            self.provider,
+            self.model,
             self._count_tokens,
             self._count_cost
         )
@@ -73,8 +73,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         return self._process_response(
             prompt,
             response,
-            self.provider_name,
-            self.model_name,
+            self.provider,
+            self.model,
             self._count_tokens,
             self._count_cost
         )
@@ -94,21 +94,21 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             "input": question, 
             "output": answer, 
             "model": {
-                "provider": self.provider_name, 
-                "name": self.model_name
+                "provider": self.provider, 
+                "name": self.model
             }
         }
         
         if self._count_tokens or self._count_cost:
             tokens = None
             if self._count_tokens:
-                tokens = TokenCounter().count(self.model_name, question, answer)
+                tokens = TokenCounter().count(self.model, question, answer)
                 response["tokens"] = tokens
                 
             if self._count_cost and tokens:
                 cost = TokenCost().compute(
-                    self.provider_name, 
-                    self.model_name, 
+                    self.provider, 
+                    self.model, 
                     tokens["input_tokens"], 
                     tokens["output_tokens"]
                 )
@@ -120,8 +120,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 if __name__ == "__main__":
     # Initialize with counting preferences
     model = Model(
-        provider_name="openai",
-        model_name="gpt-4o-mini",
+        provider="openai",
+        model="gpt-4o-mini",
         count_tokens=True,
         count_cost=True
     )

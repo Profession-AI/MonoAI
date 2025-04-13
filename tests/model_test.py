@@ -2,8 +2,8 @@ from coicoi.models import Model
 from coicoi.prompts.prompt_chain import PromptChain
 
 model = Model(
-    provider_name="openai",
-    model_name="gpt-4o-mini",
+    provider="openai",
+    model="gpt-4o-mini",
     count_tokens=True,
     count_cost=True)
 

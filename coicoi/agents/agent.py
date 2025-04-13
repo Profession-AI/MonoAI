@@ -2,8 +2,8 @@ from ..models import Model
 
 class Agent(Model):
 
-    def __init__(self, provider_name: str, model_name: str, tools):
-        super().__init__(provider_name, model_name)
+    def __init__(self, provider: str, model: str, tools):
+        super().__init__(provider, model)
         for tool in tools:
             self._agent._register_tool(tool)
 

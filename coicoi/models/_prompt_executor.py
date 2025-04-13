@@ -1,6 +1,7 @@
 from typing import Dict, Union
 from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
+from ..prompts.iterative_prompt import IterativePrompt
 from pydantic_ai import Agent
 
 class PromptExecutorMixin:
@@ -34,7 +35,12 @@ class PromptExecutorMixin:
         """
         if isinstance(prompt, PromptChain):
             return self._execute_chain(prompt, agent)
-        return agent.run_sync(prompt)
+        elif isinstance(prompt, IterativePrompt):
+            return self._execute_iterative(prompt, agent)
+        elif isinstance(prompt, Prompt):
+            return agent.run_sync(str(prompt), result_type=prompt.result_type).data
+        else:
+            return agent.run_sync(str(prompt)).data
 
     async def _execute_chain_async(self, chain: PromptChain, agent: Agent) -> Dict:
         """
@@ -69,3 +75,26 @@ class PromptExecutorMixin:
             current_prompt = chain.format(i, response.data if response else None)
             response = agent.run_sync(current_prompt)
         return response.data
+    
+    def _execute_iterative(self, prompt: IterativePrompt, agent: Agent) -> Dict:
+        """
+        Execute an iterative prompt synchronously.
+        
+        Args:
+            prompt: The iterative prompt to execute
+            agent: The agent to use for execution
+            
+        Returns:
+            Dictionary containing the final response
+        """
+        response = ""
+        for i in range(prompt.size):
+            if i > 0 and prompt.has_memory:
+                current_prompt = prompt.format(i, current_response)
+            else:
+                current_prompt = prompt.format(i)
+            print(current_prompt)
+            current_response = agent.run_sync(current_prompt).data
+            response += current_response
+        return response
+

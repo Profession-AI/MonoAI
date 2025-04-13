@@ -1,5 +1,6 @@
 from os import environ
 import sys
+import os
 
 _KEY_EXT = "_API_KEY"
 
@@ -7,15 +8,24 @@ class _KeyManager:
 
     _instance = None
     _keys = None
-
+    _key_file_path = os.path.dirname(os.path.abspath(sys.argv[0]))+"\providers.keys"
+    _is_enabled = True
 
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(_KeyManager, cls).__new__(cls)
         return cls._instance
 
+    def set_key_file(self, key_file_path: str):
+        self._key_file_path = key_file_path
+
+    def enabled(self, enable: bool):
+        self._is_enabled = enable
 
     def load_key(self, provider: str):
+        print(self._key_file_path)
+        if not self._is_enabled:
+            return
 
         key_name = provider.upper() + _KEY_EXT
 
@@ -32,7 +42,7 @@ class _KeyManager:
     def _load_keys_from_file(self):
 
         try:
-            with open('providers.keys', 'r') as f:
+            with open(self._key_file_path, 'r') as f:
                 self._keys = {}
                 for line in f:
                     line = line.strip()

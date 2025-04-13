@@ -1,3 +1,4 @@
 pydantic-ai
 duckduckgo-search
 tavily-python
+typing-extensions

@@ -53,7 +53,7 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
         """
         prompt_text = str(prompt)
         model_responses = "\n\n".join([
-            f"Model {i+1} ({response["model"]['provider']} - {response['model']["name"]}):\n{response['response']}"
+            f"Model {i+1} ({response['model']['provider']} - {response['model']['name']}):\n{response['response']}"
             for i, response in enumerate(responses)
         ])
         

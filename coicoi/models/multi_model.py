@@ -3,7 +3,6 @@ from .model import Model
 from ._prompt_executor import PromptExecutorMixin
 from ._response_processor import ResponseProcessorMixin
 from typing import List, Dict, Union
-from typing import override
 import asyncio
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
@@ -54,7 +53,6 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
             self._count_cost
         )
 
-    @override
     async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> List[Dict]:
         """
         Ask all models asynchronously.
@@ -68,7 +66,6 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
         tasks = [self._task(model, prompt) for model in self._models]
         return await asyncio.gather(*tasks)
 
-    @override
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> List[Dict]:
         """
         Ask all models synchronously.

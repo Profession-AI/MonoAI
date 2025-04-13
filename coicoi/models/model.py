@@ -6,7 +6,6 @@ from ._prompt_executor import PromptExecutorMixin
 from typing import Sequence, Dict, Union
 from ..tokens.token_counter import TokenCounter
 from ..tokens.token_cost import TokenCost
-from typing import override
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
 
@@ -37,7 +36,6 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         self.model = model
         self._agent = Agent(provider + ":" + model, system_prompt=system_prompt)
 
-    @override
     async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask the model asynchronously.
@@ -58,7 +56,6 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             self._count_cost
         )
 
-    @override
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask the model synchronously.

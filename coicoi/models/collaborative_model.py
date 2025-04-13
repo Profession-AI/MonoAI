@@ -4,7 +4,6 @@ from .multi_model import MultiModel
 from ._prompt_executor import PromptExecutorMixin
 from ._response_processor import ResponseProcessorMixin
 from typing import List, Dict, Union
-from typing import override
 import asyncio
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
@@ -65,7 +64,6 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
                     Please provide a well-reasoned response that takes into account all the information above."""
 
 
-    @override
     async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask all models and aggregate their responses asynchronously.
@@ -96,7 +94,6 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
         processed_aggregator["individual_responses"] = model_responses
         return processed_aggregator
 
-    @override
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask all models and aggregate their responses synchronously.

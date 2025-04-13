@@ -2,7 +2,6 @@ from typing import Dict
 from ..tokens.token_counter import TokenCounter
 from ..tokens.token_cost import TokenCost
 from ..prompts.prompt import Prompt
-from pydantic_ai.messages import ModelMessage
 
 class ResponseProcessorMixin:
     def _process_response(

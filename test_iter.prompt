@@ -1,0 +1,9 @@
+<iterativeprompt>
+<prompt>
+Genera il contenuto di un capitolo di un corso {topic}. 
+I capitoli sono {chapters}. Genera il contenuto del capito {{data}}
+</prompt>
+<prompt_memory>
+Assicurati che sia coerente con il contenuto del capitolo precedente: {{data}}
+</prompt_memory>
+</iterativeprompt>

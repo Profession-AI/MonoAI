@@ -1,0 +1,8 @@
+<promptchain>
+<prompt>
+Qual è la {capital} di {country} ?
+</prompt>
+<prompt>
+E di {country} ?
+</prompt>
+</promptchain>

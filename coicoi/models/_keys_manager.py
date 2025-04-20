@@ -8,7 +8,7 @@ class _KeyManager:
 
     _instance = None
     _keys = None
-    _key_file_path = os.path.dirname(os.path.abspath(sys.argv[0]))+"\providers.keys"
+    _key_file_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),"providers.keys")
     _is_enabled = True
 
     def __new__(cls):

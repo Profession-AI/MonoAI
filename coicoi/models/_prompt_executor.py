@@ -93,7 +93,6 @@ class PromptExecutorMixin:
                 current_prompt = prompt.format(i, current_response)
             else:
                 current_prompt = prompt.format(i)
-            print(current_prompt)
             current_response = agent.run_sync(current_prompt).data
             response += current_response
         return response

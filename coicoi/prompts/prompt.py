@@ -1,8 +1,22 @@
-from pydantic_ai.agent import RunResultDataT
+from ._prompt_parser import PromptParser
 
 class Prompt:
-    def __init__(self, prompt: str, result_type: type[RunResultDataT] | None = None):
-        self._prompt = prompt
+    def __init__(self, 
+                 prompt_id: str | None = None,
+                 prompt_data: dict | None = None,
+                 prompt: str | None = None, 
+                 result_type: type | None = None):
+        
+        if prompt_id is not None:
+            self._prompt = PromptParser().parse(prompt_id)
+        elif prompt is not None:
+            self._prompt = prompt
+        else:
+            raise ValueError("Either prompt_id or prompt must be provided")
+
+        if prompt_data is not None:
+            self._prompt = self._prompt.format(**prompt_data)
+
         self.result_type = result_type
 
     def __str__(self):

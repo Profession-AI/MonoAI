@@ -20,16 +20,13 @@ class IterativePrompt(Prompt):
         self._iter_data = iter_data
         self.size = len(iter_data)
         self._prompt_memory = prompt_memory.replace("{{", "{").replace("}}", "}")
-        self.has_memory = prompt_memory!=""
-        print(prompt_memory)
-        
+        self.has_memory = prompt_memory!=""        
 
     def format(self, index: int, context:str="") -> str:
 
         prompt = self._prompt.format(data=self._iter_data[index])
         if self.has_memory and index > 0:
             prompt += "\n\n"+self._prompt_memory.format(data=context)
-        print(prompt)
         return prompt
 
     def __str__(self):

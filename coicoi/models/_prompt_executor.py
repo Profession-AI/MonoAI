@@ -38,7 +38,7 @@ class PromptExecutorMixin:
         elif isinstance(prompt, IterativePrompt):
             return self._execute_iterative(prompt, agent)
         elif isinstance(prompt, Prompt):
-            return agent.run_sync(str(prompt), result_type=prompt.result_type).data
+            return agent.run_sync(str(prompt), output_type=prompt.output_type).data
         else:
             return agent.run_sync(str(prompt)).data
 

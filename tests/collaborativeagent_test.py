@@ -1,6 +1,6 @@
 from coicoi._agents import CollaborativeAgent
 from coicoi.prompts.prompt_chain import PromptChain
-from coicoi.tools import WebSearch
+from coicoi._tools import WebSearch
 
 
 collaborative_agent = CollaborativeAgent(

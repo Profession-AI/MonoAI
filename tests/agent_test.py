@@ -1,4 +1,4 @@
-from coicoi.tools.websearch import WebSearch
+from coicoi._tools.websearch import WebSearch
 from os import environ
 from coicoi.models import Model
 from coicoi._agents import Agent

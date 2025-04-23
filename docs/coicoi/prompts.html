@@ -31,21 +31,6 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#PromptChain">PromptChain</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#PromptChain.__init__">PromptChain</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#PromptChain.size">size</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#PromptChain.format">format</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#Prompt">Prompt</a>
                             <ul class="memberlist">
                         <li>
@@ -55,19 +40,19 @@
 
             </li>
             <li>
+                    <a class="class" href="#PromptChain">PromptChain</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PromptChain.__init__">PromptChain</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#IterativePrompt">IterativePrompt</a>
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#IterativePrompt.__init__">IterativePrompt</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#IterativePrompt.size">size</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#IterativePrompt.has_memory">has_memory</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#IterativePrompt.format">format</a>
                         </li>
                 </ul>
 
@@ -88,128 +73,28 @@
                     <h1 class="modulename">
 <a href="./../coicoi.html">coicoi</a><wbr>.prompts    </h1>
 
-                
+                        <div class="docstring"><p>This module provides classes for handling different types of prompts in the COICOI framework.
+Prompt can be provided as a string or as a xml-like .prompt file.</p>
+</div>
+
                         <input id="mod-prompts-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-prompts-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.prompt_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptChain</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prompt</span>  
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.iterative_prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">IterativePrompt</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PromptChain&#39;</span><span class="p">,</span> <span class="s1">&#39;Prompt&#39;</span><span class="p">,</span> <span class="s1">&#39;IterativePrompt&#39;</span><span class="p">]</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">This module provides classes for handling different types of prompts in the COICOI framework.</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Prompt can be provided as a string or as a xml-like .prompt file.</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.prompt_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptChain</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prompt</span>  
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.iterative_prompt</span><span class="w"> </span><span class="kn">import</span> <span class="n">IterativePrompt</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prompt&#39;</span><span class="p">,</span> <span class="s1">&#39;PromptChain&#39;</span><span class="p">,</span> <span class="s1">&#39;IterativePrompt&#39;</span><span class="p">]</span>
 </span></pre></div>
 
 
             </section>
-                <section id="PromptChain">
-                            <input id="PromptChain-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">PromptChain</span><wbr>(<span class="base"><a href="#Prompt">coicoi.prompts.Prompt</a></span>):
-
-                <label class="view-source-button" for="PromptChain-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#PromptChain"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain-5"><a href="#PromptChain-5"><span class="linenos"> 5</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromptChain</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
-</span><span id="PromptChain-6"><a href="#PromptChain-6"><span class="linenos"> 6</span></a>
-</span><span id="PromptChain-7"><a href="#PromptChain-7"><span class="linenos"> 7</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="PromptChain-8"><a href="#PromptChain-8"><span class="linenos"> 8</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain-9"><a href="#PromptChain-9"><span class="linenos"> 9</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain-10"><a href="#PromptChain-10"><span class="linenos">10</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-</span><span id="PromptChain-11"><a href="#PromptChain-11"><span class="linenos">11</span></a>                 <span class="p">):</span>
-</span><span id="PromptChain-12"><a href="#PromptChain-12"><span class="linenos">12</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-13"><a href="#PromptChain-13"><span class="linenos">13</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
-</span><span id="PromptChain-14"><a href="#PromptChain-14"><span class="linenos">14</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
-</span><span id="PromptChain-15"><a href="#PromptChain-15"><span class="linenos">15</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</span><span id="PromptChain-16"><a href="#PromptChain-16"><span class="linenos">16</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-17"><a href="#PromptChain-17"><span class="linenos">17</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
-</span><span id="PromptChain-18"><a href="#PromptChain-18"><span class="linenos">18</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain-19"><a href="#PromptChain-19"><span class="linenos">19</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
-</span><span id="PromptChain-20"><a href="#PromptChain-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
-</span><span id="PromptChain-21"><a href="#PromptChain-21"><span class="linenos">21</span></a>
-</span><span id="PromptChain-22"><a href="#PromptChain-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PromptChain-23"><a href="#PromptChain-23"><span class="linenos">23</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-24"><a href="#PromptChain-24"><span class="linenos">24</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-</span><span id="PromptChain-25"><a href="#PromptChain-25"><span class="linenos">25</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain-26"><a href="#PromptChain-26"><span class="linenos">26</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">context</span>
-</span><span id="PromptChain-27"><a href="#PromptChain-27"><span class="linenos">27</span></a>
-</span><span id="PromptChain-28"><a href="#PromptChain-28"><span class="linenos">28</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="PromptChain-29"><a href="#PromptChain-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">])</span>
-</span><span id="PromptChain-30"><a href="#PromptChain-30"><span class="linenos">30</span></a>
-</span><span id="PromptChain-31"><a href="#PromptChain-31"><span class="linenos">31</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="PromptChain-32"><a href="#PromptChain-32"><span class="linenos">32</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
-</span></pre></div>
-
-
-    
-
-                            <div id="PromptChain.__init__" class="classattr">
-                                        <input id="PromptChain.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="name">PromptChain</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Prompt">Prompt</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-                <label class="view-source-button" for="PromptChain.__init__-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#PromptChain.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain.__init__-7"><a href="#PromptChain.__init__-7"><span class="linenos"> 7</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="PromptChain.__init__-8"><a href="#PromptChain.__init__-8"><span class="linenos"> 8</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain.__init__-9"><a href="#PromptChain.__init__-9"><span class="linenos"> 9</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain.__init__-10"><a href="#PromptChain.__init__-10"><span class="linenos">10</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-</span><span id="PromptChain.__init__-11"><a href="#PromptChain.__init__-11"><span class="linenos">11</span></a>                 <span class="p">):</span>
-</span><span id="PromptChain.__init__-12"><a href="#PromptChain.__init__-12"><span class="linenos">12</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-13"><a href="#PromptChain.__init__-13"><span class="linenos">13</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
-</span><span id="PromptChain.__init__-14"><a href="#PromptChain.__init__-14"><span class="linenos">14</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
-</span><span id="PromptChain.__init__-15"><a href="#PromptChain.__init__-15"><span class="linenos">15</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</span><span id="PromptChain.__init__-16"><a href="#PromptChain.__init__-16"><span class="linenos">16</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-17"><a href="#PromptChain.__init__-17"><span class="linenos">17</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
-</span><span id="PromptChain.__init__-18"><a href="#PromptChain.__init__-18"><span class="linenos">18</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-19"><a href="#PromptChain.__init__-19"><span class="linenos">19</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
-</span><span id="PromptChain.__init__-20"><a href="#PromptChain.__init__-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
-</span></pre></div>
-
-
-    
-
-                            </div>
-                            <div id="PromptChain.size" class="classattr">
-                                <div class="attr variable">
-            <span class="name">size</span>
-
-        
-    </div>
-    <a class="headerlink" href="#PromptChain.size"></a>
-    
-    
-
-                            </div>
-                            <div id="PromptChain.format" class="classattr">
-                                        <input id="PromptChain.format-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">format</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">index</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
-
-                <label class="view-source-button" for="PromptChain.format-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#PromptChain.format"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain.format-22"><a href="#PromptChain.format-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PromptChain.format-23"><a href="#PromptChain.format-23"><span class="linenos">23</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain.format-24"><a href="#PromptChain.format-24"><span class="linenos">24</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-</span><span id="PromptChain.format-25"><a href="#PromptChain.format-25"><span class="linenos">25</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain.format-26"><a href="#PromptChain.format-26"><span class="linenos">26</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">context</span>
-</span></pre></div>
-
-
-    
-
-                            </div>
-                </section>
                 <section id="Prompt">
                             <input id="Prompt-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -221,38 +106,191 @@
 
     </div>
     <a class="headerlink" href="#Prompt"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Prompt-4"><a href="#Prompt-4"><span class="linenos"> 4</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Prompt</span><span class="p">:</span>
-</span><span id="Prompt-5"><a href="#Prompt-5"><span class="linenos"> 5</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="Prompt-6"><a href="#Prompt-6"><span class="linenos"> 6</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Prompt-7"><a href="#Prompt-7"><span class="linenos"> 7</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Prompt-8"><a href="#Prompt-8"><span class="linenos"> 8</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-</span><span id="Prompt-9"><a href="#Prompt-9"><span class="linenos"> 9</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="Prompt-10"><a href="#Prompt-10"><span class="linenos">10</span></a>        
-</span><span id="Prompt-11"><a href="#Prompt-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt-12"><a href="#Prompt-12"><span class="linenos">12</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_response_type</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
-</span><span id="Prompt-13"><a href="#Prompt-13"><span class="linenos">13</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt-14"><a href="#Prompt-14"><span class="linenos">14</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
-</span><span id="Prompt-15"><a href="#Prompt-15"><span class="linenos">15</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Prompt-16"><a href="#Prompt-16"><span class="linenos">16</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
-</span><span id="Prompt-17"><a href="#Prompt-17"><span class="linenos">17</span></a>
-</span><span id="Prompt-18"><a href="#Prompt-18"><span class="linenos">18</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt-19"><a href="#Prompt-19"><span class="linenos">19</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
-</span><span id="Prompt-20"><a href="#Prompt-20"><span class="linenos">20</span></a>
-</span><span id="Prompt-21"><a href="#Prompt-21"><span class="linenos">21</span></a>        <span class="k">if</span> <span class="n">prompt_response_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt-22"><a href="#Prompt-22"><span class="linenos">22</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">prompt_response_type</span>
-</span><span id="Prompt-23"><a href="#Prompt-23"><span class="linenos">23</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Prompt-24"><a href="#Prompt-24"><span class="linenos">24</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
-</span><span id="Prompt-25"><a href="#Prompt-25"><span class="linenos">25</span></a>
-</span><span id="Prompt-26"><a href="#Prompt-26"><span class="linenos">26</span></a>
-</span><span id="Prompt-27"><a href="#Prompt-27"><span class="linenos">27</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Prompt-28"><a href="#Prompt-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span>
-</span><span id="Prompt-29"><a href="#Prompt-29"><span class="linenos">29</span></a>    
-</span><span id="Prompt-30"><a href="#Prompt-30"><span class="linenos">30</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Prompt-31"><a href="#Prompt-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Prompt-6"><a href="#Prompt-6"><span class="linenos">  6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Prompt</span><span class="p">:</span>
+</span><span id="Prompt-7"><a href="#Prompt-7"><span class="linenos">  7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Prompt-8"><a href="#Prompt-8"><span class="linenos">  8</span></a><span class="sd">    A class to handle text prompts with optional response type specification.</span>
+</span><span id="Prompt-9"><a href="#Prompt-9"><span class="linenos">  9</span></a><span class="sd">    </span>
+</span><span id="Prompt-10"><a href="#Prompt-10"><span class="linenos"> 10</span></a><span class="sd">    The Prompt class can be initialized either with a direct prompt string or by loading</span>
+</span><span id="Prompt-11"><a href="#Prompt-11"><span class="linenos"> 11</span></a><span class="sd">    a prompt from a .prompt file. It supports response type specification and</span>
+</span><span id="Prompt-12"><a href="#Prompt-12"><span class="linenos"> 12</span></a><span class="sd">    data formatting through Python&#39;s string formatting.</span>
+</span><span id="Prompt-13"><a href="#Prompt-13"><span class="linenos"> 13</span></a>
+</span><span id="Prompt-14"><a href="#Prompt-14"><span class="linenos"> 14</span></a><span class="sd">    .prompt format</span>
+</span><span id="Prompt-15"><a href="#Prompt-15"><span class="linenos"> 15</span></a><span class="sd">    --------</span>
+</span><span id="Prompt-16"><a href="#Prompt-16"><span class="linenos"> 16</span></a><span class="sd">    Simple prompt</span>
+</span><span id="Prompt-17"><a href="#Prompt-17"><span class="linenos"> 17</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-18"><a href="#Prompt-18"><span class="linenos"> 18</span></a><span class="sd">    &lt;prompt&gt;</span>
+</span><span id="Prompt-19"><a href="#Prompt-19"><span class="linenos"> 19</span></a><span class="sd">        Hello, coicoi!</span>
+</span><span id="Prompt-20"><a href="#Prompt-20"><span class="linenos"> 20</span></a><span class="sd">    &lt;/prompt&gt;</span>
+</span><span id="Prompt-21"><a href="#Prompt-21"><span class="linenos"> 21</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-22"><a href="#Prompt-22"><span class="linenos"> 22</span></a><span class="sd">    In this case you could also use plain text without the prompt tag:</span>
+</span><span id="Prompt-23"><a href="#Prompt-23"><span class="linenos"> 23</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-24"><a href="#Prompt-24"><span class="linenos"> 24</span></a><span class="sd">    Hello, coicoi!</span>
+</span><span id="Prompt-25"><a href="#Prompt-25"><span class="linenos"> 25</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-26"><a href="#Prompt-26"><span class="linenos"> 26</span></a><span class="sd">    Prompt with data formatting</span>
+</span><span id="Prompt-27"><a href="#Prompt-27"><span class="linenos"> 27</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-28"><a href="#Prompt-28"><span class="linenos"> 28</span></a><span class="sd">    &lt;prompt&gt;</span>
+</span><span id="Prompt-29"><a href="#Prompt-29"><span class="linenos"> 29</span></a><span class="sd">        Hello, {name}!</span>
+</span><span id="Prompt-30"><a href="#Prompt-30"><span class="linenos"> 30</span></a><span class="sd">    &lt;/prompt&gt;</span>
+</span><span id="Prompt-31"><a href="#Prompt-31"><span class="linenos"> 31</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-32"><a href="#Prompt-32"><span class="linenos"> 32</span></a><span class="sd">    Prompt with response type</span>
+</span><span id="Prompt-33"><a href="#Prompt-33"><span class="linenos"> 33</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-34"><a href="#Prompt-34"><span class="linenos"> 34</span></a><span class="sd">    &lt;prompt response_type=&quot;int&quot;&gt;</span>
+</span><span id="Prompt-35"><a href="#Prompt-35"><span class="linenos"> 35</span></a><span class="sd">        What is 2+2?</span>
+</span><span id="Prompt-36"><a href="#Prompt-36"><span class="linenos"> 36</span></a><span class="sd">    &lt;/prompt&gt;</span>
+</span><span id="Prompt-37"><a href="#Prompt-37"><span class="linenos"> 37</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-38"><a href="#Prompt-38"><span class="linenos"> 38</span></a>
+</span><span id="Prompt-39"><a href="#Prompt-39"><span class="linenos"> 39</span></a><span class="sd">    Examples</span>
+</span><span id="Prompt-40"><a href="#Prompt-40"><span class="linenos"> 40</span></a><span class="sd">    --------</span>
+</span><span id="Prompt-41"><a href="#Prompt-41"><span class="linenos"> 41</span></a><span class="sd">    Simple prompt with response type:</span>
+</span><span id="Prompt-42"><a href="#Prompt-42"><span class="linenos"> 42</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-43"><a href="#Prompt-43"><span class="linenos"> 43</span></a><span class="sd">    prompt = Prompt(prompt=&quot;What is 2+2?&quot;, response_type=int)</span>
+</span><span id="Prompt-44"><a href="#Prompt-44"><span class="linenos"> 44</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-45"><a href="#Prompt-45"><span class="linenos"> 45</span></a><span class="sd">    Prompt with data formatting:</span>
+</span><span id="Prompt-46"><a href="#Prompt-46"><span class="linenos"> 46</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-47"><a href="#Prompt-47"><span class="linenos"> 47</span></a><span class="sd">    prompt = Prompt(</span>
+</span><span id="Prompt-48"><a href="#Prompt-48"><span class="linenos"> 48</span></a><span class="sd">        prompt=&quot;What is the capital of {country}?&quot;,</span>
+</span><span id="Prompt-49"><a href="#Prompt-49"><span class="linenos"> 49</span></a><span class="sd">        prompt_data={&quot;country&quot;: &quot;France&quot;},</span>
+</span><span id="Prompt-50"><a href="#Prompt-50"><span class="linenos"> 50</span></a><span class="sd">        response_type=str</span>
+</span><span id="Prompt-51"><a href="#Prompt-51"><span class="linenos"> 51</span></a><span class="sd">    )</span>
+</span><span id="Prompt-52"><a href="#Prompt-52"><span class="linenos"> 52</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-53"><a href="#Prompt-53"><span class="linenos"> 53</span></a><span class="sd">    Load prompt from file:</span>
+</span><span id="Prompt-54"><a href="#Prompt-54"><span class="linenos"> 54</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-55"><a href="#Prompt-55"><span class="linenos"> 55</span></a><span class="sd">    prompt = Prompt(prompt_id=&quot;math_question&quot;)</span>
+</span><span id="Prompt-56"><a href="#Prompt-56"><span class="linenos"> 56</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-57"><a href="#Prompt-57"><span class="linenos"> 57</span></a><span class="sd">    math_question.prompt</span>
+</span><span id="Prompt-58"><a href="#Prompt-58"><span class="linenos"> 58</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-59"><a href="#Prompt-59"><span class="linenos"> 59</span></a><span class="sd">    &lt;prompt response_type=&quot;int&quot;&gt;</span>
+</span><span id="Prompt-60"><a href="#Prompt-60"><span class="linenos"> 60</span></a><span class="sd">        What is 2+2?</span>
+</span><span id="Prompt-61"><a href="#Prompt-61"><span class="linenos"> 61</span></a><span class="sd">    &lt;/prompt&gt;</span>
+</span><span id="Prompt-62"><a href="#Prompt-62"><span class="linenos"> 62</span></a><span class="sd">    ```</span>
+</span><span id="Prompt-63"><a href="#Prompt-63"><span class="linenos"> 63</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Prompt-64"><a href="#Prompt-64"><span class="linenos"> 64</span></a>
+</span><span id="Prompt-65"><a href="#Prompt-65"><span class="linenos"> 65</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Prompt-66"><a href="#Prompt-66"><span class="linenos"> 66</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Prompt-67"><a href="#Prompt-67"><span class="linenos"> 67</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Prompt-68"><a href="#Prompt-68"><span class="linenos"> 68</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+</span><span id="Prompt-69"><a href="#Prompt-69"><span class="linenos"> 69</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="Prompt-70"><a href="#Prompt-70"><span class="linenos"> 70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Prompt-71"><a href="#Prompt-71"><span class="linenos"> 71</span></a><span class="sd">        Initialize a new Prompt instance.</span>
+</span><span id="Prompt-72"><a href="#Prompt-72"><span class="linenos"> 72</span></a>
+</span><span id="Prompt-73"><a href="#Prompt-73"><span class="linenos"> 73</span></a><span class="sd">        Parameters</span>
+</span><span id="Prompt-74"><a href="#Prompt-74"><span class="linenos"> 74</span></a><span class="sd">        ----------</span>
+</span><span id="Prompt-75"><a href="#Prompt-75"><span class="linenos"> 75</span></a><span class="sd">        prompt_id : str, optional</span>
+</span><span id="Prompt-76"><a href="#Prompt-76"><span class="linenos"> 76</span></a><span class="sd">            A .prompt file name for loading a prompt from file</span>
+</span><span id="Prompt-77"><a href="#Prompt-77"><span class="linenos"> 77</span></a><span class="sd">        prompt_data : dict, optional</span>
+</span><span id="Prompt-78"><a href="#Prompt-78"><span class="linenos"> 78</span></a><span class="sd">            Dictionary of values for formatting the prompt</span>
+</span><span id="Prompt-79"><a href="#Prompt-79"><span class="linenos"> 79</span></a><span class="sd">        prompt : str, optional</span>
+</span><span id="Prompt-80"><a href="#Prompt-80"><span class="linenos"> 80</span></a><span class="sd">            Direct prompt text if prompt_id is not provided</span>
+</span><span id="Prompt-81"><a href="#Prompt-81"><span class="linenos"> 81</span></a><span class="sd">        response_type : type, optional</span>
+</span><span id="Prompt-82"><a href="#Prompt-82"><span class="linenos"> 82</span></a><span class="sd">            Expected type of the response</span>
+</span><span id="Prompt-83"><a href="#Prompt-83"><span class="linenos"> 83</span></a>
+</span><span id="Prompt-84"><a href="#Prompt-84"><span class="linenos"> 84</span></a><span class="sd">        Raises</span>
+</span><span id="Prompt-85"><a href="#Prompt-85"><span class="linenos"> 85</span></a><span class="sd">        ------</span>
+</span><span id="Prompt-86"><a href="#Prompt-86"><span class="linenos"> 86</span></a><span class="sd">        ValueError</span>
+</span><span id="Prompt-87"><a href="#Prompt-87"><span class="linenos"> 87</span></a><span class="sd">            If neither prompt_id nor prompt is provided</span>
+</span><span id="Prompt-88"><a href="#Prompt-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Prompt-89"><a href="#Prompt-89"><span class="linenos"> 89</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt-90"><a href="#Prompt-90"><span class="linenos"> 90</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_response_type</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
+</span><span id="Prompt-91"><a href="#Prompt-91"><span class="linenos"> 91</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt-92"><a href="#Prompt-92"><span class="linenos"> 92</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+</span><span id="Prompt-93"><a href="#Prompt-93"><span class="linenos"> 93</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Prompt-94"><a href="#Prompt-94"><span class="linenos"> 94</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
+</span><span id="Prompt-95"><a href="#Prompt-95"><span class="linenos"> 95</span></a>
+</span><span id="Prompt-96"><a href="#Prompt-96"><span class="linenos"> 96</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt-97"><a href="#Prompt-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
+</span><span id="Prompt-98"><a href="#Prompt-98"><span class="linenos"> 98</span></a>
+</span><span id="Prompt-99"><a href="#Prompt-99"><span class="linenos"> 99</span></a>        <span class="k">if</span> <span class="n">prompt_response_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt-100"><a href="#Prompt-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">prompt_response_type</span>
+</span><span id="Prompt-101"><a href="#Prompt-101"><span class="linenos">101</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Prompt-102"><a href="#Prompt-102"><span class="linenos">102</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
+</span><span id="Prompt-103"><a href="#Prompt-103"><span class="linenos">103</span></a>
+</span><span id="Prompt-104"><a href="#Prompt-104"><span class="linenos">104</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Prompt-105"><a href="#Prompt-105"><span class="linenos">105</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Prompt-106"><a href="#Prompt-106"><span class="linenos">106</span></a><span class="sd">        Get the string representation of the prompt.</span>
+</span><span id="Prompt-107"><a href="#Prompt-107"><span class="linenos">107</span></a>
+</span><span id="Prompt-108"><a href="#Prompt-108"><span class="linenos">108</span></a><span class="sd">        Returns</span>
+</span><span id="Prompt-109"><a href="#Prompt-109"><span class="linenos">109</span></a><span class="sd">        -------</span>
+</span><span id="Prompt-110"><a href="#Prompt-110"><span class="linenos">110</span></a><span class="sd">        str</span>
+</span><span id="Prompt-111"><a href="#Prompt-111"><span class="linenos">111</span></a><span class="sd">            The prompt text</span>
+</span><span id="Prompt-112"><a href="#Prompt-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Prompt-113"><a href="#Prompt-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span>
+</span><span id="Prompt-114"><a href="#Prompt-114"><span class="linenos">114</span></a>    
+</span><span id="Prompt-115"><a href="#Prompt-115"><span class="linenos">115</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Prompt-116"><a href="#Prompt-116"><span class="linenos">116</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Prompt-117"><a href="#Prompt-117"><span class="linenos">117</span></a><span class="sd">        Get the official string representation of the prompt.</span>
+</span><span id="Prompt-118"><a href="#Prompt-118"><span class="linenos">118</span></a>
+</span><span id="Prompt-119"><a href="#Prompt-119"><span class="linenos">119</span></a><span class="sd">        Returns</span>
+</span><span id="Prompt-120"><a href="#Prompt-120"><span class="linenos">120</span></a><span class="sd">        -------</span>
+</span><span id="Prompt-121"><a href="#Prompt-121"><span class="linenos">121</span></a><span class="sd">        str</span>
+</span><span id="Prompt-122"><a href="#Prompt-122"><span class="linenos">122</span></a><span class="sd">            The prompt text</span>
+</span><span id="Prompt-123"><a href="#Prompt-123"><span class="linenos">123</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Prompt-124"><a href="#Prompt-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>A class to handle text prompts with optional response type specification.</p>
+
+<p>The Prompt class can be initialized either with a direct prompt string or by loading
+a prompt from a .prompt file. It supports response type specification and
+data formatting through Python's string formatting.</p>
+
+<h2 id="prompt-format">.prompt format</h2>
+
+<p>Simple prompt</p>
+
+<pre><code>&lt;prompt&gt;
+    Hello, coicoi!
+&lt;/prompt&gt;
+</code></pre>
+
+<p>In this case you could also use plain text without the prompt tag:</p>
+
+<pre><code>Hello, coicoi!
+</code></pre>
+
+<p>Prompt with data formatting</p>
+
+<pre><code>&lt;prompt&gt;
+    Hello, {name}!
+&lt;/prompt&gt;
+</code></pre>
+
+<p>Prompt with response type</p>
+
+<pre><code>&lt;prompt response_type="int"&gt;
+    What is 2+2?
+&lt;/prompt&gt;
+</code></pre>
+
+<h6 id="examples">Examples</h6>
+
+<p>Simple prompt with response type:</p>
+
+<pre><code>prompt = Prompt(prompt="What is 2+2?", response_type=int)
+</code></pre>
+
+<p>Prompt with data formatting:</p>
+
+<pre><code>prompt = Prompt(
+    prompt="What is the capital of {country}?",
+    prompt_data={"country": "France"},
+    response_type=str
+)
+</code></pre>
+
+<p>Load prompt from file:</p>
+
+<pre><code>prompt = Prompt(prompt_id="math_question")
+</code></pre>
+
+<p>math_question.prompt</p>
+
+<pre><code>&lt;prompt response_type="int"&gt;
+    What is 2+2?
+&lt;/prompt&gt;
+</code></pre>
+</div>
+
 
                             <div id="Prompt.__init__" class="classattr">
                                         <input id="Prompt.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -264,30 +302,298 @@
 
     </div>
     <a class="headerlink" href="#Prompt.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Prompt.__init__-5"><a href="#Prompt.__init__-5"><span class="linenos"> 5</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="Prompt.__init__-6"><a href="#Prompt.__init__-6"><span class="linenos"> 6</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Prompt.__init__-7"><a href="#Prompt.__init__-7"><span class="linenos"> 7</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Prompt.__init__-8"><a href="#Prompt.__init__-8"><span class="linenos"> 8</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-</span><span id="Prompt.__init__-9"><a href="#Prompt.__init__-9"><span class="linenos"> 9</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="Prompt.__init__-10"><a href="#Prompt.__init__-10"><span class="linenos">10</span></a>        
-</span><span id="Prompt.__init__-11"><a href="#Prompt.__init__-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt.__init__-12"><a href="#Prompt.__init__-12"><span class="linenos">12</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_response_type</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
-</span><span id="Prompt.__init__-13"><a href="#Prompt.__init__-13"><span class="linenos">13</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt.__init__-14"><a href="#Prompt.__init__-14"><span class="linenos">14</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
-</span><span id="Prompt.__init__-15"><a href="#Prompt.__init__-15"><span class="linenos">15</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Prompt.__init__-16"><a href="#Prompt.__init__-16"><span class="linenos">16</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
-</span><span id="Prompt.__init__-17"><a href="#Prompt.__init__-17"><span class="linenos">17</span></a>
-</span><span id="Prompt.__init__-18"><a href="#Prompt.__init__-18"><span class="linenos">18</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt.__init__-19"><a href="#Prompt.__init__-19"><span class="linenos">19</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
-</span><span id="Prompt.__init__-20"><a href="#Prompt.__init__-20"><span class="linenos">20</span></a>
-</span><span id="Prompt.__init__-21"><a href="#Prompt.__init__-21"><span class="linenos">21</span></a>        <span class="k">if</span> <span class="n">prompt_response_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Prompt.__init__-22"><a href="#Prompt.__init__-22"><span class="linenos">22</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">prompt_response_type</span>
-</span><span id="Prompt.__init__-23"><a href="#Prompt.__init__-23"><span class="linenos">23</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Prompt.__init__-24"><a href="#Prompt.__init__-24"><span class="linenos">24</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Prompt.__init__-65"><a href="#Prompt.__init__-65"><span class="linenos"> 65</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="Prompt.__init__-66"><a href="#Prompt.__init__-66"><span class="linenos"> 66</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Prompt.__init__-67"><a href="#Prompt.__init__-67"><span class="linenos"> 67</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Prompt.__init__-68"><a href="#Prompt.__init__-68"><span class="linenos"> 68</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+</span><span id="Prompt.__init__-69"><a href="#Prompt.__init__-69"><span class="linenos"> 69</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="Prompt.__init__-70"><a href="#Prompt.__init__-70"><span class="linenos"> 70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Prompt.__init__-71"><a href="#Prompt.__init__-71"><span class="linenos"> 71</span></a><span class="sd">        Initialize a new Prompt instance.</span>
+</span><span id="Prompt.__init__-72"><a href="#Prompt.__init__-72"><span class="linenos"> 72</span></a>
+</span><span id="Prompt.__init__-73"><a href="#Prompt.__init__-73"><span class="linenos"> 73</span></a><span class="sd">        Parameters</span>
+</span><span id="Prompt.__init__-74"><a href="#Prompt.__init__-74"><span class="linenos"> 74</span></a><span class="sd">        ----------</span>
+</span><span id="Prompt.__init__-75"><a href="#Prompt.__init__-75"><span class="linenos"> 75</span></a><span class="sd">        prompt_id : str, optional</span>
+</span><span id="Prompt.__init__-76"><a href="#Prompt.__init__-76"><span class="linenos"> 76</span></a><span class="sd">            A .prompt file name for loading a prompt from file</span>
+</span><span id="Prompt.__init__-77"><a href="#Prompt.__init__-77"><span class="linenos"> 77</span></a><span class="sd">        prompt_data : dict, optional</span>
+</span><span id="Prompt.__init__-78"><a href="#Prompt.__init__-78"><span class="linenos"> 78</span></a><span class="sd">            Dictionary of values for formatting the prompt</span>
+</span><span id="Prompt.__init__-79"><a href="#Prompt.__init__-79"><span class="linenos"> 79</span></a><span class="sd">        prompt : str, optional</span>
+</span><span id="Prompt.__init__-80"><a href="#Prompt.__init__-80"><span class="linenos"> 80</span></a><span class="sd">            Direct prompt text if prompt_id is not provided</span>
+</span><span id="Prompt.__init__-81"><a href="#Prompt.__init__-81"><span class="linenos"> 81</span></a><span class="sd">        response_type : type, optional</span>
+</span><span id="Prompt.__init__-82"><a href="#Prompt.__init__-82"><span class="linenos"> 82</span></a><span class="sd">            Expected type of the response</span>
+</span><span id="Prompt.__init__-83"><a href="#Prompt.__init__-83"><span class="linenos"> 83</span></a>
+</span><span id="Prompt.__init__-84"><a href="#Prompt.__init__-84"><span class="linenos"> 84</span></a><span class="sd">        Raises</span>
+</span><span id="Prompt.__init__-85"><a href="#Prompt.__init__-85"><span class="linenos"> 85</span></a><span class="sd">        ------</span>
+</span><span id="Prompt.__init__-86"><a href="#Prompt.__init__-86"><span class="linenos"> 86</span></a><span class="sd">        ValueError</span>
+</span><span id="Prompt.__init__-87"><a href="#Prompt.__init__-87"><span class="linenos"> 87</span></a><span class="sd">            If neither prompt_id nor prompt is provided</span>
+</span><span id="Prompt.__init__-88"><a href="#Prompt.__init__-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Prompt.__init__-89"><a href="#Prompt.__init__-89"><span class="linenos"> 89</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt.__init__-90"><a href="#Prompt.__init__-90"><span class="linenos"> 90</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_response_type</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
+</span><span id="Prompt.__init__-91"><a href="#Prompt.__init__-91"><span class="linenos"> 91</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt.__init__-92"><a href="#Prompt.__init__-92"><span class="linenos"> 92</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+</span><span id="Prompt.__init__-93"><a href="#Prompt.__init__-93"><span class="linenos"> 93</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Prompt.__init__-94"><a href="#Prompt.__init__-94"><span class="linenos"> 94</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
+</span><span id="Prompt.__init__-95"><a href="#Prompt.__init__-95"><span class="linenos"> 95</span></a>
+</span><span id="Prompt.__init__-96"><a href="#Prompt.__init__-96"><span class="linenos"> 96</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt.__init__-97"><a href="#Prompt.__init__-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
+</span><span id="Prompt.__init__-98"><a href="#Prompt.__init__-98"><span class="linenos"> 98</span></a>
+</span><span id="Prompt.__init__-99"><a href="#Prompt.__init__-99"><span class="linenos"> 99</span></a>        <span class="k">if</span> <span class="n">prompt_response_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Prompt.__init__-100"><a href="#Prompt.__init__-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">prompt_response_type</span>
+</span><span id="Prompt.__init__-101"><a href="#Prompt.__init__-101"><span class="linenos">101</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Prompt.__init__-102"><a href="#Prompt.__init__-102"><span class="linenos">102</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Initialize a new Prompt instance.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>prompt_id</strong> (str, optional):
+A .prompt file name for loading a prompt from file</li>
+<li><strong>prompt_data</strong> (dict, optional):
+Dictionary of values for formatting the prompt</li>
+<li><strong>prompt</strong> (str, optional):
+Direct prompt text if prompt_id is not provided</li>
+<li><strong>response_type</strong> (type, optional):
+Expected type of the response</li>
+</ul>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>ValueError</strong>: If neither prompt_id nor prompt is provided</li>
+</ul>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="PromptChain">
+                            <input id="PromptChain-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">PromptChain</span><wbr>(<span class="base"><a href="#Prompt">coicoi.prompts.Prompt</a></span>):
+
+                <label class="view-source-button" for="PromptChain-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#PromptChain"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain-6"><a href="#PromptChain-6"><span class="linenos">  6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromptChain</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
+</span><span id="PromptChain-7"><a href="#PromptChain-7"><span class="linenos">  7</span></a>
+</span><span id="PromptChain-8"><a href="#PromptChain-8"><span class="linenos">  8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-9"><a href="#PromptChain-9"><span class="linenos">  9</span></a><span class="sd">    PromptChain class for handling sequences of prompts, the output of one prompt is used as context for the next one.</span>
+</span><span id="PromptChain-10"><a href="#PromptChain-10"><span class="linenos"> 10</span></a>
+</span><span id="PromptChain-11"><a href="#PromptChain-11"><span class="linenos"> 11</span></a><span class="sd">    .prompt file example:</span>
+</span><span id="PromptChain-12"><a href="#PromptChain-12"><span class="linenos"> 12</span></a><span class="sd">    --------</span>
+</span><span id="PromptChain-13"><a href="#PromptChain-13"><span class="linenos"> 13</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-14"><a href="#PromptChain-14"><span class="linenos"> 14</span></a><span class="sd">    &lt;promptchain&gt;</span>
+</span><span id="PromptChain-15"><a href="#PromptChain-15"><span class="linenos"> 15</span></a><span class="sd">        &lt;prompt&gt;</span>
+</span><span id="PromptChain-16"><a href="#PromptChain-16"><span class="linenos"> 16</span></a><span class="sd">            What is the capital of {country}?</span>
+</span><span id="PromptChain-17"><a href="#PromptChain-17"><span class="linenos"> 17</span></a><span class="sd">        &lt;/prompt&gt;</span>
+</span><span id="PromptChain-18"><a href="#PromptChain-18"><span class="linenos"> 18</span></a><span class="sd">        &lt;prompt&gt;</span>
+</span><span id="PromptChain-19"><a href="#PromptChain-19"><span class="linenos"> 19</span></a><span class="sd">            What is its population?</span>
+</span><span id="PromptChain-20"><a href="#PromptChain-20"><span class="linenos"> 20</span></a><span class="sd">        &lt;/prompt&gt;</span>
+</span><span id="PromptChain-21"><a href="#PromptChain-21"><span class="linenos"> 21</span></a><span class="sd">    &lt;/promptchain&gt;</span>
+</span><span id="PromptChain-22"><a href="#PromptChain-22"><span class="linenos"> 22</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-23"><a href="#PromptChain-23"><span class="linenos"> 23</span></a>
+</span><span id="PromptChain-24"><a href="#PromptChain-24"><span class="linenos"> 24</span></a><span class="sd">    Examples</span>
+</span><span id="PromptChain-25"><a href="#PromptChain-25"><span class="linenos"> 25</span></a><span class="sd">    --------</span>
+</span><span id="PromptChain-26"><a href="#PromptChain-26"><span class="linenos"> 26</span></a><span class="sd">    Create a chain from a sequence of prompts:</span>
+</span><span id="PromptChain-27"><a href="#PromptChain-27"><span class="linenos"> 27</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-28"><a href="#PromptChain-28"><span class="linenos"> 28</span></a><span class="sd">    prompts = [</span>
+</span><span id="PromptChain-29"><a href="#PromptChain-29"><span class="linenos"> 29</span></a><span class="sd">        Prompt(prompt=&quot;What is the capital of France?&quot;),</span>
+</span><span id="PromptChain-30"><a href="#PromptChain-30"><span class="linenos"> 30</span></a><span class="sd">        Prompt(prompt=&quot;What is its population?&quot;)</span>
+</span><span id="PromptChain-31"><a href="#PromptChain-31"><span class="linenos"> 31</span></a><span class="sd">    ]</span>
+</span><span id="PromptChain-32"><a href="#PromptChain-32"><span class="linenos"> 32</span></a><span class="sd">    chain = PromptChain(prompts=prompts)</span>
+</span><span id="PromptChain-33"><a href="#PromptChain-33"><span class="linenos"> 33</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-34"><a href="#PromptChain-34"><span class="linenos"> 34</span></a>
+</span><span id="PromptChain-35"><a href="#PromptChain-35"><span class="linenos"> 35</span></a><span class="sd">    Create a chain from a file:</span>
+</span><span id="PromptChain-36"><a href="#PromptChain-36"><span class="linenos"> 36</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-37"><a href="#PromptChain-37"><span class="linenos"> 37</span></a><span class="sd">    chain = PromptChain(</span>
+</span><span id="PromptChain-38"><a href="#PromptChain-38"><span class="linenos"> 38</span></a><span class="sd">        promptchain_id=&quot;city_analysis&quot;,</span>
+</span><span id="PromptChain-39"><a href="#PromptChain-39"><span class="linenos"> 39</span></a><span class="sd">        prompts_data=[{&quot;country&quot;: &quot;France&quot;}]</span>
+</span><span id="PromptChain-40"><a href="#PromptChain-40"><span class="linenos"> 40</span></a><span class="sd">    )</span>
+</span><span id="PromptChain-41"><a href="#PromptChain-41"><span class="linenos"> 41</span></a><span class="sd">    ```</span>
+</span><span id="PromptChain-42"><a href="#PromptChain-42"><span class="linenos"> 42</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PromptChain-43"><a href="#PromptChain-43"><span class="linenos"> 43</span></a>
+</span><span id="PromptChain-44"><a href="#PromptChain-44"><span class="linenos"> 44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="PromptChain-45"><a href="#PromptChain-45"><span class="linenos"> 45</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain-46"><a href="#PromptChain-46"><span class="linenos"> 46</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain-47"><a href="#PromptChain-47"><span class="linenos"> 47</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="PromptChain-48"><a href="#PromptChain-48"><span class="linenos"> 48</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-49"><a href="#PromptChain-49"><span class="linenos"> 49</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
+</span><span id="PromptChain-50"><a href="#PromptChain-50"><span class="linenos"> 50</span></a>
+</span><span id="PromptChain-51"><a href="#PromptChain-51"><span class="linenos"> 51</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain-52"><a href="#PromptChain-52"><span class="linenos"> 52</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain-53"><a href="#PromptChain-53"><span class="linenos"> 53</span></a><span class="sd">        promptchain_id : str, optional</span>
+</span><span id="PromptChain-54"><a href="#PromptChain-54"><span class="linenos"> 54</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
+</span><span id="PromptChain-55"><a href="#PromptChain-55"><span class="linenos"> 55</span></a><span class="sd">        prompts_data : list[dict], optional</span>
+</span><span id="PromptChain-56"><a href="#PromptChain-56"><span class="linenos"> 56</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
+</span><span id="PromptChain-57"><a href="#PromptChain-57"><span class="linenos"> 57</span></a><span class="sd">        prompts : List[Prompt], optional</span>
+</span><span id="PromptChain-58"><a href="#PromptChain-58"><span class="linenos"> 58</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
+</span><span id="PromptChain-59"><a href="#PromptChain-59"><span class="linenos"> 59</span></a>
+</span><span id="PromptChain-60"><a href="#PromptChain-60"><span class="linenos"> 60</span></a><span class="sd">        Raises</span>
+</span><span id="PromptChain-61"><a href="#PromptChain-61"><span class="linenos"> 61</span></a><span class="sd">        ------</span>
+</span><span id="PromptChain-62"><a href="#PromptChain-62"><span class="linenos"> 62</span></a><span class="sd">        - ValueError</span>
+</span><span id="PromptChain-63"><a href="#PromptChain-63"><span class="linenos"> 63</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
+</span><span id="PromptChain-64"><a href="#PromptChain-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-65"><a href="#PromptChain-65"><span class="linenos"> 65</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-66"><a href="#PromptChain-66"><span class="linenos"> 66</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
+</span><span id="PromptChain-67"><a href="#PromptChain-67"><span class="linenos"> 67</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
+</span><span id="PromptChain-68"><a href="#PromptChain-68"><span class="linenos"> 68</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span id="PromptChain-69"><a href="#PromptChain-69"><span class="linenos"> 69</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-70"><a href="#PromptChain-70"><span class="linenos"> 70</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
+</span><span id="PromptChain-71"><a href="#PromptChain-71"><span class="linenos"> 71</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain-72"><a href="#PromptChain-72"><span class="linenos"> 72</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
+</span><span id="PromptChain-73"><a href="#PromptChain-73"><span class="linenos"> 73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
+</span><span id="PromptChain-74"><a href="#PromptChain-74"><span class="linenos"> 74</span></a>
+</span><span id="PromptChain-75"><a href="#PromptChain-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-76"><a href="#PromptChain-76"><span class="linenos"> 76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-77"><a href="#PromptChain-77"><span class="linenos"> 77</span></a><span class="sd">        Format a specific prompt in the chain with optional context.</span>
+</span><span id="PromptChain-78"><a href="#PromptChain-78"><span class="linenos"> 78</span></a>
+</span><span id="PromptChain-79"><a href="#PromptChain-79"><span class="linenos"> 79</span></a><span class="sd">        This method formats the prompt at the specified index, optionally including</span>
+</span><span id="PromptChain-80"><a href="#PromptChain-80"><span class="linenos"> 80</span></a><span class="sd">        context from previous prompts&#39; responses.</span>
+</span><span id="PromptChain-81"><a href="#PromptChain-81"><span class="linenos"> 81</span></a>
+</span><span id="PromptChain-82"><a href="#PromptChain-82"><span class="linenos"> 82</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain-83"><a href="#PromptChain-83"><span class="linenos"> 83</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain-84"><a href="#PromptChain-84"><span class="linenos"> 84</span></a><span class="sd">        index : int</span>
+</span><span id="PromptChain-85"><a href="#PromptChain-85"><span class="linenos"> 85</span></a><span class="sd">            Index of the prompt to format</span>
+</span><span id="PromptChain-86"><a href="#PromptChain-86"><span class="linenos"> 86</span></a><span class="sd">        context : str, optional</span>
+</span><span id="PromptChain-87"><a href="#PromptChain-87"><span class="linenos"> 87</span></a><span class="sd">            Context from previous prompts&#39; responses to include</span>
+</span><span id="PromptChain-88"><a href="#PromptChain-88"><span class="linenos"> 88</span></a>
+</span><span id="PromptChain-89"><a href="#PromptChain-89"><span class="linenos"> 89</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-90"><a href="#PromptChain-90"><span class="linenos"> 90</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-91"><a href="#PromptChain-91"><span class="linenos"> 91</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-92"><a href="#PromptChain-92"><span class="linenos"> 92</span></a><span class="sd">            The formatted prompt text with optional context</span>
+</span><span id="PromptChain-93"><a href="#PromptChain-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-94"><a href="#PromptChain-94"><span class="linenos"> 94</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-95"><a href="#PromptChain-95"><span class="linenos"> 95</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+</span><span id="PromptChain-96"><a href="#PromptChain-96"><span class="linenos"> 96</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain-97"><a href="#PromptChain-97"><span class="linenos"> 97</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">context</span>
+</span><span id="PromptChain-98"><a href="#PromptChain-98"><span class="linenos"> 98</span></a>
+</span><span id="PromptChain-99"><a href="#PromptChain-99"><span class="linenos"> 99</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-100"><a href="#PromptChain-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-101"><a href="#PromptChain-101"><span class="linenos">101</span></a><span class="sd">        Get the string representation of the prompt chain.</span>
+</span><span id="PromptChain-102"><a href="#PromptChain-102"><span class="linenos">102</span></a>
+</span><span id="PromptChain-103"><a href="#PromptChain-103"><span class="linenos">103</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-104"><a href="#PromptChain-104"><span class="linenos">104</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-105"><a href="#PromptChain-105"><span class="linenos">105</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-106"><a href="#PromptChain-106"><span class="linenos">106</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
+</span><span id="PromptChain-107"><a href="#PromptChain-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-108"><a href="#PromptChain-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">])</span>
+</span><span id="PromptChain-109"><a href="#PromptChain-109"><span class="linenos">109</span></a>
+</span><span id="PromptChain-110"><a href="#PromptChain-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-111"><a href="#PromptChain-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-112"><a href="#PromptChain-112"><span class="linenos">112</span></a><span class="sd">        Get the official string representation of the prompt chain.</span>
+</span><span id="PromptChain-113"><a href="#PromptChain-113"><span class="linenos">113</span></a>
+</span><span id="PromptChain-114"><a href="#PromptChain-114"><span class="linenos">114</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-115"><a href="#PromptChain-115"><span class="linenos">115</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-116"><a href="#PromptChain-116"><span class="linenos">116</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-117"><a href="#PromptChain-117"><span class="linenos">117</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
+</span><span id="PromptChain-118"><a href="#PromptChain-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-119"><a href="#PromptChain-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>PromptChain class for handling sequences of prompts, the output of one prompt is used as context for the next one.</p>
+
+<h2 id="prompt-file-example">.prompt file example:</h2>
+
+<pre><code>&lt;promptchain&gt;
+    &lt;prompt&gt;
+        What is the capital of {country}?
+    &lt;/prompt&gt;
+    &lt;prompt&gt;
+        What is its population?
+    &lt;/prompt&gt;
+&lt;/promptchain&gt;
+</code></pre>
+
+<h6 id="examples">Examples</h6>
+
+<p>Create a chain from a sequence of prompts:</p>
+
+<pre><code>prompts = [
+    Prompt(prompt="What is the capital of France?"),
+    Prompt(prompt="What is its population?")
+]
+chain = PromptChain(prompts=prompts)
+</code></pre>
+
+<p>Create a chain from a file:</p>
+
+<pre><code>chain = PromptChain(
+    promptchain_id="city_analysis",
+    prompts_data=[{"country": "France"}]
+)
+</code></pre>
+</div>
+
+
+                            <div id="PromptChain.__init__" class="classattr">
+                                        <input id="PromptChain.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">PromptChain</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Prompt">Prompt</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="PromptChain.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#PromptChain.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain.__init__-44"><a href="#PromptChain.__init__-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="PromptChain.__init__-45"><a href="#PromptChain.__init__-45"><span class="linenos">45</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain.__init__-46"><a href="#PromptChain.__init__-46"><span class="linenos">46</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain.__init__-47"><a href="#PromptChain.__init__-47"><span class="linenos">47</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="PromptChain.__init__-48"><a href="#PromptChain.__init__-48"><span class="linenos">48</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain.__init__-49"><a href="#PromptChain.__init__-49"><span class="linenos">49</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
+</span><span id="PromptChain.__init__-50"><a href="#PromptChain.__init__-50"><span class="linenos">50</span></a>
+</span><span id="PromptChain.__init__-51"><a href="#PromptChain.__init__-51"><span class="linenos">51</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain.__init__-52"><a href="#PromptChain.__init__-52"><span class="linenos">52</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain.__init__-53"><a href="#PromptChain.__init__-53"><span class="linenos">53</span></a><span class="sd">        promptchain_id : str, optional</span>
+</span><span id="PromptChain.__init__-54"><a href="#PromptChain.__init__-54"><span class="linenos">54</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
+</span><span id="PromptChain.__init__-55"><a href="#PromptChain.__init__-55"><span class="linenos">55</span></a><span class="sd">        prompts_data : list[dict], optional</span>
+</span><span id="PromptChain.__init__-56"><a href="#PromptChain.__init__-56"><span class="linenos">56</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
+</span><span id="PromptChain.__init__-57"><a href="#PromptChain.__init__-57"><span class="linenos">57</span></a><span class="sd">        prompts : List[Prompt], optional</span>
+</span><span id="PromptChain.__init__-58"><a href="#PromptChain.__init__-58"><span class="linenos">58</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
+</span><span id="PromptChain.__init__-59"><a href="#PromptChain.__init__-59"><span class="linenos">59</span></a>
+</span><span id="PromptChain.__init__-60"><a href="#PromptChain.__init__-60"><span class="linenos">60</span></a><span class="sd">        Raises</span>
+</span><span id="PromptChain.__init__-61"><a href="#PromptChain.__init__-61"><span class="linenos">61</span></a><span class="sd">        ------</span>
+</span><span id="PromptChain.__init__-62"><a href="#PromptChain.__init__-62"><span class="linenos">62</span></a><span class="sd">        - ValueError</span>
+</span><span id="PromptChain.__init__-63"><a href="#PromptChain.__init__-63"><span class="linenos">63</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
+</span><span id="PromptChain.__init__-64"><a href="#PromptChain.__init__-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain.__init__-65"><a href="#PromptChain.__init__-65"><span class="linenos">65</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-66"><a href="#PromptChain.__init__-66"><span class="linenos">66</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-67"><a href="#PromptChain.__init__-67"><span class="linenos">67</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
+</span><span id="PromptChain.__init__-68"><a href="#PromptChain.__init__-68"><span class="linenos">68</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span id="PromptChain.__init__-69"><a href="#PromptChain.__init__-69"><span class="linenos">69</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-70"><a href="#PromptChain.__init__-70"><span class="linenos">70</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
+</span><span id="PromptChain.__init__-71"><a href="#PromptChain.__init__-71"><span class="linenos">71</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-72"><a href="#PromptChain.__init__-72"><span class="linenos">72</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-73"><a href="#PromptChain.__init__-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize a new PromptChain instance.</p>
+
+<h6 id="parameters">Parameters</h6>
+
+<ul>
+<li><strong>promptchain_id</strong> (str, optional):
+A .prompt file name for loading a prompt chain from file</li>
+<li><strong>prompts_data</strong> (list[dict], optional):
+List of dictionaries containing formatting data for each prompt</li>
+<li><strong>prompts</strong> (List[Prompt], optional):
+Direct list of Prompt objects to form the chain if promptchain_id is not provided</li>
+</ul>
+
+<h6 id="raises">Raises</h6>
+
+<ul>
+<li><strong>- ValueError</strong>: If neither promptchain_id nor prompts is provided</li>
+</ul>
+</div>
+
 
                             </div>
                 </section>
@@ -302,43 +608,196 @@
 
     </div>
     <a class="headerlink" href="#IterativePrompt"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="IterativePrompt-5"><a href="#IterativePrompt-5"><span class="linenos"> 5</span></a><span class="k">class</span><span class="w"> </span><span class="nc">IterativePrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
-</span><span id="IterativePrompt-6"><a href="#IterativePrompt-6"><span class="linenos"> 6</span></a>
-</span><span id="IterativePrompt-7"><a href="#IterativePrompt-7"><span class="linenos"> 7</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="IterativePrompt-8"><a href="#IterativePrompt-8"><span class="linenos"> 8</span></a>                 <span class="n">prompt_id</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt-9"><a href="#IterativePrompt-9"><span class="linenos"> 9</span></a>                 <span class="n">prompt</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt-10"><a href="#IterativePrompt-10"><span class="linenos">10</span></a>                 <span class="n">prompt_data</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt-11"><a href="#IterativePrompt-11"><span class="linenos">11</span></a>                 <span class="n">iter_data</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-</span><span id="IterativePrompt-12"><a href="#IterativePrompt-12"><span class="linenos">12</span></a>                 <span class="n">prompt_memory</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-</span><span id="IterativePrompt-13"><a href="#IterativePrompt-13"><span class="linenos">13</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt-14"><a href="#IterativePrompt-14"><span class="linenos">14</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_memory</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
-</span><span id="IterativePrompt-15"><a href="#IterativePrompt-15"><span class="linenos">15</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt-16"><a href="#IterativePrompt-16"><span class="linenos">16</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
-</span><span id="IterativePrompt-17"><a href="#IterativePrompt-17"><span class="linenos">17</span></a>        <span class="k">else</span><span class="p">:</span>       
-</span><span id="IterativePrompt-18"><a href="#IterativePrompt-18"><span class="linenos">18</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
-</span><span id="IterativePrompt-19"><a href="#IterativePrompt-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt-20"><a href="#IterativePrompt-20"><span class="linenos">20</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
-</span><span id="IterativePrompt-21"><a href="#IterativePrompt-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span> <span class="o">=</span> <span class="n">iter_data</span>
-</span><span id="IterativePrompt-22"><a href="#IterativePrompt-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iter_data</span><span class="p">)</span>
-</span><span id="IterativePrompt-23"><a href="#IterativePrompt-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}}&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
-</span><span id="IterativePrompt-24"><a href="#IterativePrompt-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">has_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">!=</span><span class="s2">&quot;&quot;</span>        
-</span><span id="IterativePrompt-25"><a href="#IterativePrompt-25"><span class="linenos">25</span></a>
-</span><span id="IterativePrompt-26"><a href="#IterativePrompt-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="IterativePrompt-27"><a href="#IterativePrompt-27"><span class="linenos">27</span></a>
-</span><span id="IterativePrompt-28"><a href="#IterativePrompt-28"><span class="linenos">28</span></a>        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-</span><span id="IterativePrompt-29"><a href="#IterativePrompt-29"><span class="linenos">29</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_memory</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="IterativePrompt-30"><a href="#IterativePrompt-30"><span class="linenos">30</span></a>            <span class="n">prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
-</span><span id="IterativePrompt-31"><a href="#IterativePrompt-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="n">prompt</span>
-</span><span id="IterativePrompt-32"><a href="#IterativePrompt-32"><span class="linenos">32</span></a>
-</span><span id="IterativePrompt-33"><a href="#IterativePrompt-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="IterativePrompt-34"><a href="#IterativePrompt-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span>
-</span><span id="IterativePrompt-35"><a href="#IterativePrompt-35"><span class="linenos">35</span></a>
-</span><span id="IterativePrompt-36"><a href="#IterativePrompt-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="IterativePrompt-37"><a href="#IterativePrompt-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="IterativePrompt-6"><a href="#IterativePrompt-6"><span class="linenos">  6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">IterativePrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
+</span><span id="IterativePrompt-7"><a href="#IterativePrompt-7"><span class="linenos">  7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-8"><a href="#IterativePrompt-8"><span class="linenos">  8</span></a><span class="sd">    IterativePrompt class for handling prompts that iterate over a sequence of data, with optional memory</span>
+</span><span id="IterativePrompt-9"><a href="#IterativePrompt-9"><span class="linenos">  9</span></a><span class="sd">    of previous iterations&#39; responses. This allow for the generation of longer and structured responses.</span>
+</span><span id="IterativePrompt-10"><a href="#IterativePrompt-10"><span class="linenos"> 10</span></a>
+</span><span id="IterativePrompt-11"><a href="#IterativePrompt-11"><span class="linenos"> 11</span></a><span class="sd">    .prompt file example:</span>
+</span><span id="IterativePrompt-12"><a href="#IterativePrompt-12"><span class="linenos"> 12</span></a><span class="sd">    --------</span>
+</span><span id="IterativePrompt-13"><a href="#IterativePrompt-13"><span class="linenos"> 13</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-14"><a href="#IterativePrompt-14"><span class="linenos"> 14</span></a><span class="sd">    &lt;iterativeprompt&gt;</span>
+</span><span id="IterativePrompt-15"><a href="#IterativePrompt-15"><span class="linenos"> 15</span></a><span class="sd">        &lt;prompt&gt;</span>
+</span><span id="IterativePrompt-16"><a href="#IterativePrompt-16"><span class="linenos"> 16</span></a><span class="sd">            Generate the content of a chapter of a book about {topic}</span>
+</span><span id="IterativePrompt-17"><a href="#IterativePrompt-17"><span class="linenos"> 17</span></a><span class="sd">            The chapters are {chapters}. Generate the chapter {{data}}.</span>
+</span><span id="IterativePrompt-18"><a href="#IterativePrompt-18"><span class="linenos"> 18</span></a><span class="sd">        &lt;/prompt&gt;</span>
+</span><span id="IterativePrompt-19"><a href="#IterativePrompt-19"><span class="linenos"> 19</span></a><span class="sd">        &lt;prompt_memory&gt;</span>
+</span><span id="IterativePrompt-20"><a href="#IterativePrompt-20"><span class="linenos"> 20</span></a><span class="sd">            Be sure that the chapter is coherent with the previous chapters, this is the content of the previous chapters:</span>
+</span><span id="IterativePrompt-21"><a href="#IterativePrompt-21"><span class="linenos"> 21</span></a><span class="sd">            {{data}}</span>
+</span><span id="IterativePrompt-22"><a href="#IterativePrompt-22"><span class="linenos"> 22</span></a><span class="sd">        &lt;/prompt_memory&gt;</span>
+</span><span id="IterativePrompt-23"><a href="#IterativePrompt-23"><span class="linenos"> 23</span></a><span class="sd">    &lt;/iterativeprompt&gt;</span>
+</span><span id="IterativePrompt-24"><a href="#IterativePrompt-24"><span class="linenos"> 24</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-25"><a href="#IterativePrompt-25"><span class="linenos"> 25</span></a>
+</span><span id="IterativePrompt-26"><a href="#IterativePrompt-26"><span class="linenos"> 26</span></a><span class="sd">    Examples</span>
+</span><span id="IterativePrompt-27"><a href="#IterativePrompt-27"><span class="linenos"> 27</span></a><span class="sd">    --------</span>
+</span><span id="IterativePrompt-28"><a href="#IterativePrompt-28"><span class="linenos"> 28</span></a><span class="sd">    </span>
+</span><span id="IterativePrompt-29"><a href="#IterativePrompt-29"><span class="linenos"> 29</span></a><span class="sd">    Iterative prompt with memory:</span>
+</span><span id="IterativePrompt-30"><a href="#IterativePrompt-30"><span class="linenos"> 30</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-31"><a href="#IterativePrompt-31"><span class="linenos"> 31</span></a><span class="sd">    data = [&quot;data types&quot;, &quot;conditional statements&quot;, &quot;iterative statements&quot;]</span>
+</span><span id="IterativePrompt-32"><a href="#IterativePrompt-32"><span class="linenos"> 32</span></a><span class="sd">    prompt = IterativePrompt(</span>
+</span><span id="IterativePrompt-33"><a href="#IterativePrompt-33"><span class="linenos"> 33</span></a><span class="sd">        prompt=&quot;Generate the content of a chapter of a book about {topic}. The chapters are {chapters}. Generate the chapter {{data}}.&quot;,</span>
+</span><span id="IterativePrompt-34"><a href="#IterativePrompt-34"><span class="linenos"> 34</span></a><span class="sd">        iter_data=data,</span>
+</span><span id="IterativePrompt-35"><a href="#IterativePrompt-35"><span class="linenos"> 35</span></a><span class="sd">        prompt_memory=&quot;Be sure that the chapter is coherent with the previous chapters, this is the content of the previous chapters: {data}&quot;</span>
+</span><span id="IterativePrompt-36"><a href="#IterativePrompt-36"><span class="linenos"> 36</span></a><span class="sd">    )</span>
+</span><span id="IterativePrompt-37"><a href="#IterativePrompt-37"><span class="linenos"> 37</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-38"><a href="#IterativePrompt-38"><span class="linenos"> 38</span></a><span class="sd">    Iterative prompt with memory from a .prompt file:</span>
+</span><span id="IterativePrompt-39"><a href="#IterativePrompt-39"><span class="linenos"> 39</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-40"><a href="#IterativePrompt-40"><span class="linenos"> 40</span></a><span class="sd">    data = [&quot;data types&quot;, &quot;conditional statements&quot;, &quot;iterative statements&quot;]</span>
+</span><span id="IterativePrompt-41"><a href="#IterativePrompt-41"><span class="linenos"> 41</span></a><span class="sd">    prompt = IterativePrompt(</span>
+</span><span id="IterativePrompt-42"><a href="#IterativePrompt-42"><span class="linenos"> 42</span></a><span class="sd">        prompt_id=&quot;book_generation&quot;,</span>
+</span><span id="IterativePrompt-43"><a href="#IterativePrompt-43"><span class="linenos"> 43</span></a><span class="sd">        prompt_data={&quot;topic&quot;: &quot;python programming&quot;, &quot;chapters&quot;: data},</span>
+</span><span id="IterativePrompt-44"><a href="#IterativePrompt-44"><span class="linenos"> 44</span></a><span class="sd">        iter_data=data</span>
+</span><span id="IterativePrompt-45"><a href="#IterativePrompt-45"><span class="linenos"> 45</span></a><span class="sd">    )</span>
+</span><span id="IterativePrompt-46"><a href="#IterativePrompt-46"><span class="linenos"> 46</span></a><span class="sd">    ```</span>
+</span><span id="IterativePrompt-47"><a href="#IterativePrompt-47"><span class="linenos"> 47</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-48"><a href="#IterativePrompt-48"><span class="linenos"> 48</span></a>
+</span><span id="IterativePrompt-49"><a href="#IterativePrompt-49"><span class="linenos"> 49</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="IterativePrompt-50"><a href="#IterativePrompt-50"><span class="linenos"> 50</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt-51"><a href="#IterativePrompt-51"><span class="linenos"> 51</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt-52"><a href="#IterativePrompt-52"><span class="linenos"> 52</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt-53"><a href="#IterativePrompt-53"><span class="linenos"> 53</span></a>                 <span class="n">iter_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+</span><span id="IterativePrompt-54"><a href="#IterativePrompt-54"><span class="linenos"> 54</span></a>                 <span class="n">prompt_memory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span id="IterativePrompt-55"><a href="#IterativePrompt-55"><span class="linenos"> 55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-56"><a href="#IterativePrompt-56"><span class="linenos"> 56</span></a><span class="sd">        Initialize a new IterativePrompt instance.</span>
+</span><span id="IterativePrompt-57"><a href="#IterativePrompt-57"><span class="linenos"> 57</span></a>
+</span><span id="IterativePrompt-58"><a href="#IterativePrompt-58"><span class="linenos"> 58</span></a><span class="sd">        Parameters</span>
+</span><span id="IterativePrompt-59"><a href="#IterativePrompt-59"><span class="linenos"> 59</span></a><span class="sd">        ----------</span>
+</span><span id="IterativePrompt-60"><a href="#IterativePrompt-60"><span class="linenos"> 60</span></a><span class="sd">        prompt_id : str, optional</span>
+</span><span id="IterativePrompt-61"><a href="#IterativePrompt-61"><span class="linenos"> 61</span></a><span class="sd">            .prompt file name for loading a prompt from file</span>
+</span><span id="IterativePrompt-62"><a href="#IterativePrompt-62"><span class="linenos"> 62</span></a><span class="sd">        prompt : str, optional</span>
+</span><span id="IterativePrompt-63"><a href="#IterativePrompt-63"><span class="linenos"> 63</span></a><span class="sd">            Direct prompt text with {{data}} placeholder if prompt_id is not provided</span>
+</span><span id="IterativePrompt-64"><a href="#IterativePrompt-64"><span class="linenos"> 64</span></a><span class="sd">        prompt_data : dict, optional</span>
+</span><span id="IterativePrompt-65"><a href="#IterativePrompt-65"><span class="linenos"> 65</span></a><span class="sd">            Dictionary of values for formatting the base prompt</span>
+</span><span id="IterativePrompt-66"><a href="#IterativePrompt-66"><span class="linenos"> 66</span></a><span class="sd">        iter_data : List[str], optional</span>
+</span><span id="IterativePrompt-67"><a href="#IterativePrompt-67"><span class="linenos"> 67</span></a><span class="sd">            Sequence of data items to iterate over</span>
+</span><span id="IterativePrompt-68"><a href="#IterativePrompt-68"><span class="linenos"> 68</span></a><span class="sd">        prompt_memory : str, optional</span>
+</span><span id="IterativePrompt-69"><a href="#IterativePrompt-69"><span class="linenos"> 69</span></a><span class="sd">            Template for including memory of previous iterations</span>
+</span><span id="IterativePrompt-70"><a href="#IterativePrompt-70"><span class="linenos"> 70</span></a>
+</span><span id="IterativePrompt-71"><a href="#IterativePrompt-71"><span class="linenos"> 71</span></a><span class="sd">        Raises</span>
+</span><span id="IterativePrompt-72"><a href="#IterativePrompt-72"><span class="linenos"> 72</span></a><span class="sd">        ------</span>
+</span><span id="IterativePrompt-73"><a href="#IterativePrompt-73"><span class="linenos"> 73</span></a><span class="sd">        ValueError</span>
+</span><span id="IterativePrompt-74"><a href="#IterativePrompt-74"><span class="linenos"> 74</span></a><span class="sd">            If neither prompt_id nor prompt is provided</span>
+</span><span id="IterativePrompt-75"><a href="#IterativePrompt-75"><span class="linenos"> 75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-76"><a href="#IterativePrompt-76"><span class="linenos"> 76</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt-77"><a href="#IterativePrompt-77"><span class="linenos"> 77</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_memory</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
+</span><span id="IterativePrompt-78"><a href="#IterativePrompt-78"><span class="linenos"> 78</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt-79"><a href="#IterativePrompt-79"><span class="linenos"> 79</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+</span><span id="IterativePrompt-80"><a href="#IterativePrompt-80"><span class="linenos"> 80</span></a>        <span class="k">else</span><span class="p">:</span>       
+</span><span id="IterativePrompt-81"><a href="#IterativePrompt-81"><span class="linenos"> 81</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
+</span><span id="IterativePrompt-82"><a href="#IterativePrompt-82"><span class="linenos"> 82</span></a>        
+</span><span id="IterativePrompt-83"><a href="#IterativePrompt-83"><span class="linenos"> 83</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt-84"><a href="#IterativePrompt-84"><span class="linenos"> 84</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
+</span><span id="IterativePrompt-85"><a href="#IterativePrompt-85"><span class="linenos"> 85</span></a>            
+</span><span id="IterativePrompt-86"><a href="#IterativePrompt-86"><span class="linenos"> 86</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span> <span class="o">=</span> <span class="n">iter_data</span>
+</span><span id="IterativePrompt-87"><a href="#IterativePrompt-87"><span class="linenos"> 87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iter_data</span><span class="p">)</span>
+</span><span id="IterativePrompt-88"><a href="#IterativePrompt-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}}&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+</span><span id="IterativePrompt-89"><a href="#IterativePrompt-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_has_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>        
+</span><span id="IterativePrompt-90"><a href="#IterativePrompt-90"><span class="linenos"> 90</span></a>
+</span><span id="IterativePrompt-91"><a href="#IterativePrompt-91"><span class="linenos"> 91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="IterativePrompt-92"><a href="#IterativePrompt-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-93"><a href="#IterativePrompt-93"><span class="linenos"> 93</span></a><span class="sd">        Format the prompt for a specific iteration with optional context.</span>
+</span><span id="IterativePrompt-94"><a href="#IterativePrompt-94"><span class="linenos"> 94</span></a>
+</span><span id="IterativePrompt-95"><a href="#IterativePrompt-95"><span class="linenos"> 95</span></a><span class="sd">        This method formats the prompt for the data item at the specified index,</span>
+</span><span id="IterativePrompt-96"><a href="#IterativePrompt-96"><span class="linenos"> 96</span></a><span class="sd">        optionally including context from previous iterations if memory is enabled.</span>
+</span><span id="IterativePrompt-97"><a href="#IterativePrompt-97"><span class="linenos"> 97</span></a>
+</span><span id="IterativePrompt-98"><a href="#IterativePrompt-98"><span class="linenos"> 98</span></a><span class="sd">        Parameters</span>
+</span><span id="IterativePrompt-99"><a href="#IterativePrompt-99"><span class="linenos"> 99</span></a><span class="sd">        ----------</span>
+</span><span id="IterativePrompt-100"><a href="#IterativePrompt-100"><span class="linenos">100</span></a><span class="sd">        index : int</span>
+</span><span id="IterativePrompt-101"><a href="#IterativePrompt-101"><span class="linenos">101</span></a><span class="sd">            Index of the current data item</span>
+</span><span id="IterativePrompt-102"><a href="#IterativePrompt-102"><span class="linenos">102</span></a><span class="sd">        context : str, optional</span>
+</span><span id="IterativePrompt-103"><a href="#IterativePrompt-103"><span class="linenos">103</span></a><span class="sd">            Context from previous iterations, default &quot;&quot;</span>
+</span><span id="IterativePrompt-104"><a href="#IterativePrompt-104"><span class="linenos">104</span></a>
+</span><span id="IterativePrompt-105"><a href="#IterativePrompt-105"><span class="linenos">105</span></a><span class="sd">        Returns</span>
+</span><span id="IterativePrompt-106"><a href="#IterativePrompt-106"><span class="linenos">106</span></a><span class="sd">        -------</span>
+</span><span id="IterativePrompt-107"><a href="#IterativePrompt-107"><span class="linenos">107</span></a><span class="sd">        str</span>
+</span><span id="IterativePrompt-108"><a href="#IterativePrompt-108"><span class="linenos">108</span></a><span class="sd">            The formatted prompt text with current data and optional memory</span>
+</span><span id="IterativePrompt-109"><a href="#IterativePrompt-109"><span class="linenos">109</span></a>
+</span><span id="IterativePrompt-110"><a href="#IterativePrompt-110"><span class="linenos">110</span></a><span class="sd">        Examples</span>
+</span><span id="IterativePrompt-111"><a href="#IterativePrompt-111"><span class="linenos">111</span></a><span class="sd">        --------</span>
+</span><span id="IterativePrompt-112"><a href="#IterativePrompt-112"><span class="linenos">112</span></a><span class="sd">        Format without memory:</span>
+</span><span id="IterativePrompt-113"><a href="#IterativePrompt-113"><span class="linenos">113</span></a><span class="sd">            &gt;&gt;&gt; prompt = IterativePrompt(</span>
+</span><span id="IterativePrompt-114"><a href="#IterativePrompt-114"><span class="linenos">114</span></a><span class="sd">            ...     prompt=&quot;Analyze {data}&quot;,</span>
+</span><span id="IterativePrompt-115"><a href="#IterativePrompt-115"><span class="linenos">115</span></a><span class="sd">            ...     iter_data=[&quot;item1&quot;, &quot;item2&quot;]</span>
+</span><span id="IterativePrompt-116"><a href="#IterativePrompt-116"><span class="linenos">116</span></a><span class="sd">            ... )</span>
+</span><span id="IterativePrompt-117"><a href="#IterativePrompt-117"><span class="linenos">117</span></a><span class="sd">            &gt;&gt;&gt; formatted = prompt.format(0)</span>
+</span><span id="IterativePrompt-118"><a href="#IterativePrompt-118"><span class="linenos">118</span></a>
+</span><span id="IterativePrompt-119"><a href="#IterativePrompt-119"><span class="linenos">119</span></a><span class="sd">        Format with memory:</span>
+</span><span id="IterativePrompt-120"><a href="#IterativePrompt-120"><span class="linenos">120</span></a><span class="sd">            &gt;&gt;&gt; prompt = IterativePrompt(</span>
+</span><span id="IterativePrompt-121"><a href="#IterativePrompt-121"><span class="linenos">121</span></a><span class="sd">            ...     prompt=&quot;Compare {data}&quot;,</span>
+</span><span id="IterativePrompt-122"><a href="#IterativePrompt-122"><span class="linenos">122</span></a><span class="sd">            ...     iter_data=[&quot;item1&quot;, &quot;item2&quot;],</span>
+</span><span id="IterativePrompt-123"><a href="#IterativePrompt-123"><span class="linenos">123</span></a><span class="sd">            ...     prompt_memory=&quot;Previous: {data}&quot;</span>
+</span><span id="IterativePrompt-124"><a href="#IterativePrompt-124"><span class="linenos">124</span></a><span class="sd">            ... )</span>
+</span><span id="IterativePrompt-125"><a href="#IterativePrompt-125"><span class="linenos">125</span></a><span class="sd">            &gt;&gt;&gt; formatted = prompt.format(1, &quot;Analysis of item1&quot;)</span>
+</span><span id="IterativePrompt-126"><a href="#IterativePrompt-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-127"><a href="#IterativePrompt-127"><span class="linenos">127</span></a>        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+</span><span id="IterativePrompt-128"><a href="#IterativePrompt-128"><span class="linenos">128</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_memory</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="IterativePrompt-129"><a href="#IterativePrompt-129"><span class="linenos">129</span></a>            <span class="n">prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</span><span id="IterativePrompt-130"><a href="#IterativePrompt-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="n">prompt</span>
+</span><span id="IterativePrompt-131"><a href="#IterativePrompt-131"><span class="linenos">131</span></a>
+</span><span id="IterativePrompt-132"><a href="#IterativePrompt-132"><span class="linenos">132</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="IterativePrompt-133"><a href="#IterativePrompt-133"><span class="linenos">133</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-134"><a href="#IterativePrompt-134"><span class="linenos">134</span></a><span class="sd">        Get the string representation of the prompt.</span>
+</span><span id="IterativePrompt-135"><a href="#IterativePrompt-135"><span class="linenos">135</span></a>
+</span><span id="IterativePrompt-136"><a href="#IterativePrompt-136"><span class="linenos">136</span></a><span class="sd">        Returns</span>
+</span><span id="IterativePrompt-137"><a href="#IterativePrompt-137"><span class="linenos">137</span></a><span class="sd">        -------</span>
+</span><span id="IterativePrompt-138"><a href="#IterativePrompt-138"><span class="linenos">138</span></a><span class="sd">        str</span>
+</span><span id="IterativePrompt-139"><a href="#IterativePrompt-139"><span class="linenos">139</span></a><span class="sd">            The base prompt template</span>
+</span><span id="IterativePrompt-140"><a href="#IterativePrompt-140"><span class="linenos">140</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-141"><a href="#IterativePrompt-141"><span class="linenos">141</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span>
+</span><span id="IterativePrompt-142"><a href="#IterativePrompt-142"><span class="linenos">142</span></a>
+</span><span id="IterativePrompt-143"><a href="#IterativePrompt-143"><span class="linenos">143</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="IterativePrompt-144"><a href="#IterativePrompt-144"><span class="linenos">144</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-145"><a href="#IterativePrompt-145"><span class="linenos">145</span></a><span class="sd">        Get the official string representation of the prompt.</span>
+</span><span id="IterativePrompt-146"><a href="#IterativePrompt-146"><span class="linenos">146</span></a>
+</span><span id="IterativePrompt-147"><a href="#IterativePrompt-147"><span class="linenos">147</span></a><span class="sd">        Returns</span>
+</span><span id="IterativePrompt-148"><a href="#IterativePrompt-148"><span class="linenos">148</span></a><span class="sd">        -------</span>
+</span><span id="IterativePrompt-149"><a href="#IterativePrompt-149"><span class="linenos">149</span></a><span class="sd">        str</span>
+</span><span id="IterativePrompt-150"><a href="#IterativePrompt-150"><span class="linenos">150</span></a><span class="sd">            The base prompt template</span>
+</span><span id="IterativePrompt-151"><a href="#IterativePrompt-151"><span class="linenos">151</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt-152"><a href="#IterativePrompt-152"><span class="linenos">152</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>IterativePrompt class for handling prompts that iterate over a sequence of data, with optional memory
+of previous iterations' responses. This allow for the generation of longer and structured responses.</p>
+
+<h2 id="prompt-file-example">.prompt file example:</h2>
+
+<pre><code>&lt;iterativeprompt&gt;
+    &lt;prompt&gt;
+        Generate the content of a chapter of a book about {topic}
+        The chapters are {chapters}. Generate the chapter {{data}}.
+    &lt;/prompt&gt;
+    &lt;prompt_memory&gt;
+        Be sure that the chapter is coherent with the previous chapters, this is the content of the previous chapters:
+        {{data}}
+    &lt;/prompt_memory&gt;
+&lt;/iterativeprompt&gt;
+</code></pre>
+
+<h6 id="examples">Examples</h6>
+
+<p>Iterative prompt with memory:</p>
+
+<pre><code>data = ["data types", "conditional statements", "iterative statements"]
+prompt = IterativePrompt(
+    prompt="Generate the content of a chapter of a book about {topic}. The chapters are {chapters}. Generate the chapter {{data}}.",
+    iter_data=data,
+    prompt_memory="Be sure that the chapter is coherent with the previous chapters, this is the content of the previous chapters: {data}"
+)
+</code></pre>
+
+<p>Iterative prompt with memory from a .prompt file:</p>
+
+<pre><code>data = ["data types", "conditional statements", "iterative statements"]
+prompt = IterativePrompt(
+    prompt_id="book_generation",
+    prompt_data={"topic": "python programming", "chapters": data},
+    iter_data=data
+)
+</code></pre>
+</div>
+
 
                             <div id="IterativePrompt.__init__" class="classattr">
                                         <input id="IterativePrompt.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -350,73 +809,74 @@
 
     </div>
     <a class="headerlink" href="#IterativePrompt.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="IterativePrompt.__init__-7"><a href="#IterativePrompt.__init__-7"><span class="linenos"> 7</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-</span><span id="IterativePrompt.__init__-8"><a href="#IterativePrompt.__init__-8"><span class="linenos"> 8</span></a>                 <span class="n">prompt_id</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt.__init__-9"><a href="#IterativePrompt.__init__-9"><span class="linenos"> 9</span></a>                 <span class="n">prompt</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt.__init__-10"><a href="#IterativePrompt.__init__-10"><span class="linenos">10</span></a>                 <span class="n">prompt_data</span><span class="p">:</span><span class="nb">dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="IterativePrompt.__init__-11"><a href="#IterativePrompt.__init__-11"><span class="linenos">11</span></a>                 <span class="n">iter_data</span><span class="p">:</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-</span><span id="IterativePrompt.__init__-12"><a href="#IterativePrompt.__init__-12"><span class="linenos">12</span></a>                 <span class="n">prompt_memory</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-</span><span id="IterativePrompt.__init__-13"><a href="#IterativePrompt.__init__-13"><span class="linenos">13</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt.__init__-14"><a href="#IterativePrompt.__init__-14"><span class="linenos">14</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_memory</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
-</span><span id="IterativePrompt.__init__-15"><a href="#IterativePrompt.__init__-15"><span class="linenos">15</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt.__init__-16"><a href="#IterativePrompt.__init__-16"><span class="linenos">16</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
-</span><span id="IterativePrompt.__init__-17"><a href="#IterativePrompt.__init__-17"><span class="linenos">17</span></a>        <span class="k">else</span><span class="p">:</span>       
-</span><span id="IterativePrompt.__init__-18"><a href="#IterativePrompt.__init__-18"><span class="linenos">18</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
-</span><span id="IterativePrompt.__init__-19"><a href="#IterativePrompt.__init__-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="IterativePrompt.__init__-20"><a href="#IterativePrompt.__init__-20"><span class="linenos">20</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
-</span><span id="IterativePrompt.__init__-21"><a href="#IterativePrompt.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span> <span class="o">=</span> <span class="n">iter_data</span>
-</span><span id="IterativePrompt.__init__-22"><a href="#IterativePrompt.__init__-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iter_data</span><span class="p">)</span>
-</span><span id="IterativePrompt.__init__-23"><a href="#IterativePrompt.__init__-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}}&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
-</span><span id="IterativePrompt.__init__-24"><a href="#IterativePrompt.__init__-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">has_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">!=</span><span class="s2">&quot;&quot;</span>        
+            <div class="pdoc-code codehilite"><pre><span></span><span id="IterativePrompt.__init__-49"><a href="#IterativePrompt.__init__-49"><span class="linenos">49</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+</span><span id="IterativePrompt.__init__-50"><a href="#IterativePrompt.__init__-50"><span class="linenos">50</span></a>                 <span class="n">prompt_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt.__init__-51"><a href="#IterativePrompt.__init__-51"><span class="linenos">51</span></a>                 <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt.__init__-52"><a href="#IterativePrompt.__init__-52"><span class="linenos">52</span></a>                 <span class="n">prompt_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="IterativePrompt.__init__-53"><a href="#IterativePrompt.__init__-53"><span class="linenos">53</span></a>                 <span class="n">iter_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+</span><span id="IterativePrompt.__init__-54"><a href="#IterativePrompt.__init__-54"><span class="linenos">54</span></a>                 <span class="n">prompt_memory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span id="IterativePrompt.__init__-55"><a href="#IterativePrompt.__init__-55"><span class="linenos">55</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IterativePrompt.__init__-56"><a href="#IterativePrompt.__init__-56"><span class="linenos">56</span></a><span class="sd">        Initialize a new IterativePrompt instance.</span>
+</span><span id="IterativePrompt.__init__-57"><a href="#IterativePrompt.__init__-57"><span class="linenos">57</span></a>
+</span><span id="IterativePrompt.__init__-58"><a href="#IterativePrompt.__init__-58"><span class="linenos">58</span></a><span class="sd">        Parameters</span>
+</span><span id="IterativePrompt.__init__-59"><a href="#IterativePrompt.__init__-59"><span class="linenos">59</span></a><span class="sd">        ----------</span>
+</span><span id="IterativePrompt.__init__-60"><a href="#IterativePrompt.__init__-60"><span class="linenos">60</span></a><span class="sd">        prompt_id : str, optional</span>
+</span><span id="IterativePrompt.__init__-61"><a href="#IterativePrompt.__init__-61"><span class="linenos">61</span></a><span class="sd">            .prompt file name for loading a prompt from file</span>
+</span><span id="IterativePrompt.__init__-62"><a href="#IterativePrompt.__init__-62"><span class="linenos">62</span></a><span class="sd">        prompt : str, optional</span>
+</span><span id="IterativePrompt.__init__-63"><a href="#IterativePrompt.__init__-63"><span class="linenos">63</span></a><span class="sd">            Direct prompt text with {{data}} placeholder if prompt_id is not provided</span>
+</span><span id="IterativePrompt.__init__-64"><a href="#IterativePrompt.__init__-64"><span class="linenos">64</span></a><span class="sd">        prompt_data : dict, optional</span>
+</span><span id="IterativePrompt.__init__-65"><a href="#IterativePrompt.__init__-65"><span class="linenos">65</span></a><span class="sd">            Dictionary of values for formatting the base prompt</span>
+</span><span id="IterativePrompt.__init__-66"><a href="#IterativePrompt.__init__-66"><span class="linenos">66</span></a><span class="sd">        iter_data : List[str], optional</span>
+</span><span id="IterativePrompt.__init__-67"><a href="#IterativePrompt.__init__-67"><span class="linenos">67</span></a><span class="sd">            Sequence of data items to iterate over</span>
+</span><span id="IterativePrompt.__init__-68"><a href="#IterativePrompt.__init__-68"><span class="linenos">68</span></a><span class="sd">        prompt_memory : str, optional</span>
+</span><span id="IterativePrompt.__init__-69"><a href="#IterativePrompt.__init__-69"><span class="linenos">69</span></a><span class="sd">            Template for including memory of previous iterations</span>
+</span><span id="IterativePrompt.__init__-70"><a href="#IterativePrompt.__init__-70"><span class="linenos">70</span></a>
+</span><span id="IterativePrompt.__init__-71"><a href="#IterativePrompt.__init__-71"><span class="linenos">71</span></a><span class="sd">        Raises</span>
+</span><span id="IterativePrompt.__init__-72"><a href="#IterativePrompt.__init__-72"><span class="linenos">72</span></a><span class="sd">        ------</span>
+</span><span id="IterativePrompt.__init__-73"><a href="#IterativePrompt.__init__-73"><span class="linenos">73</span></a><span class="sd">        ValueError</span>
+</span><span id="IterativePrompt.__init__-74"><a href="#IterativePrompt.__init__-74"><span class="linenos">74</span></a><span class="sd">            If neither prompt_id nor prompt is provided</span>
+</span><span id="IterativePrompt.__init__-75"><a href="#IterativePrompt.__init__-75"><span class="linenos">75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IterativePrompt.__init__-76"><a href="#IterativePrompt.__init__-76"><span class="linenos">76</span></a>        <span class="k">if</span> <span class="n">prompt_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt.__init__-77"><a href="#IterativePrompt.__init__-77"><span class="linenos">77</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="p">,</span> <span class="n">prompt_memory</span> <span class="o">=</span> <span class="n">PromptParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prompt_id</span><span class="p">)</span>
+</span><span id="IterativePrompt.__init__-78"><a href="#IterativePrompt.__init__-78"><span class="linenos">78</span></a>        <span class="k">elif</span> <span class="n">prompt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt.__init__-79"><a href="#IterativePrompt.__init__-79"><span class="linenos">79</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="n">prompt</span>
+</span><span id="IterativePrompt.__init__-80"><a href="#IterativePrompt.__init__-80"><span class="linenos">80</span></a>        <span class="k">else</span><span class="p">:</span>       
+</span><span id="IterativePrompt.__init__-81"><a href="#IterativePrompt.__init__-81"><span class="linenos">81</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either prompt_id or prompt must be provided&quot;</span><span class="p">)</span>
+</span><span id="IterativePrompt.__init__-82"><a href="#IterativePrompt.__init__-82"><span class="linenos">82</span></a>        
+</span><span id="IterativePrompt.__init__-83"><a href="#IterativePrompt.__init__-83"><span class="linenos">83</span></a>        <span class="k">if</span> <span class="n">prompt_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="IterativePrompt.__init__-84"><a href="#IterativePrompt.__init__-84"><span class="linenos">84</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_data</span><span class="p">)</span>
+</span><span id="IterativePrompt.__init__-85"><a href="#IterativePrompt.__init__-85"><span class="linenos">85</span></a>            
+</span><span id="IterativePrompt.__init__-86"><a href="#IterativePrompt.__init__-86"><span class="linenos">86</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span> <span class="o">=</span> <span class="n">iter_data</span>
+</span><span id="IterativePrompt.__init__-87"><a href="#IterativePrompt.__init__-87"><span class="linenos">87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iter_data</span><span class="p">)</span>
+</span><span id="IterativePrompt.__init__-88"><a href="#IterativePrompt.__init__-88"><span class="linenos">88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}}&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">)</span>
+</span><span id="IterativePrompt.__init__-89"><a href="#IterativePrompt.__init__-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_has_memory</span> <span class="o">=</span> <span class="n">prompt_memory</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>        
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Initialize a new IterativePrompt instance.</p>
 
-                            </div>
-                            <div id="IterativePrompt.size" class="classattr">
-                                <div class="attr variable">
-            <span class="name">size</span>
+<h6 id="parameters">Parameters</h6>
 
-        
-    </div>
-    <a class="headerlink" href="#IterativePrompt.size"></a>
-    
-    
+<ul>
+<li><strong>prompt_id</strong> (str, optional):
+.prompt file name for loading a prompt from file</li>
+<li><strong>prompt</strong> (str, optional):
+Direct prompt text with {{data}} placeholder if prompt_id is not provided</li>
+<li><strong>prompt_data</strong> (dict, optional):
+Dictionary of values for formatting the base prompt</li>
+<li><strong>iter_data</strong> (List[str], optional):
+Sequence of data items to iterate over</li>
+<li><strong>prompt_memory</strong> (str, optional):
+Template for including memory of previous iterations</li>
+</ul>
 
-                            </div>
-                            <div id="IterativePrompt.has_memory" class="classattr">
-                                <div class="attr variable">
-            <span class="name">has_memory</span>
+<h6 id="raises">Raises</h6>
 
-        
-    </div>
-    <a class="headerlink" href="#IterativePrompt.has_memory"></a>
-    
-    
+<ul>
+<li><strong>ValueError</strong>: If neither prompt_id nor prompt is provided</li>
+</ul>
+</div>
 
-                            </div>
-                            <div id="IterativePrompt.format" class="classattr">
-                                        <input id="IterativePrompt.format-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">format</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">index</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
-
-                <label class="view-source-button" for="IterativePrompt.format-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#IterativePrompt.format"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="IterativePrompt.format-26"><a href="#IterativePrompt.format-26"><span class="linenos">26</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span><span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="IterativePrompt.format-27"><a href="#IterativePrompt.format-27"><span class="linenos">27</span></a>
-</span><span id="IterativePrompt.format-28"><a href="#IterativePrompt.format-28"><span class="linenos">28</span></a>        <span class="n">prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_data</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-</span><span id="IterativePrompt.format-29"><a href="#IterativePrompt.format-29"><span class="linenos">29</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_memory</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="IterativePrompt.format-30"><a href="#IterativePrompt.format-30"><span class="linenos">30</span></a>            <span class="n">prompt</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompt_memory</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
-</span><span id="IterativePrompt.format-31"><a href="#IterativePrompt.format-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="n">prompt</span>
-</span></pre></div>
-
-
-    
 
                             </div>
                 </section>

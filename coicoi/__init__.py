@@ -1,3 +1,5 @@
 """
-Coicoi is a Python library for interacting with AI models in a structured, standardized and efficient way.
+.. include:: ../README.md
+   :start-line: 1
+   :end-before: [Read the documentation]
 """

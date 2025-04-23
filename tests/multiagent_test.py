@@ -1,4 +1,4 @@
-from coicoi.agents import MultiAgent
+from coicoi._agents import MultiAgent
 from coicoi.prompts.prompt_chain import PromptChain
 from coicoi.tools import WebSearch
 

@@ -8,6 +8,32 @@ from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
 
 class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
+    """
+    A class to execute prompts across multiple AI models in parallel.
+    
+    MultiModel manages a collection of AI models and enables parallel execution of prompts
+    across all models. It's particularly useful for comparing model responses or
+    implementing ensemble approaches.
+
+    Examples
+    --------
+    Basic comparison of models:
+    ```
+    models = [
+        {"provider": "openai", "model": "gpt-4"},
+        {"provider": "anthropic", "model": "claude-3"}
+    ]
+    multi_model = MultiModel(models=models)
+    prompt = Prompt(
+        prompt="What is 2+2?",
+        response_type=int
+    )
+    responses = multi_model.ask(prompt)
+    for resp in responses:
+        print(f"{resp['model']['name']}: {resp['response']}")
+    ```
+    """
+
     def __init__(
         self, 
         models: List[Dict[str, str]], 
@@ -15,12 +41,16 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
         count_cost: bool = False
     ):
         """
-        Initialize MultiModel with a list of models and counting preferences.
-        
-        Args:
-            models: List of dictionaries containing provider and model information
-            count_tokens: Whether to count tokens for each request
-            count_cost: Whether to calculate costs for each request
+        Initialize a new MultiModel instance.
+
+        Parameters
+        ----------
+        models : List[Dict[str, str]]
+            List of dictionaries with provider and model information
+        count_tokens : bool, optional
+            Whether to count tokens for each request
+        count_cost : bool, optional
+            Whether to calculate costs for each request
         """
         super().__init__(count_tokens, count_cost)
         self._models = [
@@ -34,14 +64,24 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
 
     async def _task(self, model: Model, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
-        Execute a single model task.
-        
-        Args:
-            model: The model to use
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            Dictionary containing the response and optional stats
+        Execute a single model task asynchronously.
+
+        Parameters
+        ----------
+        model : Model
+            The model instance to use
+        prompt : Union[str, Prompt, PromptChain]
+            The prompt to process
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - response: The model's response
+            - prompt: The original prompt
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
         """
         response = await self._execute_async(prompt, model._agent)
         return self._process_response(
@@ -53,28 +93,54 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
             self._count_cost
         )
 
-    async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> List[Dict]:
+    async def _ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> List[Dict]:
         """
         Ask all models asynchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            List of dictionaries containing responses and optional stats
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt, PromptChain]
+            The prompt to process across all models
+
+        Returns
+        -------
+        List[Dict]
+            List of response dictionaries, one per model, each containing:
+            - response: The model's response
+            - prompt: The original prompt
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+
+        Examples
+        --------
+        Using async/await:
+            >>> responses = await multi_model.ask_async("What is 2+2?")
+            >>> for resp in responses:
+            ...     print(f"{resp['model']['name']}: {resp['response']}")
         """
         tasks = [self._task(model, prompt) for model in self._models]
         return await asyncio.gather(*tasks)
 
-    def ask(self, prompt: Union[str, Prompt, PromptChain]) -> List[Dict]:
+    def ask(self, prompt: Union[str, Prompt]) -> List[Dict]:
         """
-        Ask all models synchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            List of dictionaries containing responses and optional stats
+        Ask all models.
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt]
+            The prompt to process across all models
+
+        Returns
+        -------
+        List[Dict]
+            List of response dictionaries, one per model, each containing:
+            - response: The model's response
+            - prompt: The original prompt
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+
         """
         return asyncio.run(self.ask_async(prompt))
 

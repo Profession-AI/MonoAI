@@ -9,6 +9,30 @@ from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
 
 class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
+    """
+    A class to implement collaborative decision making across multiple AI models.
+    
+    CollaborativeModel manages a collection of AI models and an aggregator model.
+    It executes prompts across all models in parallel and then uses the aggregator
+    to synthesize a final response based on all individual responses.
+
+    Examples
+    --------
+    Basic collaborative analysis:
+    ```
+    models = [
+        {"provider": "openai", "model": "gpt-4"},
+        {"provider": "anthropic", "model": "claude-3"}
+    ]
+    aggregator = {"provider": "openai", "model": "gpt-4"}
+    collab = CollaborativeModel(models=models, aggregator=aggregator)
+    response = collab.ask("Explain quantum computing")
+    print(response["response"])  # Aggregated response
+    for ind_resp in response["individual_responses"]:
+        print(f"{ind_resp['model']['name']}: {ind_resp['response']}")
+    ```
+    """
+
     def __init__(
         self,
         models: List[Dict[str, str]],
@@ -17,13 +41,18 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
         count_cost: bool = False
     ):
         """
-        Initialize CollaborativeModel with a list of models and an aggregator model.
-        
-        Args:
-            models: List of dictionaries containing provider and model information
-            aggregator: Dictionary containing aggregator model provider and model information
-            count_tokens: Whether to count tokens for each request
-            count_cost: Whether to calculate costs for each request
+        Initialize a new CollaborativeModel instance.
+
+        Parameters
+        ----------
+        models : List[Dict[str, str]]
+            List of dictionaries with provider and model information
+        aggregator : Dict[str, str]
+            Dictionary with provider and model information for the aggregator
+        count_tokens : bool, optional
+            Whether to count tokens for each request
+        count_cost : bool, optional
+            Whether to calculate costs for each request
         """
         super().__init__(count_tokens, count_cost)
 
@@ -43,13 +72,19 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
     def _format_aggregator_prompt(self, prompt: Union[str, Prompt, PromptChain], responses: List[Dict]) -> str:
         """
         Format the prompt for the aggregator model.
-        
-        Args:
-            prompt: The original prompt or prompt chain
-            responses: List of responses from individual models
-            
-        Returns:
-            Formatted prompt for the aggregator
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt, PromptChain]
+            The original prompt
+        responses : List[Dict]
+            List of responses from individual models
+
+        Returns
+        -------
+        str
+            Formatted prompt for the aggregator including original question
+            and all model responses
         """
         prompt_text = str(prompt)
         model_responses = "\n\n".join([
@@ -63,16 +98,33 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
                     {model_responses}
                     Please provide a well-reasoned response that takes into account all the information above."""
 
-
-    async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+    async def _ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask all models and aggregate their responses asynchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            Dictionary containing aggregated response and statistics
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt, PromptChain]
+            The prompt to process across all models
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - response: The aggregated response
+            - prompt: The original prompt
+            - model: Dictionary with aggregator's provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+            - individual_responses: List of responses from individual models
+
+        Examples
+        --------
+        Using async/await:
+            >>> response = await collab.ask_async("What is consciousness?")
+            >>> print(response["response"])  # Aggregated response
+            >>> for resp in response["individual_responses"]:
+            ...     print(f"{resp['model']['name']}: {resp['response']}")
         """
         # Get responses from all models
         model_responses = await self._multi_model.ask_async(prompt)
@@ -97,12 +149,23 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask all models and aggregate their responses synchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            Dictionary containing aggregated response and statistics
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt, PromptChain]
+            The prompt to process across all models
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - response: The aggregated response
+            - prompt: The original prompt
+            - model: Dictionary with aggregator's provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+            - individual_responses: List of responses from individual models
+
         """
         return asyncio.run(self.ask_async(prompt))
 

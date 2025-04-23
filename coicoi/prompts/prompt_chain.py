@@ -1,13 +1,66 @@
 from typing import List
 from .prompt import Prompt
 from ._prompt_parser import PromptParser
+
 class PromptChain(Prompt):
 
+    """
+    PromptChain class for handling sequences of prompts, the output of one prompt is used as context for the next one.
+
+    .prompt file example:
+    --------
+    ```
+    <promptchain>
+        <prompt>
+            What is the capital of {country}?
+        </prompt>
+        <prompt>
+            What is its population?
+        </prompt>
+    </promptchain>
+    ```
+
+    Examples
+    --------
+    Create a chain from a sequence of prompts:
+    ```
+    prompts = [
+        Prompt(prompt="What is the capital of France?"),
+        Prompt(prompt="What is its population?")
+    ]
+    chain = PromptChain(prompts=prompts)
+    ```
+
+    Create a chain from a file:
+    ```
+    chain = PromptChain(
+        promptchain_id="city_analysis",
+        prompts_data=[{"country": "France"}]
+    )
+    ```
+    """
+
     def __init__(self, 
-                 promptchain_id: str=None,
-                 prompts_data: list[dict]=None,
-                 prompts: List[Prompt]=None, 
-                 ):
+                 promptchain_id: str = None,
+                 prompts_data: list[dict] = None,
+                 prompts: List[Prompt] = None):
+        """
+        Initialize a new PromptChain instance.
+
+        Parameters
+        ----------
+        promptchain_id : str, optional
+            A .prompt file name for loading a prompt chain from file
+        prompts_data : list[dict], optional
+            List of dictionaries containing formatting data for each prompt
+        prompts : List[Prompt], optional
+            Direct list of Prompt objects to form the chain if promptchain_id is not provided
+
+        Raises
+        ------
+        - ValueError
+            If neither promptchain_id nor prompts is provided
+        """
         if promptchain_id is not None:
             self._prompts = PromptParser().parse(promptchain_id)
             for i in range(len(self._prompts)):
@@ -16,16 +69,50 @@ class PromptChain(Prompt):
             self._prompts = prompts
         else:
             raise ValueError("Either promptchain_id or prompts must be provided")
-        self.size = len(self._prompts)
+        self._size = len(self._prompts)
 
-    def format(self, index: int, context: str | None = None) -> str:
+    def _format(self, index: int, context: str | None = None) -> str:
+        """
+        Format a specific prompt in the chain with optional context.
+
+        This method formats the prompt at the specified index, optionally including
+        context from previous prompts' responses.
+
+        Parameters
+        ----------
+        index : int
+            Index of the prompt to format
+        context : str, optional
+            Context from previous prompts' responses to include
+
+        Returns
+        -------
+        str
+            The formatted prompt text with optional context
+        """
         if context is None:
             return str(self._prompts[index])
         else:
             return str(self._prompts[index]) + "\n\n" + context
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Get the string representation of the prompt chain.
+
+        Returns
+        -------
+        str
+            All prompts in the chain joined by newlines
+        """
         return "\n".join([str(prompt) for prompt in self._prompts])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """
+        Get the official string representation of the prompt chain.
+
+        Returns
+        -------
+        str
+            All prompts in the chain joined by newlines
+        """
         return self.__str__()

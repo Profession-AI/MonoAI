@@ -1,6 +1,6 @@
 from pydantic_ai import Agent
 from ._base_model import BaseModel
-from ._keys_manager import load_key
+from ..keys.keys_manager import load_key
 from ._response_processor import ResponseProcessorMixin
 from ._prompt_executor import PromptExecutorMixin
 from typing import Sequence, Dict, Union
@@ -9,8 +9,36 @@ from ..tokens.token_cost import TokenCost
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
 
-
 class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
+    """
+    Model class for interacting with AI language models.
+
+    This module provides the Model class which serves as the primary interface for interacting
+    with various AI language models (like GPT-4, Claude-3, etc.).
+
+    Examples
+    --------
+    Basic usage:
+    ```
+    model = Model(provider="openai", model="gpt-4")
+    response = model.ask("What is the capital of France?")
+    ```
+
+    With prompt:
+    ```
+    model = Model(
+        provider="anthropic",
+        model="claude-3",
+    )
+    prompt = Prompt(
+        prompt="What is the capital of {country}?",
+        prompt_data={"country": "France"},
+        response_type=str
+    )
+    response = model.ask(prompt)
+    ```
+    """
+
     def __init__(
         self, 
         provider: str, 
@@ -20,14 +48,20 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         count_cost: bool = False
     ):
         """
-        Initialize Model with provider and model name.
-        
-        Args:
-            provider: Name of the provider (e.g., 'openai', 'anthropic')
-            model: Name of the model (e.g., 'gpt-4', 'claude-3')
-            system_prompt: System prompt or sequence of prompts
-            count_tokens: Whether to count tokens for each request
-            count_cost: Whether to calculate costs for each request
+        Initialize a new Model instance.
+
+        Parameters
+        ----------
+        provider : str
+            Name of the provider (e.g., 'openai', 'anthropic')
+        model : str
+            Name of the model (e.g., 'gpt-4', 'claude-3')
+        system_prompt : str | Sequence[str], optional
+            System prompt or sequence of prompts
+        count_tokens : bool, optional
+            Whether to count tokens for each request
+        count_cost : bool, optional
+            Whether to calculate costs for each request
         """
         super().__init__(count_tokens, count_cost)
         load_key(provider)
@@ -36,15 +70,25 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         self.model = model
         self._agent = Agent(provider + ":" + model, system_prompt=system_prompt)
 
-    async def ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+    async def _ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask the model asynchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            Dictionary containing the response and optional stats
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt]
+            The prompt to process
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - response: The model's response
+            - prompt: The original prompt
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+
         """
         response = await self._execute_async(prompt, self._agent)
         return self._process_response(
@@ -58,14 +102,25 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
-        Ask the model synchronously.
-        
-        Args:
-            prompt: The prompt or prompt chain to process
-            
-        Returns:
-            Dictionary containing the response and optional stats
+        Ask the model.
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt]
+            The prompt to process
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - response: The model's response
+            - prompt: The original prompt
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
+
         """
+
         response = self._execute(prompt, self._agent)
         return self._process_response(
             prompt,
@@ -79,13 +134,23 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
     def _post_process_response(self, question: str, answer: str) -> Dict:
         """
         Process the response and add optional token and cost information.
-        
-        Args:
-            question: The input question
-            answer: The model's answer
-            
-        Returns:
-            Dictionary containing the response and optional stats
+
+        Parameters
+        ----------
+        question : str
+            The input question
+        answer : str
+            The model's answer
+
+        Returns
+        -------
+        Dict
+            Dictionary containing:
+            - input: The original question
+            - output: The model's answer
+            - model: Dictionary with provider and model name
+            - tokens: Token counts (if enabled)
+            - cost: Cost calculation (if enabled)
         """
         response = {
             "input": question, 

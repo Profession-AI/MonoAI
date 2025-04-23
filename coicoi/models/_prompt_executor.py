@@ -54,8 +54,8 @@ class PromptExecutorMixin:
             Dictionary containing the final response
         """
         response = None
-        for i in range(chain.size):
-            current_prompt = chain.format(i, response.output if response else None)
+        for i in range(chain._size):
+            current_prompt = chain._format(i, response.output if response else None)
             response = await agent.run(current_prompt)
         return response
 
@@ -89,10 +89,10 @@ class PromptExecutorMixin:
         """
         response = ""
         for i in range(prompt.size):
-            if i > 0 and prompt.has_memory:
-                current_prompt = prompt.format(i, current_response)
+            if i > 0 and prompt._has_memory:
+                current_prompt = prompt._format(i, current_response)
             else:
-                current_prompt = prompt.format(i)
+                current_prompt = prompt._format(i)
             current_response = agent.run_sync(current_prompt).output
             response += current_response
         return response

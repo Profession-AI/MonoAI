@@ -1,3 +1,7 @@
+"""
+Models are the core of Coicoi. They are responsible for executing prompts and returning responses.
+"""
+
 from .model import Model
 from .multi_model import MultiModel
 from .collaborative_model import CollaborativeModel

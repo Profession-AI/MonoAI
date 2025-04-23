@@ -15,9 +15,33 @@ class PromptParser:
     def _parse_xml(self, text: str):
         root = ET.fromstring(text)
         if root.tag == "promptchain":
-            return [prompt.text for prompt in root.findall("prompt")]
+            return [prompt.text for prompt in root.findall("prompt")], root.get("response_type")
         elif root.tag == "iterativeprompt":
             return root.find("prompt").text, root.find("prompt_memory").text
         else:
-            return root.find("prompt").text
+            return root.text, self._type_from_str(root.get("response_type"))
 
+    def _type_from_str(self, type_str: str):
+        
+        if type_str is None:
+            return None
+        
+        type_mapping = {
+            "str": str,
+            "int": int,
+            "float": float,
+            "bool": bool,
+            "list": list,
+            "dict": dict,
+            "tuple": tuple,
+            "set": set,
+            "None": type(None)
+        }
+        
+        assert type_str in type_mapping, f"Type {type_str} not found in type_mapping"
+        return type_mapping[type_str]
+
+
+if __name__ == "__main__":
+    parser = PromptParser()
+    print(parser.parse("test"))

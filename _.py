@@ -1,9 +1,15 @@
-from coicoi.models.image_model import ImageModel
+from coicoi.models import Model
+from coicoi.prompts import Prompt
+from pydantic import BaseModel
 
-image_model = ImageModel(
+class Response(BaseModel):
+    response: int
+
+model = Model(
     provider="openai",
-    model="dall-e-3"
-)
+    model="gpt-4o-mini")
 
-print(image_model.generate("a white siamese cat"))
+prompt = Prompt(prompt_id="test")
+
+print(model.ask(prompt))
 

@@ -5,10 +5,10 @@ class Prompt:
                  prompt_id: str | None = None,
                  prompt_data: dict | None = None,
                  prompt: str | None = None, 
-                 output_type: type | None = None):
+                 response_type: type | None = None):
         
         if prompt_id is not None:
-            self._prompt = PromptParser().parse(prompt_id)
+            self._prompt, prompt_response_type = PromptParser().parse(prompt_id)
         elif prompt is not None:
             self._prompt = prompt
         else:
@@ -17,7 +17,11 @@ class Prompt:
         if prompt_data is not None:
             self._prompt = self._prompt.format(**prompt_data)
 
-        self.output_type = output_type
+        if prompt_response_type is not None:
+            self.response_type = prompt_response_type
+        else:
+            self.response_type = response_type
+
 
     def __str__(self):
         return self._prompt

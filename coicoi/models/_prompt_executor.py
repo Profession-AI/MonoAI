@@ -38,9 +38,9 @@ class PromptExecutorMixin:
         elif isinstance(prompt, IterativePrompt):
             return self._execute_iterative(prompt, agent)
         elif isinstance(prompt, Prompt):
-            return agent.run_sync(str(prompt), output_type=prompt.output_type).data
+            return agent.run_sync(str(prompt), output_type=prompt.response_type).output
         else:
-            return agent.run_sync(str(prompt)).data
+            return agent.run_sync(str(prompt)).output
 
     async def _execute_chain_async(self, chain: PromptChain, agent: Agent) -> Dict:
         """
@@ -55,7 +55,7 @@ class PromptExecutorMixin:
         """
         response = None
         for i in range(chain.size):
-            current_prompt = chain.format(i, response.data if response else None)
+            current_prompt = chain.format(i, response.output if response else None)
             response = await agent.run(current_prompt)
         return response
 
@@ -72,9 +72,9 @@ class PromptExecutorMixin:
         """
         response = None
         for i in range(chain.size):
-            current_prompt = chain.format(i, response.data if response else None)
+            current_prompt = chain.format(i, response.output if response else None)
             response = agent.run_sync(current_prompt)
-        return response.data
+        return response.output
     
     def _execute_iterative(self, prompt: IterativePrompt, agent: Agent) -> Dict:
         """
@@ -93,7 +93,7 @@ class PromptExecutorMixin:
                 current_prompt = prompt.format(i, current_response)
             else:
                 current_prompt = prompt.format(i)
-            current_response = agent.run_sync(current_prompt).data
+            current_response = agent.run_sync(current_prompt).output
             response += current_response
         return response
 

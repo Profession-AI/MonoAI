@@ -9,7 +9,7 @@ model = Model(
     provider="openai",
     model="gpt-4o-mini")
 
-prompt = Prompt(prompt_id="test")
+prompt = Prompt(prompt="2+2=", response_type=Response)
 
 print(model.ask(prompt))
 

@@ -2,6 +2,7 @@ from os import environ
 import sys
 import os
 from typing import Dict, Optional
+from coicoi._config import Config
 
 _KEY_EXT = "_API_KEY"
 
@@ -27,7 +28,7 @@ class KeyManager:
 
     _instance = None
     _keys = None
-    _key_file_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])),"providers.keys")
+    _key_file_path = Config().get("keysfile_path")
     _is_enabled = True
 
     def __new__(cls):
@@ -89,7 +90,6 @@ class KeyManager:
         This method is automatically called when you use a model, so you don't really need to use this method directly.
         """
         
-        print(self._key_file_path)
         if not self._is_enabled:
             return
 

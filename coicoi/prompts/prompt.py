@@ -85,6 +85,7 @@ class Prompt:
         ValueError
             If neither prompt_id nor prompt is provided
         """
+        prompt_response_type = None
         if prompt_id is not None:
             self._prompt, prompt_response_type = PromptParser().parse(prompt_id)
         elif prompt is not None:

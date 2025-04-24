@@ -53,6 +53,7 @@ class Config:
     
     _instance = None
     _DEFAULT_CONFIG = {
+        'keysfile_path': "providers.keys",
         'prompts_path': "",
         'base_model':{
             "provider": "openai",

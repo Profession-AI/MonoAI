@@ -12,7 +12,7 @@ class PromptParser:
         if self._very_dumb_xml_check(prompt_text):
             return self._parse_xml(prompt_text)
         else:
-            return prompt_text
+            return prompt_text, None
 
     def _very_dumb_xml_check(self, text: str):
         return text[0]=="<" and text[-1]==">"

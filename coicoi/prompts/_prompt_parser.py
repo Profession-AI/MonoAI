@@ -1,8 +1,13 @@
 import xml.etree.ElementTree as ET
+from os.path import join
+from coicoi._config import Config
 
 class PromptParser:
     def parse(self, prompt_id: str):
-        prompt_file = open(prompt_id+".prompt")
+        prompt_path = join(Config().get("prompts_path"),prompt_id+".prompt")
+        if not prompt_path.endswith(".prompt"):
+            prompt_path = prompt_path+".prompt"
+        prompt_file = open(prompt_path)
         prompt_text = prompt_file.read()        
         if self._very_dumb_xml_check(prompt_text):
             return self._parse_xml(prompt_text)

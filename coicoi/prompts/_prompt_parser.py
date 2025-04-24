@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from os.path import join
 from coicoi._config import Config
+from typing import List
 
 class PromptParser:
     def parse(self, prompt_id: str):
@@ -36,7 +37,7 @@ class PromptParser:
             "int": int,
             "float": float,
             "bool": bool,
-            "list": list,
+            "list": List[str],
             "dict": dict,
             "tuple": tuple,
             "set": set,

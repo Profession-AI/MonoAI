@@ -1,7 +1,3 @@
-Awesome! Here's a **more official, polished version** of your COICOI documentation, ready for GitHub or even for publishing in a professional repository:
-
----
-
 # COICOI
 ### Collective Intelligence via Collaborative Inference
 

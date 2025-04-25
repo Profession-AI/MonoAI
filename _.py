@@ -1,14 +1,11 @@
 from coicoi.models import Model
-from coicoi.prompts import Prompt
-from pydantic import BaseModel, RootModel
-from typing import List, Optional
+from coicoi.prompts import IterativePrompt
 
+model = Model()
 
+chapters = ["variabili", "espressioni condizionali", "cicli", "funzioni"]
+data = {"topic":"programmazione con python", "chapters":chapters}
 
-model = Model(
-    provider="openai",
-    model="gpt-4o-mini")
-
-prompt = Prompt(prompt_id="test")
+prompt = IterativePrompt(prompt_id="test_iter", prompt_data=data, iter_data=chapters, retain_all=True)
 print(model.ask(prompt))
 

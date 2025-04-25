@@ -1,6 +1,5 @@
 from typing import List
-from .prompt import Prompt
-from ._prompt_parser import PromptParser
+from .prompt import Prompt, _PromptParser
 
 class PromptChain(Prompt):
 
@@ -62,7 +61,7 @@ class PromptChain(Prompt):
             If neither promptchain_id nor prompts is provided
         """
         if promptchain_id is not None:
-            self._prompts = PromptParser().parse(promptchain_id)
+            self._prompts, self._response_type = _PromptChainParser().parse(promptchain_id)
             for i in range(len(self._prompts)):
                 self._prompts[i] = Prompt(prompt=self._prompts[i], prompt_data=prompts_data[i])
         elif prompts is not None:
@@ -116,3 +115,16 @@ class PromptChain(Prompt):
             All prompts in the chain joined by newlines
         """
         return self.__str__()
+
+
+class _PromptChainParser(_PromptParser):
+    def _parse(self, prompt_dict):
+        prompt_dict = prompt_dict["promptchain"]
+        return prompt_dict["prompt"], prompt_dict.get("@response_type")
+        
+
+if __name__ == "__main__":
+    parser = _PromptChainParser()
+    print(parser.parse("test_chain"))
+
+    

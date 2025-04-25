@@ -8,7 +8,7 @@ from ..tokens.token_counter import TokenCounter
 from ..tokens.token_cost import TokenCost
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
-
+from coicoi.conf import CoiConf
 class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
     """
     Model class for interacting with AI language models.
@@ -41,8 +41,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 
     def __init__(
         self, 
-        provider: str, 
-        model: str, 
+        provider: str | None = None, 
+        model: str | None = None, 
         system_prompt: str | Sequence[str] = (),
         count_tokens: bool = False, 
         count_cost: bool = False
@@ -64,6 +64,12 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             Whether to calculate costs for each request
         """
         super().__init__(count_tokens, count_cost)
+        
+        if provider is None:
+            provider = CoiConf()["base_model"]["provider"]
+        if model is None:
+            model = CoiConf()["base_model"]["model"]
+
         load_key(provider)
 
         self.provider = provider
@@ -177,27 +183,3 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
                 response["cost"] = cost
                 
         return response
-
-
-if __name__ == "__main__":
-    # Initialize with counting preferences
-    model = Model(
-        provider="openai",
-        model="gpt-4o-mini",
-        count_tokens=True,
-        count_cost=True
-    )
-    
-    # Example with simple prompt
-    result = model.ask("What is the capital of France?")
-    print("\nSimple prompt result:")
-    print(result)
-    
-    # Example with prompt chain
-    chain = PromptChain([
-        "What is the capital of France?",
-        "Based on the previous answer, what is its population?"
-    ])
-    result = model.ask(chain)
-    print("\nPrompt chain result:")
-    print(result)

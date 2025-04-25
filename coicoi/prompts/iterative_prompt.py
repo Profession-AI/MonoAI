@@ -1,6 +1,5 @@
 from typing import List
-from .prompt import Prompt
-from ._prompt_parser import PromptParser
+from .prompt import Prompt, _PromptParser
 
 class IterativePrompt(Prompt):
     """
@@ -50,7 +49,8 @@ class IterativePrompt(Prompt):
                  prompt: str = None,
                  prompt_data: dict = None,
                  iter_data: List[str] = None, 
-                 prompt_memory: str = ""):
+                 prompt_memory: str = "",
+                 retain_all: bool = False):
         """
         Initialize a new IterativePrompt instance.
 
@@ -66,6 +66,8 @@ class IterativePrompt(Prompt):
             Sequence of data items to iterate over
         prompt_memory : str, optional
             Template for including memory of previous iterations
+        retain_all : bool, optional
+            If True, all responses are retained in memory, otherwise only the last response is retained
 
         Raises
         ------
@@ -73,7 +75,7 @@ class IterativePrompt(Prompt):
             If neither prompt_id nor prompt is provided
         """
         if prompt_id is not None:
-            self._prompt, prompt_memory = PromptParser().parse(prompt_id)
+            self._prompt, prompt_memory = _IterativePromptParser().parse(prompt_id)
         elif prompt is not None:
             self._prompt = prompt
         else:       
@@ -85,7 +87,8 @@ class IterativePrompt(Prompt):
         self._iter_data = iter_data
         self._size = len(iter_data)
         self._prompt_memory = prompt_memory.replace("{{", "{").replace("}}", "}")
-        self._has_memory = prompt_memory != ""        
+        self._has_memory = prompt_memory != "" 
+        self._retain_all = retain_all        
 
     def _format(self, index: int, context: str = "") -> str:
         """
@@ -123,7 +126,7 @@ class IterativePrompt(Prompt):
             ... )
             >>> formatted = prompt.format(1, "Analysis of item1")
         """
-        prompt = self._prompt._format(data=self._iter_data[index])
+        prompt = self._prompt.format(data=self._iter_data[index])
         if self._has_memory and index > 0:
             prompt += "\n\n" + self._prompt_memory.format(data=context)
         return prompt
@@ -149,3 +152,14 @@ class IterativePrompt(Prompt):
             The base prompt template
         """
         return self.__str__()
+
+
+class _IterativePromptParser(_PromptParser):
+    def _parse(self, prompt_dict):
+        prompt_dict = prompt_dict["iterativeprompt"]
+        return prompt_dict["prompt"], prompt_dict.get("prompt_memory")
+    
+    
+if __name__ == "__main__":
+    parser = _IterativePromptParser()
+    print(parser.parse("test_iter"))

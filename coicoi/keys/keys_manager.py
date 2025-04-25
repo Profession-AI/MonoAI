@@ -2,7 +2,7 @@ from os import environ
 import sys
 import os
 from typing import Dict, Optional
-from coicoi._config import Config
+from coicoi.conf import CoiConf
 
 _KEY_EXT = "_API_KEY"
 
@@ -28,7 +28,7 @@ class KeyManager:
 
     _instance = None
     _keys = None
-    _key_file_path = Config().get("keysfile_path")
+    _key_file_path = CoiConf()["keysfile_path"]
     _is_enabled = True
 
     def __new__(cls):

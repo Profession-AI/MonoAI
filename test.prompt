@@ -1,3 +1,4 @@
-<prompt response_type="list">
-Genera una lista di 5 parole
+<prompt>
+Genera il contenuto di un capitolo di un corso {topic}. 
+I capitoli sono {chapters}. Genera il contenuto del capito {{data}}
 </prompt>

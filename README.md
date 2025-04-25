@@ -1,4 +1,167 @@
+Awesome! Here's a **more official, polished version** of your COICOI documentation, ready for GitHub or even for publishing in a professional repository:
+
+---
+
 # COICOI
 ### Collective Intelligence via Collaborative Inference
-Coicoi is a Python library for interacting with AI models in a structured, standardized and efficient way.
-[Read the documentation](http://Profession-AI.github.io/COICOI)
+
+**COICOI** is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.
+
+---
+
+## 🚀 Quick Start
+
+### Prompts
+In COICOI, a **prompt** is the request you send to a model.  
+You can define prompts in three different ways:
+
+---
+
+#### 1. Plain Text
+Directly write the prompt inside the `ask` method:
+```python
+from coicoi.models import Model
+
+model = Model()
+response = model.ask("What is 2 + 2?")
+```
+
+---
+
+#### 2. `Prompt` Class
+Use the `Prompt` class to enhance your prompts with additional parameters such as response types, chaining, and iteration control:
+```python
+from coicoi.models import Model
+from coicoi.prompts import Prompt
+
+model = Model()
+prompt = Prompt("What is 2 + 2?", response_type=int)
+response = model.ask(prompt)
+```
+
+---
+
+#### 3. `.prompt` Files
+Store prompts in external `.prompt` files to separate your codebase from content logic.
+
+**Example - `sum.prompt`:**
+```
+What is 2 + 2?
+```
+
+```python
+from coicoi.models import Model
+from coicoi.prompts import Prompt
+
+model = Model()
+prompt = Prompt(prompt_id="sum", response_type=int)
+response = model.ask(prompt)
+```
+
+You can also define additional metadata using an XML-like syntax inside `.prompt` files:
+
+**Example with metadata:**
+```
+# sum.prompt
+<prompt response_type="int">
+What is 2 + 2?
+</prompt>
+```
+
+---
+
+### Models
+COICOI provides multiple model interfaces to handle different use cases, from basic generation to multi-model aggregation:
+
+---
+
+#### `Model`
+The standard interface for interacting with a single AI model.
+
+---
+
+#### `MultiModel`
+Send a prompt to multiple models asynchronously and retrieve their individual outputs:
+```python
+from coicoi.models import MultiModel
+
+model = MultiModel(models=[
+    {"provider": "openai", "model": "gpt-4o"},
+    {"provider": "deepseek", "model": "chat"}
+])
+response = model.ask("What is the capital of Italy?")
+```
+
+---
+
+#### `CollectiveModel`
+Send a prompt to multiple models and aggregate their outputs using a separate aggregator model for a richer, consolidated answer:
+```python
+from coicoi.models import CollectiveModel
+
+model = CollectiveModel(
+    models=[
+        {"provider": "openai", "model": "gpt-4o"},
+        {"provider": "deepseek", "model": "chat"}
+    ],
+    aggregator={"provider": "openai", "model": "gpt-4o"}
+)
+response = model.ask("What is the capital of Italy?")
+```
+
+---
+
+#### `AutoModel`
+Automatically select the best model for a given prompt based on configuration or inference:
+```python
+from coicoi.models import AutoModel
+
+model = AutoModel()
+response = model.ask("What is the capital of Italy?")
+```
+
+---
+
+### 🔑 API Key Management
+COICOI simplifies API key management through a `providers.keys` file in the root directory.  
+Each line should follow this format:
+```
+PROVIDER_NAME=API_KEY
+```
+
+**Example `providers.keys`:**
+```
+OPENAI=sk-proj-ABCDE12345
+DEEPSEEK=sk-proj-FGHIJ67890
+```
+
+COICOI automatically loads these keys at runtime — no extra setup needed.
+
+---
+
+## ⚙️ Configuration
+
+Configure COICOI globally via a `coiconf.yaml` file.  
+Supported fields:
+
+| Field             | Description                                          | Default             |
+|-------------------|------------------------------------------------------|---------------------|
+| `prompts_path`    | Directory where `.prompt` files are stored           | `""` (current folder) |
+| `keysfile_path`   | Path to the API keys file                            | `"providers.keys"`  |
+| `base_model`      | Default model to use when no model is specified      | None                |
+
+**Example `coiconf.yaml`:**
+```yaml
+prompts_path: prompts
+keysfile_path: providers.keys
+base_model:
+  provider: openai
+  model: gpt-4o-mini
+```
+
+---
+
+## 📚 Documentation
+
+Full documentation is available at:  
+👉 [COICOI Documentation](http://Profession-AI.github.io/COICOI)

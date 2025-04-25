@@ -1,5 +1,7 @@
-from ._prompt_parser import PromptParser
-
+from os.path import join
+from typing import List
+from coicoi.conf import CoiConf
+import xmltodict
 
 
 class Prompt:
@@ -87,7 +89,7 @@ class Prompt:
         """
         prompt_response_type = None
         if prompt_id is not None:
-            self._prompt, prompt_response_type = PromptParser().parse(prompt_id)
+            self._prompt, prompt_response_type = _PromptParser().parse(prompt_id)
         elif prompt is not None:
             self._prompt = prompt
         else:
@@ -122,3 +124,64 @@ class Prompt:
             The prompt text
         """
         return self.__str__()
+
+
+class _PromptParser:
+    def parse(self, prompt_id: str):
+        prompt_path = join(CoiConf()["prompts_path"], prompt_id+".prompt")
+        if not prompt_path.endswith(".prompt"):
+            prompt_path = prompt_path+".prompt"
+        prompt_file = open(prompt_path)
+        prompt_text = prompt_file.read()        
+        if self._very_dumb_xml_check(prompt_text):
+            prompt_dict = xmltodict.parse(prompt_text)
+            return self._parse(prompt_dict)
+        else:
+            return prompt_text, None
+
+    def _very_dumb_xml_check(self, text: str):
+        return text[0]=="<" and text[-1]==">"
+    
+    def _parse(self, prompt_dict: dict):
+        if isinstance(prompt_dict["prompt"], dict):
+            prompt_dict = prompt_dict["prompt"]
+            return prompt_dict["#text"], self._type_from_str(prompt_dict["@response_type"])
+        return prompt_dict["prompt"]
+    
+    """
+    def _parse(self, text: str):
+        root = ET.fromstring(text)
+        if root.tag == "promptchain":
+            return [prompt.text for prompt in root.findall("prompt")], root.get("response_type")
+        elif root.tag == "iterativeprompt":
+            prompt_memory = root.find("prompt_memory")
+            return root.find("prompt").text, root.find("prompt_memory").text
+        else:
+            return root.text, self._type_from_str(root.get("response_type"))
+    """
+    
+    def _type_from_str(self, type_str: str):
+        
+        if type_str is None:
+            return None
+        
+        type_mapping = {
+            "str": str,
+            "int": int,
+            "float": float,
+            "bool": bool,
+            "list": List[str],
+            "dict": dict,
+            "tuple": tuple,
+            "set": set,
+            "None": type(None)
+        }
+        
+        assert type_str in type_mapping, f"Type {type_str} not found in type_mapping"
+        return type_mapping[type_str]
+    
+    
+if __name__ == "__main__":
+    parser = _PromptParser()
+    print(parser.parse("test"))
+

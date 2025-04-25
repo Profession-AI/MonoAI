@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 15.0.3"/>
-    <title>coicoi API documentation</title>
+    <title>coicoi.conf API documentation</title>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
@@ -16,24 +16,30 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>
+        <div>            <a class="pdoc-button module-list-button" href="../coicoi.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                &nbsp;coicoi</a>
+
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
-            <h2>Contents</h2>
-            <ul>
-  <li><a href="#quick-start">🚀 Quick Start</a></li>
-  <li><a href="#configuration">⚙️ Configuration</a></li>
-</ul>
 
 
-            <h2>Submodules</h2>
-            <ul>
-                    <li><a href="coicoi/prompts.html">prompts</a></li>
-                    <li><a href="coicoi/models.html">models</a></li>
-                    <li><a href="coicoi/conf.html">conf</a></li>
-            </ul>
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#CoiConf">CoiConf</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#CoiConf.__init__">CoiConf</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
 
 
 
@@ -47,226 +53,198 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-coicoi    </h1>
+<a href="./../coicoi.html">coicoi</a><wbr>.conf    </h1>
 
-                        <div class="docstring"><h3 id="collective-intelligence-via-collaborative-inference">Collective Intelligence via Collaborative Inference</h3>
+                
+                        <input id="mod-conf-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
-<p><strong>COICOI</strong> is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.</p>
+                        <label class="view-source-button" for="mod-conf-view-source"><span>View Source</span></label>
 
-<hr />
-
-<h2 id="quick-start">🚀 Quick Start</h2>
-
-<h3 id="prompts">Prompts</h3>
-
-<p>In COICOI, a <strong>prompt</strong> is the request you send to a model.<br />
-You can define prompts in three different ways:</p>
-
-<hr />
-
-<h4 id="1-plain-text">1. Plain Text</h4>
-
-<p>Directly write the prompt inside the <code>ask</code> method:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What is 2 + 2?&quot;</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<hr />
-
-<h4 id="2-prompt-class">2. <code>Prompt</code> Class</h4>
-
-<p>Use the <code>Prompt</code> class to enhance your prompts with additional parameters such as response types, chaining, and iteration control:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/prompts.html">coicoi.prompts</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Prompt</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="s2">&quot;What is 2 + 2?&quot;</span><span class="p">,</span> <span class="n">response_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<hr />
-
-<h4 id="3-prompt-files">3. <code>.prompt</code> Files</h4>
-
-<p>Store prompts in external <code>.prompt</code> files to separate your codebase from content logic.</p>
-
-<p><strong>Example - <code>sum.prompt</code>:</strong></p>
-
-<pre><code>What is 2 + 2?
-</code></pre>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/prompts.html">coicoi.prompts</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">Prompt</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
-<span class="n">prompt</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt_id</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="n">response_type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<p>You can also define additional metadata using an XML-like syntax inside <code>.prompt</code> files:</p>
-
-<p><strong>Example with metadata:</strong></p>
-
-<pre><code># sum.prompt
-&lt;prompt response_type="int"&gt;
-What is 2 + 2?
-&lt;/prompt&gt;
-</code></pre>
-
-<hr />
-
-<h3 id="models">Models</h3>
-
-<p>COICOI provides multiple model interfaces to handle different use cases, from basic generation to multi-model aggregation:</p>
-
-<hr />
-
-<h4 id="model"><code>Model</code></h4>
-
-<p>The standard interface for interacting with a single AI model.</p>
-
-<hr />
-
-<h4 id="multimodel"><code>MultiModel</code></h4>
-
-<p>Send a prompt to multiple models asynchronously and retrieve their individual outputs:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiModel</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">MultiModel</span><span class="p">(</span><span class="n">models</span><span class="o">=</span><span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;deepseek&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;chat&quot;</span><span class="p">}</span>
-<span class="p">])</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What is the capital of Italy?&quot;</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<hr />
-
-<h4 id="collectivemodel"><code>CollectiveModel</code></h4>
-
-<p>Send a prompt to multiple models and aggregate their outputs using a separate aggregator model for a richer, consolidated answer:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">CollectiveModel</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">CollectiveModel</span><span class="p">(</span>
-    <span class="n">models</span><span class="o">=</span><span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;deepseek&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;chat&quot;</span><span class="p">}</span>
-    <span class="p">],</span>
-    <span class="n">aggregator</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="s2">&quot;openai&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">}</span>
-<span class="p">)</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What is the capital of Italy?&quot;</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<hr />
-
-<h4 id="automodel"><code>AutoModel</code></h4>
-
-<p>Automatically select the best model for a given prompt based on configuration or inference:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn"><a href="coicoi/models.html">coicoi.models</a></span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModel</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModel</span><span class="p">()</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ask</span><span class="p">(</span><span class="s2">&quot;What is the capital of Italy?&quot;</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<hr />
-
-<h3 id="api-key-management">🔑 API Key Management</h3>
-
-<p>COICOI simplifies API key management through a <code>providers.keys</code> file in the root directory.<br />
-Each line should follow this format:</p>
-
-<pre><code>PROVIDER_NAME=API_KEY
-</code></pre>
-
-<p><strong>Example <code>providers.keys</code>:</strong></p>
-
-<pre><code>OPENAI=sk-proj-ABCDE12345
-DEEPSEEK=sk-proj-FGHIJ67890
-</code></pre>
-
-<p>COICOI automatically loads these keys at runtime — no extra setup needed.</p>
-
-<hr />
-
-<h2 id="configuration">⚙️ Configuration</h2>
-
-<p>Configure COICOI globally via a <code>coiconf.yaml</code> file.<br />
-Supported fields:</p>
-
-<table>
-<thead>
-<tr>
-  <th>Field</th>
-  <th>Description</th>
-  <th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><code>prompts_path</code></td>
-  <td>Directory where <code>.prompt</code> files are stored</td>
-  <td><code>""</code> (current folder)</td>
-</tr>
-<tr>
-  <td><code>keysfile_path</code></td>
-  <td>Path to the API keys file</td>
-  <td><code>"providers.keys"</code></td>
-</tr>
-<tr>
-  <td><code>base_model</code></td>
-  <td>Default model to use when no model is specified</td>
-  <td>None</td>
-</tr>
-</tbody>
-</table>
-
-<p><strong>Example <code>coiconf.yaml</code>:</strong></p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="nt">prompts_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prompts</span>
-<span class="nt">keysfile_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">providers.keys</span>
-<span class="nt">base_model</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openai</span>
-<span class="w">  </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt-4o-mini</span>
-</code></pre>
-</div>
-
-<hr />
-</div>
-
-                        <input id="mod-coicoi-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-
-                        <label class="view-source-button" for="mod-coicoi-view-source"><span>View Source</span></label>
-
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../README.md</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">   :start-line: 1</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="sd">   :end-before: ## 📚 Documentation</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">7</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;prompts&quot;</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;conf&quot;</span><span class="p">]</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.coiconf</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoiConf</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CoiConf&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
             </section>
+                <section id="CoiConf">
+                            <input id="CoiConf-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">CoiConf</span>:
+
+                <label class="view-source-button" for="CoiConf-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CoiConf"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CoiConf-8"><a href="#CoiConf-8"><span class="linenos">  8</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CoiConf</span><span class="p">:</span>
+</span><span id="CoiConf-9"><a href="#CoiConf-9"><span class="linenos">  9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf-10"><a href="#CoiConf-10"><span class="linenos"> 10</span></a><span class="sd">    A singleton class for managing configuration in a programmatic way.</span>
+</span><span id="CoiConf-11"><a href="#CoiConf-11"><span class="linenos"> 11</span></a><span class="sd">    Configuration defined here overrides the configuration in coiconf.yaml file.</span>
+</span><span id="CoiConf-12"><a href="#CoiConf-12"><span class="linenos"> 12</span></a>
+</span><span id="CoiConf-13"><a href="#CoiConf-13"><span class="linenos"> 13</span></a><span class="sd">    Examples</span>
+</span><span id="CoiConf-14"><a href="#CoiConf-14"><span class="linenos"> 14</span></a><span class="sd">    --------</span>
+</span><span id="CoiConf-15"><a href="#CoiConf-15"><span class="linenos"> 15</span></a><span class="sd">    ```</span>
+</span><span id="CoiConf-16"><a href="#CoiConf-16"><span class="linenos"> 16</span></a><span class="sd">    from coicoi.conf import CoiConf</span>
+</span><span id="CoiConf-17"><a href="#CoiConf-17"><span class="linenos"> 17</span></a><span class="sd">    </span>
+</span><span id="CoiConf-18"><a href="#CoiConf-18"><span class="linenos"> 18</span></a><span class="sd">    # override the base model</span>
+</span><span id="CoiConf-19"><a href="#CoiConf-19"><span class="linenos"> 19</span></a><span class="sd">    CoiConf()[&quot;base_model&quot;] = {</span>
+</span><span id="CoiConf-20"><a href="#CoiConf-20"><span class="linenos"> 20</span></a><span class="sd">        &quot;provider&quot;: &quot;openai&quot;,</span>
+</span><span id="CoiConf-21"><a href="#CoiConf-21"><span class="linenos"> 21</span></a><span class="sd">        &quot;model&quot;: &quot;gpt-4o-mini&quot;</span>
+</span><span id="CoiConf-22"><a href="#CoiConf-22"><span class="linenos"> 22</span></a><span class="sd">    }</span>
+</span><span id="CoiConf-23"><a href="#CoiConf-23"><span class="linenos"> 23</span></a><span class="sd">    </span>
+</span><span id="CoiConf-24"><a href="#CoiConf-24"><span class="linenos"> 24</span></a><span class="sd">    # set prompts path programmatically</span>
+</span><span id="CoiConf-25"><a href="#CoiConf-25"><span class="linenos"> 25</span></a><span class="sd">    CoiConf()[&quot;prompts_path&quot;] = &quot;prompts&quot;</span>
+</span><span id="CoiConf-26"><a href="#CoiConf-26"><span class="linenos"> 26</span></a><span class="sd">    ```</span>
+</span><span id="CoiConf-27"><a href="#CoiConf-27"><span class="linenos"> 27</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="CoiConf-28"><a href="#CoiConf-28"><span class="linenos"> 28</span></a>    
+</span><span id="CoiConf-29"><a href="#CoiConf-29"><span class="linenos"> 29</span></a>    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CoiConf-30"><a href="#CoiConf-30"><span class="linenos"> 30</span></a>    <span class="n">_DEFAULT_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="CoiConf-31"><a href="#CoiConf-31"><span class="linenos"> 31</span></a>        <span class="s1">&#39;keysfile_path&#39;</span><span class="p">:</span> <span class="s2">&quot;providers.keys&quot;</span><span class="p">,</span>
+</span><span id="CoiConf-32"><a href="#CoiConf-32"><span class="linenos"> 32</span></a>        <span class="s1">&#39;prompts_path&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+</span><span id="CoiConf-33"><a href="#CoiConf-33"><span class="linenos"> 33</span></a>    <span class="p">}</span>
+</span><span id="CoiConf-34"><a href="#CoiConf-34"><span class="linenos"> 34</span></a>    
+</span><span id="CoiConf-35"><a href="#CoiConf-35"><span class="linenos"> 35</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span id="CoiConf-36"><a href="#CoiConf-36"><span class="linenos"> 36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf-37"><a href="#CoiConf-37"><span class="linenos"> 37</span></a><span class="sd">        Create or return the singleton instance.</span>
+</span><span id="CoiConf-38"><a href="#CoiConf-38"><span class="linenos"> 38</span></a>
+</span><span id="CoiConf-39"><a href="#CoiConf-39"><span class="linenos"> 39</span></a><span class="sd">        Returns</span>
+</span><span id="CoiConf-40"><a href="#CoiConf-40"><span class="linenos"> 40</span></a><span class="sd">        -------</span>
+</span><span id="CoiConf-41"><a href="#CoiConf-41"><span class="linenos"> 41</span></a><span class="sd">        Config</span>
+</span><span id="CoiConf-42"><a href="#CoiConf-42"><span class="linenos"> 42</span></a><span class="sd">            The singleton instance</span>
+</span><span id="CoiConf-43"><a href="#CoiConf-43"><span class="linenos"> 43</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoiConf-44"><a href="#CoiConf-44"><span class="linenos"> 44</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CoiConf-45"><a href="#CoiConf-45"><span class="linenos"> 45</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CoiConf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="CoiConf-46"><a href="#CoiConf-46"><span class="linenos"> 46</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
+</span><span id="CoiConf-47"><a href="#CoiConf-47"><span class="linenos"> 47</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</span><span id="CoiConf-48"><a href="#CoiConf-48"><span class="linenos"> 48</span></a>    
+</span><span id="CoiConf-49"><a href="#CoiConf-49"><span class="linenos"> 49</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CoiConf-50"><a href="#CoiConf-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf-51"><a href="#CoiConf-51"><span class="linenos"> 51</span></a><span class="sd">        Initialize the Config instance.</span>
+</span><span id="CoiConf-52"><a href="#CoiConf-52"><span class="linenos"> 52</span></a><span class="sd">        </span>
+</span><span id="CoiConf-53"><a href="#CoiConf-53"><span class="linenos"> 53</span></a><span class="sd">        Loads and validates the configuration file, setting up defaults</span>
+</span><span id="CoiConf-54"><a href="#CoiConf-54"><span class="linenos"> 54</span></a><span class="sd">        and performing environment variable interpolation.</span>
+</span><span id="CoiConf-55"><a href="#CoiConf-55"><span class="linenos"> 55</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoiConf-56"><a href="#CoiConf-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;coiconf.yaml&#39;</span><span class="p">)</span>
+</span><span id="CoiConf-57"><a href="#CoiConf-57"><span class="linenos"> 57</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_CONFIG</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="CoiConf-58"><a href="#CoiConf-58"><span class="linenos"> 58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config</span><span class="p">()</span>
+</span><span id="CoiConf-59"><a href="#CoiConf-59"><span class="linenos"> 59</span></a>    
+</span><span id="CoiConf-60"><a href="#CoiConf-60"><span class="linenos"> 60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CoiConf-61"><a href="#CoiConf-61"><span class="linenos"> 61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf-62"><a href="#CoiConf-62"><span class="linenos"> 62</span></a><span class="sd">        Load configuration from the YAML file.</span>
+</span><span id="CoiConf-63"><a href="#CoiConf-63"><span class="linenos"> 63</span></a><span class="sd">        </span>
+</span><span id="CoiConf-64"><a href="#CoiConf-64"><span class="linenos"> 64</span></a><span class="sd">        Handles file reading, YAML parsing, environment variable interpolation,</span>
+</span><span id="CoiConf-65"><a href="#CoiConf-65"><span class="linenos"> 65</span></a><span class="sd">        and configuration validation.</span>
+</span><span id="CoiConf-66"><a href="#CoiConf-66"><span class="linenos"> 66</span></a>
+</span><span id="CoiConf-67"><a href="#CoiConf-67"><span class="linenos"> 67</span></a><span class="sd">        Raises</span>
+</span><span id="CoiConf-68"><a href="#CoiConf-68"><span class="linenos"> 68</span></a><span class="sd">        ------</span>
+</span><span id="CoiConf-69"><a href="#CoiConf-69"><span class="linenos"> 69</span></a><span class="sd">        FileNotFoundError</span>
+</span><span id="CoiConf-70"><a href="#CoiConf-70"><span class="linenos"> 70</span></a><span class="sd">            If the configuration file doesn&#39;t exist</span>
+</span><span id="CoiConf-71"><a href="#CoiConf-71"><span class="linenos"> 71</span></a><span class="sd">        yaml.ParserError</span>
+</span><span id="CoiConf-72"><a href="#CoiConf-72"><span class="linenos"> 72</span></a><span class="sd">            If the YAML syntax is invalid</span>
+</span><span id="CoiConf-73"><a href="#CoiConf-73"><span class="linenos"> 73</span></a><span class="sd">        ValueError</span>
+</span><span id="CoiConf-74"><a href="#CoiConf-74"><span class="linenos"> 74</span></a><span class="sd">            If the configuration structure is invalid</span>
+</span><span id="CoiConf-75"><a href="#CoiConf-75"><span class="linenos"> 75</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoiConf-76"><a href="#CoiConf-76"><span class="linenos"> 76</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="CoiConf-77"><a href="#CoiConf-77"><span class="linenos"> 77</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="CoiConf-78"><a href="#CoiConf-78"><span class="linenos"> 78</span></a>                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="CoiConf-79"><a href="#CoiConf-79"><span class="linenos"> 79</span></a>                    <span class="n">file_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="CoiConf-80"><a href="#CoiConf-80"><span class="linenos"> 80</span></a>                <span class="k">if</span> <span class="n">file_config</span><span class="p">:</span>
+</span><span id="CoiConf-81"><a href="#CoiConf-81"><span class="linenos"> 81</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">file_config</span><span class="p">)</span>            
+</span><span id="CoiConf-82"><a href="#CoiConf-82"><span class="linenos"> 82</span></a>            
+</span><span id="CoiConf-83"><a href="#CoiConf-83"><span class="linenos"> 83</span></a>        <span class="k">except</span> <span class="n">ParserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="CoiConf-84"><a href="#CoiConf-84"><span class="linenos"> 84</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid YAML syntax in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="CoiConf-85"><a href="#CoiConf-85"><span class="linenos"> 85</span></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="CoiConf-86"><a href="#CoiConf-86"><span class="linenos"> 86</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading configuration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="CoiConf-87"><a href="#CoiConf-87"><span class="linenos"> 87</span></a>    
+</span><span id="CoiConf-88"><a href="#CoiConf-88"><span class="linenos"> 88</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">override</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CoiConf-89"><a href="#CoiConf-89"><span class="linenos"> 89</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf-90"><a href="#CoiConf-90"><span class="linenos"> 90</span></a><span class="sd">        Recursively merge override configuration into base configuration.</span>
+</span><span id="CoiConf-91"><a href="#CoiConf-91"><span class="linenos"> 91</span></a>
+</span><span id="CoiConf-92"><a href="#CoiConf-92"><span class="linenos"> 92</span></a><span class="sd">        Parameters</span>
+</span><span id="CoiConf-93"><a href="#CoiConf-93"><span class="linenos"> 93</span></a><span class="sd">        ----------</span>
+</span><span id="CoiConf-94"><a href="#CoiConf-94"><span class="linenos"> 94</span></a><span class="sd">        base : Dict</span>
+</span><span id="CoiConf-95"><a href="#CoiConf-95"><span class="linenos"> 95</span></a><span class="sd">            The base configuration dictionary</span>
+</span><span id="CoiConf-96"><a href="#CoiConf-96"><span class="linenos"> 96</span></a><span class="sd">        override : Dict</span>
+</span><span id="CoiConf-97"><a href="#CoiConf-97"><span class="linenos"> 97</span></a><span class="sd">            The override configuration dictionary</span>
+</span><span id="CoiConf-98"><a href="#CoiConf-98"><span class="linenos"> 98</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoiConf-99"><a href="#CoiConf-99"><span class="linenos"> 99</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">override</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="CoiConf-100"><a href="#CoiConf-100"><span class="linenos">100</span></a>            <span class="k">if</span> <span class="p">(</span>
+</span><span id="CoiConf-101"><a href="#CoiConf-101"><span class="linenos">101</span></a>                <span class="n">key</span> <span class="ow">in</span> <span class="n">base</span> <span class="ow">and</span> 
+</span><span id="CoiConf-102"><a href="#CoiConf-102"><span class="linenos">102</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> 
+</span><span id="CoiConf-103"><a href="#CoiConf-103"><span class="linenos">103</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+</span><span id="CoiConf-104"><a href="#CoiConf-104"><span class="linenos">104</span></a>            <span class="p">):</span>
+</span><span id="CoiConf-105"><a href="#CoiConf-105"><span class="linenos">105</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="CoiConf-106"><a href="#CoiConf-106"><span class="linenos">106</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="CoiConf-107"><a href="#CoiConf-107"><span class="linenos">107</span></a>                <span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="CoiConf-108"><a href="#CoiConf-108"><span class="linenos">108</span></a>        
+</span><span id="CoiConf-109"><a href="#CoiConf-109"><span class="linenos">109</span></a>        
+</span><span id="CoiConf-110"><a href="#CoiConf-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="CoiConf-111"><a href="#CoiConf-111"><span class="linenos">111</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="CoiConf-112"><a href="#CoiConf-112"><span class="linenos">112</span></a>    
+</span><span id="CoiConf-113"><a href="#CoiConf-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CoiConf-114"><a href="#CoiConf-114"><span class="linenos">114</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>A singleton class for managing configuration in a programmatic way.
+Configuration defined here overrides the configuration in coiconf.yaml file.</p>
+
+<h6 id="examples">Examples</h6>
+
+<pre><code>from <a href="">coicoi.conf</a> import CoiConf
+
+# override the base model
+CoiConf()["base_model"] = {
+    "provider": "openai",
+    "model": "gpt-4o-mini"
+}
+
+# set prompts path programmatically
+CoiConf()["prompts_path"] = "prompts"
+</code></pre>
+</div>
+
+
+                            <div id="CoiConf.__init__" class="classattr">
+                                        <input id="CoiConf.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">CoiConf</span><span class="signature pdoc-code condensed">()</span>
+
+                <label class="view-source-button" for="CoiConf.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CoiConf.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CoiConf.__init__-35"><a href="#CoiConf.__init__-35"><span class="linenos">35</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span id="CoiConf.__init__-36"><a href="#CoiConf.__init__-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CoiConf.__init__-37"><a href="#CoiConf.__init__-37"><span class="linenos">37</span></a><span class="sd">        Create or return the singleton instance.</span>
+</span><span id="CoiConf.__init__-38"><a href="#CoiConf.__init__-38"><span class="linenos">38</span></a>
+</span><span id="CoiConf.__init__-39"><a href="#CoiConf.__init__-39"><span class="linenos">39</span></a><span class="sd">        Returns</span>
+</span><span id="CoiConf.__init__-40"><a href="#CoiConf.__init__-40"><span class="linenos">40</span></a><span class="sd">        -------</span>
+</span><span id="CoiConf.__init__-41"><a href="#CoiConf.__init__-41"><span class="linenos">41</span></a><span class="sd">        Config</span>
+</span><span id="CoiConf.__init__-42"><a href="#CoiConf.__init__-42"><span class="linenos">42</span></a><span class="sd">            The singleton instance</span>
+</span><span id="CoiConf.__init__-43"><a href="#CoiConf.__init__-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CoiConf.__init__-44"><a href="#CoiConf.__init__-44"><span class="linenos">44</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CoiConf.__init__-45"><a href="#CoiConf.__init__-45"><span class="linenos">45</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CoiConf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="CoiConf.__init__-46"><a href="#CoiConf.__init__-46"><span class="linenos">46</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
+</span><span id="CoiConf.__init__-47"><a href="#CoiConf.__init__-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create or return the singleton instance.</p>
+
+<h6 id="returns">Returns</h6>
+
+<ul>
+<li><strong>Config</strong>: The singleton instance</li>
+</ul>
+</div>
+
+
+                            </div>
+                </section>
     </main>
 <script>
     function escapeHTML(html) {
@@ -320,7 +298,7 @@ Supported fields:</p>
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "search.js";
+                script.src = "../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -362,7 +340,7 @@ Supported fields:</p>
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }

@@ -83,3 +83,6 @@ settings_local.py
 *.keys
 _.py
 **/_.py
+
+*.prompts
+prompts/

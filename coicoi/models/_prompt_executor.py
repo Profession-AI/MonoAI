@@ -89,7 +89,6 @@ class PromptExecutorMixin:
         """
         response = ""
         memory = ""
-        print(type(prompt), prompt)
         for i in range(prompt._size):
             if i > 0 and prompt._has_memory:
                 if prompt._retain_all:
@@ -99,7 +98,6 @@ class PromptExecutorMixin:
                 current_prompt = prompt._format(i, memory)
             else:
                 current_prompt = prompt._format(i)
-            print(current_prompt)
             current_response = agent.run_sync(current_prompt).output
             response += current_response
         return response

@@ -1,6 +1,6 @@
 from ..models import CollaborativeModel
 from typing import List, Dict, Union, Callable
-from .._tools._base_tools import BaseTool
+from ..tools._base_tools import BaseTool
 
 class CollaborativeAgent(CollaborativeModel):
 

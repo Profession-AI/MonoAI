@@ -27,10 +27,34 @@
                    pattern=".+" required>
 
 
-            <h2>Submodules</h2>
-            <ul>
-                    <li><a href="tools/websearch.html">websearch</a></li>
-            </ul>
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#WebSearch">WebSearch</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#WebSearch.__init__">WebSearch</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#WebSearch.search">search</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#WebScraping">WebScraping</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#WebScraping.__init__">WebScraping</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#WebScraping.scrape">scrape</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
 
 
 
@@ -46,16 +70,389 @@
                     <h1 class="modulename">
 <a href="./../coicoi.html">coicoi</a><wbr>.tools    </h1>
 
-                
+                        <div class="docstring"><p>Tools are used to extend the capabilities of the model.</p>
+</div>
+
                         <input id="mod-tools-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-tools-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.websearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSearch</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">Tools are used to extend the capabilities of the model.</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.websearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSearch</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.webscraping</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebScraping</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">8</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WebSearch&quot;</span><span class="p">,</span> <span class="s2">&quot;WebScraping&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
             </section>
+                <section id="WebSearch">
+                            <input id="WebSearch-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">WebSearch</span>:
+
+                <label class="view-source-button" for="WebSearch-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebSearch"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebSearch-2"><a href="#WebSearch-2"><span class="linenos"> 2</span></a><span class="k">class</span><span class="w"> </span><span class="nc">WebSearch</span><span class="p">():</span>
+</span><span id="WebSearch-3"><a href="#WebSearch-3"><span class="linenos"> 3</span></a>
+</span><span id="WebSearch-4"><a href="#WebSearch-4"><span class="linenos"> 4</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebSearch-5"><a href="#WebSearch-5"><span class="linenos"> 5</span></a><span class="sd">    WebSearch is a tool that allows you to search the web. </span>
+</span><span id="WebSearch-6"><a href="#WebSearch-6"><span class="linenos"> 6</span></a><span class="sd">    It uses the DuckDuckGo or Tavily API to search the web.</span>
+</span><span id="WebSearch-7"><a href="#WebSearch-7"><span class="linenos"> 7</span></a>
+</span><span id="WebSearch-8"><a href="#WebSearch-8"><span class="linenos"> 8</span></a><span class="sd">    Examples</span>
+</span><span id="WebSearch-9"><a href="#WebSearch-9"><span class="linenos"> 9</span></a><span class="sd">    --------</span>
+</span><span id="WebSearch-10"><a href="#WebSearch-10"><span class="linenos">10</span></a>
+</span><span id="WebSearch-11"><a href="#WebSearch-11"><span class="linenos">11</span></a><span class="sd">    ```python</span>
+</span><span id="WebSearch-12"><a href="#WebSearch-12"><span class="linenos">12</span></a><span class="sd">    websearch = WebSearch(engine=&quot;duckduckgo&quot;, max_results=5)</span>
+</span><span id="WebSearch-13"><a href="#WebSearch-13"><span class="linenos">13</span></a><span class="sd">    result = websearch.search(&quot;What is the capital of France?&quot;)</span>
+</span><span id="WebSearch-14"><a href="#WebSearch-14"><span class="linenos">14</span></a><span class="sd">    print(result[&quot;text&quot;]) # print the result merged into a single string</span>
+</span><span id="WebSearch-15"><a href="#WebSearch-15"><span class="linenos">15</span></a><span class="sd">    print(result[&quot;data&quot;]) # print the result as a list of dictionaries</span>
+</span><span id="WebSearch-16"><a href="#WebSearch-16"><span class="linenos">16</span></a><span class="sd">    ```</span>
+</span><span id="WebSearch-17"><a href="#WebSearch-17"><span class="linenos">17</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="WebSearch-18"><a href="#WebSearch-18"><span class="linenos">18</span></a>
+</span><span id="WebSearch-19"><a href="#WebSearch-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;duckduckgo&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+</span><span id="WebSearch-20"><a href="#WebSearch-20"><span class="linenos">20</span></a>
+</span><span id="WebSearch-21"><a href="#WebSearch-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebSearch-22"><a href="#WebSearch-22"><span class="linenos">22</span></a><span class="sd">        Initialize the WebSearch tool.</span>
+</span><span id="WebSearch-23"><a href="#WebSearch-23"><span class="linenos">23</span></a>
+</span><span id="WebSearch-24"><a href="#WebSearch-24"><span class="linenos">24</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebSearch-25"><a href="#WebSearch-25"><span class="linenos">25</span></a><span class="sd">        ----------</span>
+</span><span id="WebSearch-26"><a href="#WebSearch-26"><span class="linenos">26</span></a><span class="sd">        engine: str, optional</span>
+</span><span id="WebSearch-27"><a href="#WebSearch-27"><span class="linenos">27</span></a><span class="sd">            The search engine to use (duckduckgo or tavily, default is duckduckgo)</span>
+</span><span id="WebSearch-28"><a href="#WebSearch-28"><span class="linenos">28</span></a><span class="sd">        max_results: int, optional</span>
+</span><span id="WebSearch-29"><a href="#WebSearch-29"><span class="linenos">29</span></a><span class="sd">            The maximum number of results to return (default is 5)</span>
+</span><span id="WebSearch-30"><a href="#WebSearch-30"><span class="linenos">30</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebSearch-31"><a href="#WebSearch-31"><span class="linenos">31</span></a>
+</span><span id="WebSearch-32"><a href="#WebSearch-32"><span class="linenos">32</span></a>        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;duckduckgo&quot;</span><span class="p">:</span>
+</span><span id="WebSearch-33"><a href="#WebSearch-33"><span class="linenos">33</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_DuckDuckGoSearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+</span><span id="WebSearch-34"><a href="#WebSearch-34"><span class="linenos">34</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;tavily&quot;</span><span class="p">:</span>
+</span><span id="WebSearch-35"><a href="#WebSearch-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_TavilySearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+</span><span id="WebSearch-36"><a href="#WebSearch-36"><span class="linenos">36</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="WebSearch-37"><a href="#WebSearch-37"><span class="linenos">37</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2"> (must be &#39;duckduckgo&#39; or &#39;tavily&#39;)&quot;</span><span class="p">)</span>
+</span><span id="WebSearch-38"><a href="#WebSearch-38"><span class="linenos">38</span></a>
+</span><span id="WebSearch-39"><a href="#WebSearch-39"><span class="linenos">39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebSearch-40"><a href="#WebSearch-40"><span class="linenos">40</span></a>
+</span><span id="WebSearch-41"><a href="#WebSearch-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebSearch-42"><a href="#WebSearch-42"><span class="linenos">42</span></a><span class="sd">        Search the web.</span>
+</span><span id="WebSearch-43"><a href="#WebSearch-43"><span class="linenos">43</span></a>
+</span><span id="WebSearch-44"><a href="#WebSearch-44"><span class="linenos">44</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebSearch-45"><a href="#WebSearch-45"><span class="linenos">45</span></a><span class="sd">        ----------</span>
+</span><span id="WebSearch-46"><a href="#WebSearch-46"><span class="linenos">46</span></a><span class="sd">        query: str</span>
+</span><span id="WebSearch-47"><a href="#WebSearch-47"><span class="linenos">47</span></a><span class="sd">            The query to search for</span>
+</span><span id="WebSearch-48"><a href="#WebSearch-48"><span class="linenos">48</span></a>
+</span><span id="WebSearch-49"><a href="#WebSearch-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
+</span><span id="WebSearch-50"><a href="#WebSearch-50"><span class="linenos">50</span></a><span class="sd">        -------</span>
+</span><span id="WebSearch-51"><a href="#WebSearch-51"><span class="linenos">51</span></a><span class="sd">        dict</span>
+</span><span id="WebSearch-52"><a href="#WebSearch-52"><span class="linenos">52</span></a><span class="sd">            The text response from the search engine.</span>
+</span><span id="WebSearch-53"><a href="#WebSearch-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebSearch-54"><a href="#WebSearch-54"><span class="linenos">54</span></a>        <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span id="WebSearch-55"><a href="#WebSearch-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>WebSearch is a tool that allows you to search the web. 
+It uses the DuckDuckGo or Tavily API to search the web.</p>
+
+<h6 id="examples">Examples</h6>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">websearch</span> <span class="o">=</span> <span class="n">WebSearch</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="s2">&quot;duckduckgo&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">websearch</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span> <span class="c1"># print the result merged into a single string</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span> <span class="c1"># print the result as a list of dictionaries</span>
+</code></pre>
+</div>
+</div>
+
+
+                            <div id="WebSearch.__init__" class="classattr">
+                                        <input id="WebSearch.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">WebSearch</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;duckduckgo&#39;</span>, </span><span class="param"><span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span></span>)</span>
+
+                <label class="view-source-button" for="WebSearch.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebSearch.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebSearch.__init__-19"><a href="#WebSearch.__init__-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;duckduckgo&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+</span><span id="WebSearch.__init__-20"><a href="#WebSearch.__init__-20"><span class="linenos">20</span></a>
+</span><span id="WebSearch.__init__-21"><a href="#WebSearch.__init__-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebSearch.__init__-22"><a href="#WebSearch.__init__-22"><span class="linenos">22</span></a><span class="sd">        Initialize the WebSearch tool.</span>
+</span><span id="WebSearch.__init__-23"><a href="#WebSearch.__init__-23"><span class="linenos">23</span></a>
+</span><span id="WebSearch.__init__-24"><a href="#WebSearch.__init__-24"><span class="linenos">24</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebSearch.__init__-25"><a href="#WebSearch.__init__-25"><span class="linenos">25</span></a><span class="sd">        ----------</span>
+</span><span id="WebSearch.__init__-26"><a href="#WebSearch.__init__-26"><span class="linenos">26</span></a><span class="sd">        engine: str, optional</span>
+</span><span id="WebSearch.__init__-27"><a href="#WebSearch.__init__-27"><span class="linenos">27</span></a><span class="sd">            The search engine to use (duckduckgo or tavily, default is duckduckgo)</span>
+</span><span id="WebSearch.__init__-28"><a href="#WebSearch.__init__-28"><span class="linenos">28</span></a><span class="sd">        max_results: int, optional</span>
+</span><span id="WebSearch.__init__-29"><a href="#WebSearch.__init__-29"><span class="linenos">29</span></a><span class="sd">            The maximum number of results to return (default is 5)</span>
+</span><span id="WebSearch.__init__-30"><a href="#WebSearch.__init__-30"><span class="linenos">30</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebSearch.__init__-31"><a href="#WebSearch.__init__-31"><span class="linenos">31</span></a>
+</span><span id="WebSearch.__init__-32"><a href="#WebSearch.__init__-32"><span class="linenos">32</span></a>        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;duckduckgo&quot;</span><span class="p">:</span>
+</span><span id="WebSearch.__init__-33"><a href="#WebSearch.__init__-33"><span class="linenos">33</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_DuckDuckGoSearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+</span><span id="WebSearch.__init__-34"><a href="#WebSearch.__init__-34"><span class="linenos">34</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;tavily&quot;</span><span class="p">:</span>
+</span><span id="WebSearch.__init__-35"><a href="#WebSearch.__init__-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_TavilySearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+</span><span id="WebSearch.__init__-36"><a href="#WebSearch.__init__-36"><span class="linenos">36</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="WebSearch.__init__-37"><a href="#WebSearch.__init__-37"><span class="linenos">37</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2"> (must be &#39;duckduckgo&#39; or &#39;tavily&#39;)&quot;</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize the WebSearch tool.</p>
+
+<h2 id="parameters">Parameters:</h2>
+
+<p>engine: str, optional
+    The search engine to use (duckduckgo or tavily, default is duckduckgo)
+max_results: int, optional
+    The maximum number of results to return (default is 5)</p>
+</div>
+
+
+                            </div>
+                            <div id="WebSearch.search" class="classattr">
+                                        <input id="WebSearch.search-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">search</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">query</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="WebSearch.search-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebSearch.search"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebSearch.search-39"><a href="#WebSearch.search-39"><span class="linenos">39</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebSearch.search-40"><a href="#WebSearch.search-40"><span class="linenos">40</span></a>
+</span><span id="WebSearch.search-41"><a href="#WebSearch.search-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebSearch.search-42"><a href="#WebSearch.search-42"><span class="linenos">42</span></a><span class="sd">        Search the web.</span>
+</span><span id="WebSearch.search-43"><a href="#WebSearch.search-43"><span class="linenos">43</span></a>
+</span><span id="WebSearch.search-44"><a href="#WebSearch.search-44"><span class="linenos">44</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebSearch.search-45"><a href="#WebSearch.search-45"><span class="linenos">45</span></a><span class="sd">        ----------</span>
+</span><span id="WebSearch.search-46"><a href="#WebSearch.search-46"><span class="linenos">46</span></a><span class="sd">        query: str</span>
+</span><span id="WebSearch.search-47"><a href="#WebSearch.search-47"><span class="linenos">47</span></a><span class="sd">            The query to search for</span>
+</span><span id="WebSearch.search-48"><a href="#WebSearch.search-48"><span class="linenos">48</span></a>
+</span><span id="WebSearch.search-49"><a href="#WebSearch.search-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
+</span><span id="WebSearch.search-50"><a href="#WebSearch.search-50"><span class="linenos">50</span></a><span class="sd">        -------</span>
+</span><span id="WebSearch.search-51"><a href="#WebSearch.search-51"><span class="linenos">51</span></a><span class="sd">        dict</span>
+</span><span id="WebSearch.search-52"><a href="#WebSearch.search-52"><span class="linenos">52</span></a><span class="sd">            The text response from the search engine.</span>
+</span><span id="WebSearch.search-53"><a href="#WebSearch.search-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebSearch.search-54"><a href="#WebSearch.search-54"><span class="linenos">54</span></a>        <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span id="WebSearch.search-55"><a href="#WebSearch.search-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Search the web.</p>
+
+<h2 id="parameters">Parameters:</h2>
+
+<p>query: str
+    The query to search for</p>
+
+<h2 id="returns">Returns:</h2>
+
+<p>dict
+    The text response from the search engine.</p>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="WebScraping">
+                            <input id="WebScraping-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">WebScraping</span>:
+
+                <label class="view-source-button" for="WebScraping-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebScraping"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebScraping-2"><a href="#WebScraping-2"><span class="linenos"> 2</span></a><span class="k">class</span><span class="w"> </span><span class="nc">WebScraping</span><span class="p">():</span>
+</span><span id="WebScraping-3"><a href="#WebScraping-3"><span class="linenos"> 3</span></a>
+</span><span id="WebScraping-4"><a href="#WebScraping-4"><span class="linenos"> 4</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebScraping-5"><a href="#WebScraping-5"><span class="linenos"> 5</span></a><span class="sd">    WebScraping is a tool that allows you to scrape the web.</span>
+</span><span id="WebScraping-6"><a href="#WebScraping-6"><span class="linenos"> 6</span></a><span class="sd">    It uses the requests library to scrape the web.</span>
+</span><span id="WebScraping-7"><a href="#WebScraping-7"><span class="linenos"> 7</span></a>
+</span><span id="WebScraping-8"><a href="#WebScraping-8"><span class="linenos"> 8</span></a><span class="sd">    Examples</span>
+</span><span id="WebScraping-9"><a href="#WebScraping-9"><span class="linenos"> 9</span></a><span class="sd">    --------</span>
+</span><span id="WebScraping-10"><a href="#WebScraping-10"><span class="linenos">10</span></a>
+</span><span id="WebScraping-11"><a href="#WebScraping-11"><span class="linenos">11</span></a><span class="sd">    ```python</span>
+</span><span id="WebScraping-12"><a href="#WebScraping-12"><span class="linenos">12</span></a><span class="sd">    webscraping = WebScraping()</span>
+</span><span id="WebScraping-13"><a href="#WebScraping-13"><span class="linenos">13</span></a><span class="sd">    result = webscraping.scrape(&quot;https://www.scrapethissite.com&quot;)</span>
+</span><span id="WebScraping-14"><a href="#WebScraping-14"><span class="linenos">14</span></a><span class="sd">    print(result[&quot;html&quot;]) # print the html of the page</span>
+</span><span id="WebScraping-15"><a href="#WebScraping-15"><span class="linenos">15</span></a><span class="sd">    print(result[&quot;text&quot;]) # print the content of the page merged into a single string</span>
+</span><span id="WebScraping-16"><a href="#WebScraping-16"><span class="linenos">16</span></a><span class="sd">    ```</span>
+</span><span id="WebScraping-17"><a href="#WebScraping-17"><span class="linenos">17</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="WebScraping-18"><a href="#WebScraping-18"><span class="linenos">18</span></a>
+</span><span id="WebScraping-19"><a href="#WebScraping-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;requests&quot;</span><span class="p">,</span> <span class="n">deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="WebScraping-20"><a href="#WebScraping-20"><span class="linenos">20</span></a>
+</span><span id="WebScraping-21"><a href="#WebScraping-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebScraping-22"><a href="#WebScraping-22"><span class="linenos">22</span></a><span class="sd">        Initialize the WebScraping tool.</span>
+</span><span id="WebScraping-23"><a href="#WebScraping-23"><span class="linenos">23</span></a>
+</span><span id="WebScraping-24"><a href="#WebScraping-24"><span class="linenos">24</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebScraping-25"><a href="#WebScraping-25"><span class="linenos">25</span></a><span class="sd">        ----------</span>
+</span><span id="WebScraping-26"><a href="#WebScraping-26"><span class="linenos">26</span></a><span class="sd">        engine: str, optional</span>
+</span><span id="WebScraping-27"><a href="#WebScraping-27"><span class="linenos">27</span></a><span class="sd">            The engine to use (requests, tavily, selenium. Default is requests)</span>
+</span><span id="WebScraping-28"><a href="#WebScraping-28"><span class="linenos">28</span></a><span class="sd">        deep: bool, optional</span>
+</span><span id="WebScraping-29"><a href="#WebScraping-29"><span class="linenos">29</span></a><span class="sd">            If using tavily, whether to use the advanced extraction mode (default is False)</span>
+</span><span id="WebScraping-30"><a href="#WebScraping-30"><span class="linenos">30</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebScraping-31"><a href="#WebScraping-31"><span class="linenos">31</span></a>
+</span><span id="WebScraping-32"><a href="#WebScraping-32"><span class="linenos">32</span></a>        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;requests&quot;</span><span class="p">:</span>
+</span><span id="WebScraping-33"><a href="#WebScraping-33"><span class="linenos">33</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_RequestsScraper</span><span class="p">()</span>
+</span><span id="WebScraping-34"><a href="#WebScraping-34"><span class="linenos">34</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;tavily&quot;</span><span class="p">:</span>
+</span><span id="WebScraping-35"><a href="#WebScraping-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_TavilyScraper</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="n">deep</span><span class="p">)</span>
+</span><span id="WebScraping-36"><a href="#WebScraping-36"><span class="linenos">36</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;selenium&quot;</span><span class="p">:</span>
+</span><span id="WebScraping-37"><a href="#WebScraping-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_SeleniumScraper</span><span class="p">()</span>
+</span><span id="WebScraping-38"><a href="#WebScraping-38"><span class="linenos">38</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="WebScraping-39"><a href="#WebScraping-39"><span class="linenos">39</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2"> (must be &#39;requests&#39;, &#39;tavily&#39;, or &#39;selenium&#39;)&quot;</span><span class="p">)</span>
+</span><span id="WebScraping-40"><a href="#WebScraping-40"><span class="linenos">40</span></a>
+</span><span id="WebScraping-41"><a href="#WebScraping-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebScraping-42"><a href="#WebScraping-42"><span class="linenos">42</span></a>
+</span><span id="WebScraping-43"><a href="#WebScraping-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebScraping-44"><a href="#WebScraping-44"><span class="linenos">44</span></a><span class="sd">        Scrape a webpage.</span>
+</span><span id="WebScraping-45"><a href="#WebScraping-45"><span class="linenos">45</span></a>
+</span><span id="WebScraping-46"><a href="#WebScraping-46"><span class="linenos">46</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebScraping-47"><a href="#WebScraping-47"><span class="linenos">47</span></a><span class="sd">        ----------</span>
+</span><span id="WebScraping-48"><a href="#WebScraping-48"><span class="linenos">48</span></a><span class="sd">        url: str</span>
+</span><span id="WebScraping-49"><a href="#WebScraping-49"><span class="linenos">49</span></a><span class="sd">            The url to scrape</span>
+</span><span id="WebScraping-50"><a href="#WebScraping-50"><span class="linenos">50</span></a>
+</span><span id="WebScraping-51"><a href="#WebScraping-51"><span class="linenos">51</span></a><span class="sd">        Returns:</span>
+</span><span id="WebScraping-52"><a href="#WebScraping-52"><span class="linenos">52</span></a><span class="sd">        -------</span>
+</span><span id="WebScraping-53"><a href="#WebScraping-53"><span class="linenos">53</span></a><span class="sd">        dict</span>
+</span><span id="WebScraping-54"><a href="#WebScraping-54"><span class="linenos">54</span></a><span class="sd">            The response from the scraper.</span>
+</span><span id="WebScraping-55"><a href="#WebScraping-55"><span class="linenos">55</span></a><span class="sd">            html: str</span>
+</span><span id="WebScraping-56"><a href="#WebScraping-56"><span class="linenos">56</span></a><span class="sd">            The html of the page (not available if using tavily)</span>
+</span><span id="WebScraping-57"><a href="#WebScraping-57"><span class="linenos">57</span></a><span class="sd">            text: str</span>
+</span><span id="WebScraping-58"><a href="#WebScraping-58"><span class="linenos">58</span></a><span class="sd">            The content of the page merged into a single string</span>
+</span><span id="WebScraping-59"><a href="#WebScraping-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebScraping-60"><a href="#WebScraping-60"><span class="linenos">60</span></a>        <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span id="WebScraping-61"><a href="#WebScraping-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>WebScraping is a tool that allows you to scrape the web.
+It uses the requests library to scrape the web.</p>
+
+<h6 id="examples">Examples</h6>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="n">webscraping</span> <span class="o">=</span> <span class="n">WebScraping</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">webscraping</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="s2">&quot;https://www.scrapethissite.com&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;html&quot;</span><span class="p">])</span> <span class="c1"># print the html of the page</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">])</span> <span class="c1"># print the content of the page merged into a single string</span>
+</code></pre>
+</div>
+</div>
+
+
+                            <div id="WebScraping.__init__" class="classattr">
+                                        <input id="WebScraping.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">WebScraping</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;requests&#39;</span>, </span><span class="param"><span class="n">deep</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span>)</span>
+
+                <label class="view-source-button" for="WebScraping.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebScraping.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebScraping.__init__-19"><a href="#WebScraping.__init__-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;requests&quot;</span><span class="p">,</span> <span class="n">deep</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="WebScraping.__init__-20"><a href="#WebScraping.__init__-20"><span class="linenos">20</span></a>
+</span><span id="WebScraping.__init__-21"><a href="#WebScraping.__init__-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebScraping.__init__-22"><a href="#WebScraping.__init__-22"><span class="linenos">22</span></a><span class="sd">        Initialize the WebScraping tool.</span>
+</span><span id="WebScraping.__init__-23"><a href="#WebScraping.__init__-23"><span class="linenos">23</span></a>
+</span><span id="WebScraping.__init__-24"><a href="#WebScraping.__init__-24"><span class="linenos">24</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebScraping.__init__-25"><a href="#WebScraping.__init__-25"><span class="linenos">25</span></a><span class="sd">        ----------</span>
+</span><span id="WebScraping.__init__-26"><a href="#WebScraping.__init__-26"><span class="linenos">26</span></a><span class="sd">        engine: str, optional</span>
+</span><span id="WebScraping.__init__-27"><a href="#WebScraping.__init__-27"><span class="linenos">27</span></a><span class="sd">            The engine to use (requests, tavily, selenium. Default is requests)</span>
+</span><span id="WebScraping.__init__-28"><a href="#WebScraping.__init__-28"><span class="linenos">28</span></a><span class="sd">        deep: bool, optional</span>
+</span><span id="WebScraping.__init__-29"><a href="#WebScraping.__init__-29"><span class="linenos">29</span></a><span class="sd">            If using tavily, whether to use the advanced extraction mode (default is False)</span>
+</span><span id="WebScraping.__init__-30"><a href="#WebScraping.__init__-30"><span class="linenos">30</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebScraping.__init__-31"><a href="#WebScraping.__init__-31"><span class="linenos">31</span></a>
+</span><span id="WebScraping.__init__-32"><a href="#WebScraping.__init__-32"><span class="linenos">32</span></a>        <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;requests&quot;</span><span class="p">:</span>
+</span><span id="WebScraping.__init__-33"><a href="#WebScraping.__init__-33"><span class="linenos">33</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_RequestsScraper</span><span class="p">()</span>
+</span><span id="WebScraping.__init__-34"><a href="#WebScraping.__init__-34"><span class="linenos">34</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;tavily&quot;</span><span class="p">:</span>
+</span><span id="WebScraping.__init__-35"><a href="#WebScraping.__init__-35"><span class="linenos">35</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_TavilyScraper</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="n">deep</span><span class="p">)</span>
+</span><span id="WebScraping.__init__-36"><a href="#WebScraping.__init__-36"><span class="linenos">36</span></a>        <span class="k">elif</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;selenium&quot;</span><span class="p">:</span>
+</span><span id="WebScraping.__init__-37"><a href="#WebScraping.__init__-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">_SeleniumScraper</span><span class="p">()</span>
+</span><span id="WebScraping.__init__-38"><a href="#WebScraping.__init__-38"><span class="linenos">38</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="WebScraping.__init__-39"><a href="#WebScraping.__init__-39"><span class="linenos">39</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid engine: </span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2"> (must be &#39;requests&#39;, &#39;tavily&#39;, or &#39;selenium&#39;)&quot;</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize the WebScraping tool.</p>
+
+<h2 id="parameters">Parameters:</h2>
+
+<p>engine: str, optional
+    The engine to use (requests, tavily, selenium. Default is requests)
+deep: bool, optional
+    If using tavily, whether to use the advanced extraction mode (default is False)</p>
+</div>
+
+
+                            </div>
+                            <div id="WebScraping.scrape" class="classattr">
+                                        <input id="WebScraping.scrape-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">scrape</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">url</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="WebScraping.scrape-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WebScraping.scrape"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WebScraping.scrape-41"><a href="#WebScraping.scrape-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">scrape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="WebScraping.scrape-42"><a href="#WebScraping.scrape-42"><span class="linenos">42</span></a>
+</span><span id="WebScraping.scrape-43"><a href="#WebScraping.scrape-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="WebScraping.scrape-44"><a href="#WebScraping.scrape-44"><span class="linenos">44</span></a><span class="sd">        Scrape a webpage.</span>
+</span><span id="WebScraping.scrape-45"><a href="#WebScraping.scrape-45"><span class="linenos">45</span></a>
+</span><span id="WebScraping.scrape-46"><a href="#WebScraping.scrape-46"><span class="linenos">46</span></a><span class="sd">        Parameters:</span>
+</span><span id="WebScraping.scrape-47"><a href="#WebScraping.scrape-47"><span class="linenos">47</span></a><span class="sd">        ----------</span>
+</span><span id="WebScraping.scrape-48"><a href="#WebScraping.scrape-48"><span class="linenos">48</span></a><span class="sd">        url: str</span>
+</span><span id="WebScraping.scrape-49"><a href="#WebScraping.scrape-49"><span class="linenos">49</span></a><span class="sd">            The url to scrape</span>
+</span><span id="WebScraping.scrape-50"><a href="#WebScraping.scrape-50"><span class="linenos">50</span></a>
+</span><span id="WebScraping.scrape-51"><a href="#WebScraping.scrape-51"><span class="linenos">51</span></a><span class="sd">        Returns:</span>
+</span><span id="WebScraping.scrape-52"><a href="#WebScraping.scrape-52"><span class="linenos">52</span></a><span class="sd">        -------</span>
+</span><span id="WebScraping.scrape-53"><a href="#WebScraping.scrape-53"><span class="linenos">53</span></a><span class="sd">        dict</span>
+</span><span id="WebScraping.scrape-54"><a href="#WebScraping.scrape-54"><span class="linenos">54</span></a><span class="sd">            The response from the scraper.</span>
+</span><span id="WebScraping.scrape-55"><a href="#WebScraping.scrape-55"><span class="linenos">55</span></a><span class="sd">            html: str</span>
+</span><span id="WebScraping.scrape-56"><a href="#WebScraping.scrape-56"><span class="linenos">56</span></a><span class="sd">            The html of the page (not available if using tavily)</span>
+</span><span id="WebScraping.scrape-57"><a href="#WebScraping.scrape-57"><span class="linenos">57</span></a><span class="sd">            text: str</span>
+</span><span id="WebScraping.scrape-58"><a href="#WebScraping.scrape-58"><span class="linenos">58</span></a><span class="sd">            The content of the page merged into a single string</span>
+</span><span id="WebScraping.scrape-59"><a href="#WebScraping.scrape-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="WebScraping.scrape-60"><a href="#WebScraping.scrape-60"><span class="linenos">60</span></a>        <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">scrape</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span id="WebScraping.scrape-61"><a href="#WebScraping.scrape-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Scrape a webpage.</p>
+
+<h2 id="parameters">Parameters:</h2>
+
+<p>url: str
+    The url to scrape</p>
+
+<h2 id="returns">Returns:</h2>
+
+<p>dict
+    The response from the scraper.
+    html: str
+    The html of the page (not available if using tavily)
+    text: str
+    The content of the page merged into a single string</p>
+</div>
+
+
+                            </div>
+                </section>
     </main>
 <script>
     function escapeHTML(html) {

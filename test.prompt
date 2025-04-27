@@ -1,4 +1,4 @@
 <prompt>
-Genera il contenuto di un capitolo di un corso {topic}. 
-I capitoli sono {chapters}. Genera il contenuto del capito {{data}}
+{data}
+Chi è Giuseppe Gullo di ProfessionAI ?
 </prompt>

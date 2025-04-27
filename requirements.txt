@@ -3,3 +3,5 @@ duckduckgo-search
 tavily-python
 typing-extensions
 xmltodict
+beautifulsoup4
+selenium

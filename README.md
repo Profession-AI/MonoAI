@@ -1,5 +1,9 @@
 # COICOI
+
+<img src="res/coicoi.png" alt="alt text" width="500"/>
+
 ### Collective Intelligence via Collaborative Inference
+
 
 **COICOI** is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.
 

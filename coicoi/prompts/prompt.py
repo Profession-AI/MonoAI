@@ -135,7 +135,7 @@ class _PromptParser:
         prompt_text = prompt_file.read()        
         if self._very_dumb_xml_check(prompt_text):
             prompt_dict = xmltodict.parse(prompt_text)
-            return self._parse(prompt_dict)
+            return self._parse(prompt_dict), None
         else:
             return prompt_text, None
 

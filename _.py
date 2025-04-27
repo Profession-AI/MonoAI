@@ -1,11 +1,7 @@
 from coicoi.models import Model
-from coicoi.prompts import IterativePrompt
+from coicoi.prompts import Prompt
+from coicoi.tools import WebScraping
 
-model = Model()
-
-chapters = ["variabili", "espressioni condizionali", "cicli", "funzioni"]
-data = {"topic":"programmazione con python", "chapters":chapters}
-
-prompt = IterativePrompt(prompt_id="test_iter", prompt_data=data, iter_data=chapters, retain_all=True)
-print(model.ask(prompt))
-
+websearch = WebScraping(engine="selenium")
+result = websearch.scrape("https://www.scrapethissite.com/pages/simple/")
+#print(result)

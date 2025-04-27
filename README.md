@@ -1,6 +1,6 @@
 # COICOI
 
-<img src="res/coicoi.png" alt="alt text" width="500"/>
+<img src="https://raw.githubusercontent.com/Profession-AI/COICOI/refs/heads/main/docs/res/coicoi.png" alt="alt text" width="500"/>
 
 ### Collective Intelligence via Collaborative Inference
 

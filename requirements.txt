@@ -1,7 +1,11 @@
-pydantic-ai
+litellm
 duckduckgo-search
 tavily-python
 typing-extensions
 xmltodict
+<<<<<<< HEAD
+pytest
+=======
 beautifulsoup4
 selenium
+>>>>>>> 8d1c9aebcf9ef3bd2dd163bd9b470fc01fddea17

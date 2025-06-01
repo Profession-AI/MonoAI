@@ -1,4 +1,3 @@
-from pydantic_ai import Agent
 from ._base_model import BaseModel
 from ..keys.keys_manager import load_key
 from ._response_processor import ResponseProcessorMixin
@@ -9,6 +8,7 @@ from ..tokens.token_cost import TokenCost
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.prompt import Prompt
 from coicoi.conf import CoiConf
+
 class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
     """
     Model class for interacting with AI language models.
@@ -74,7 +74,6 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 
         self.provider = provider
         self.model = model
-        self._agent = Agent(provider + ":" + model, system_prompt=system_prompt)
 
     async def _ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
@@ -96,14 +95,10 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             - cost: Cost calculation (if enabled)
 
         """
-        response = await self._execute_async(prompt, self._agent)
+        response = await self._execute_async(prompt)
         return self._process_response(
             prompt,
             response,
-            self.provider,
-            self.model,
-            self._count_tokens,
-            self._count_cost
         )
 
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
@@ -127,14 +122,10 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 
         """
 
-        response = self._execute(prompt, self._agent)
+        response = self._execute(prompt)
         return self._process_response(
             prompt,
-            response,
-            self.provider,
-            self.model,
-            self._count_tokens,
-            self._count_cost
+            response
         )
 
     def _post_process_response(self, question: str, answer: str) -> Dict:

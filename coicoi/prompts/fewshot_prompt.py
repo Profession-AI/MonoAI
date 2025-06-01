@@ -6,7 +6,7 @@ class FewShotPrompt:
         self._prompt = prompt
         self._examples = examples
 
-    def format(self) -> str:
+    def _format(self) -> str:
         return self._prompt + "\n\n" + \
             "Use the information from the following examples:" + "\n" + \
             "\n".join(self._examples)

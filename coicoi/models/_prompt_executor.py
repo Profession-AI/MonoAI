@@ -2,12 +2,12 @@ from typing import Dict, Union
 from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
-from pydantic_ai import Agent
+from litellm import completion
 
 class PromptExecutorMixin:
     """Mixin class to handle prompt execution."""
     
-    async def _execute_async(self, prompt: Union[str, Prompt, PromptChain], agent: Agent) -> Dict:
+    async def _execute_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Execute a prompt asynchronously.
         
@@ -18,11 +18,12 @@ class PromptExecutorMixin:
         Returns:
             Dictionary containing the response
         """
+                
         if isinstance(prompt, PromptChain):
-            return await self._execute_chain_async(prompt, agent)
-        return await agent.run(prompt)
-
-    def _execute(self, prompt: Union[str, Prompt, PromptChain], agent: Agent) -> Dict:
+            return await self._execute_chain_async(prompt)
+        return self._completion(prompt)
+    
+    def _execute(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Execute a prompt synchronously.
         
@@ -34,15 +35,15 @@ class PromptExecutorMixin:
             Dictionary containing the response
         """
         if isinstance(prompt, PromptChain):
-            return self._execute_chain(prompt, agent)
+            return self._execute_chain(prompt)
         elif isinstance(prompt, IterativePrompt):
-            return self._execute_iterative(prompt, agent)
+            return self._execute_iterative(prompt)
         elif isinstance(prompt, Prompt):
-            return agent.run_sync(str(prompt), output_type=prompt.response_type).output
+            return self._completion(str(prompt), response_type=prompt.response_type)
         else:
-            return agent.run_sync(str(prompt)).output
+            return self._completion(prompt)
 
-    async def _execute_chain_async(self, chain: PromptChain, agent: Agent) -> Dict:
+    async def _execute_chain_async(self, chain: PromptChain) -> Dict:
         """
         Execute a prompt chain asynchronously.
         
@@ -56,10 +57,10 @@ class PromptExecutorMixin:
         response = None
         for i in range(chain._size):
             current_prompt = chain._format(i, response.output if response else None)
-            response = await agent.run(current_prompt)
+            response = self._completion(current_prompt)
         return response
 
-    def _execute_chain(self, chain: PromptChain, agent: Agent) -> Dict:
+    def _execute_chain(self, chain: PromptChain) -> Dict:
         """
         Execute a prompt chain synchronously.
         
@@ -72,11 +73,11 @@ class PromptExecutorMixin:
         """
         response = None
         for i in range(chain._size):
-            current_prompt = chain.format(i, response.output if response else None)
-            response = agent.run_sync(current_prompt)
-        return response.output
+            current_prompt = chain._format(i, response["choices"][0]["message"]["content"] if response else None)
+            response = self._completion(current_prompt)
+        return response
     
-    def _execute_iterative(self, prompt: IterativePrompt, agent: Agent) -> Dict:
+    def _execute_iterative(self, prompt: IterativePrompt) -> Dict:
         """
         Execute an iterative prompt synchronously.
         
@@ -98,7 +99,23 @@ class PromptExecutorMixin:
                 current_prompt = prompt._format(i, memory)
             else:
                 current_prompt = prompt._format(i)
+<<<<<<< HEAD
+            current_response = self._completion(current_prompt)
+=======
             current_response = agent.run_sync(current_prompt).output
+>>>>>>> 8d1c9aebcf9ef3bd2dd163bd9b470fc01fddea17
             response += current_response
         return response
 
+    def _completion(self, prompt: str, response_type: str = None) -> Dict:
+        
+        from pydantic import BaseModel
+
+        class Response(BaseModel):
+            response: response_type
+
+        if response_type!=None:
+            response_type = Response
+        
+        messages = [{ "content": prompt,"role": "user"}]
+        return completion(model=self.provider+"/"+self.model, messages=messages, response_format=response_type)

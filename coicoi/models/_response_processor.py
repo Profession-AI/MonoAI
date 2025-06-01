@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 from ..tokens.token_counter import TokenCounter
 from ..tokens.token_cost import TokenCost
@@ -7,11 +8,7 @@ class ResponseProcessorMixin:
     def _process_response(
         self,
         prompt: Prompt,
-        response: str,
-        provider: str,
-        model: str,
-        count_tokens: bool,
-        count_cost: bool
+        response: Dict
     ) -> Dict:
         """
         Process the response and add optional token and cost information.
@@ -27,30 +24,21 @@ class ResponseProcessorMixin:
         Returns:
             Dictionary containing the response and optional stats
         """
+        print(response)
+        response = response["choices"][0]["message"]["content"]
+        
+        if isinstance(prompt, Prompt):
+            if prompt.response_type != None:
+                response = json.loads(response)["response"]
 
         processed_response = {
             "prompt": str(prompt), 
             "response": response,
             #"messages_trace": response.all_messages(),
             "model": {
-                "provider": provider, 
-                "name": model
+                "provider": self.provider, 
+                "name": self.model
             }
         }
-        
-        if count_tokens or count_cost:
-            tokens = None
-            if count_tokens:
-                tokens = TokenCounter().count(model, str(prompt), response)
-                processed_response["tokens"] = tokens
-                
-            if count_cost and tokens:
-                cost = TokenCost().compute(
-                    provider, 
-                    model, 
-                    tokens["input_tokens"], 
-                    tokens["output_tokens"]
-                )
-                processed_response["cost"] = cost
-                
+                        
         return processed_response 

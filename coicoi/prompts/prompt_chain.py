@@ -42,7 +42,9 @@ class PromptChain(Prompt):
     def __init__(self, 
                  promptchain_id: str = None,
                  prompts_data: list[dict] = None,
-                 prompts: List[Prompt] = None):
+                 prompts: List[Prompt] = None,
+                 response_type: type | None = None):
+
         """
         Initialize a new PromptChain instance.
 
@@ -69,6 +71,7 @@ class PromptChain(Prompt):
         else:
             raise ValueError("Either promptchain_id or prompts must be provided")
         self._size = len(self._prompts)
+        self.response_type = response_type
 
     def _format(self, index: int, context: str | None = None) -> str:
         """

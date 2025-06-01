@@ -203,115 +203,106 @@
 </span><span id="Model-75"><a href="#Model-75"><span class="linenos"> 75</span></a>
 </span><span id="Model-76"><a href="#Model-76"><span class="linenos"> 76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">provider</span> <span class="o">=</span> <span class="n">provider</span>
 </span><span id="Model-77"><a href="#Model-77"><span class="linenos"> 77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-</span><span id="Model-78"><a href="#Model-78"><span class="linenos"> 78</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">provider</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">model</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">)</span>
-</span><span id="Model-79"><a href="#Model-79"><span class="linenos"> 79</span></a>
-</span><span id="Model-80"><a href="#Model-80"><span class="linenos"> 80</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_ask_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="Model-81"><a href="#Model-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Model-82"><a href="#Model-82"><span class="linenos"> 82</span></a><span class="sd">        Ask the model asynchronously.</span>
-</span><span id="Model-83"><a href="#Model-83"><span class="linenos"> 83</span></a>
-</span><span id="Model-84"><a href="#Model-84"><span class="linenos"> 84</span></a><span class="sd">        Parameters</span>
-</span><span id="Model-85"><a href="#Model-85"><span class="linenos"> 85</span></a><span class="sd">        ----------</span>
-</span><span id="Model-86"><a href="#Model-86"><span class="linenos"> 86</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
-</span><span id="Model-87"><a href="#Model-87"><span class="linenos"> 87</span></a><span class="sd">            The prompt to process</span>
-</span><span id="Model-88"><a href="#Model-88"><span class="linenos"> 88</span></a>
-</span><span id="Model-89"><a href="#Model-89"><span class="linenos"> 89</span></a><span class="sd">        Returns</span>
-</span><span id="Model-90"><a href="#Model-90"><span class="linenos"> 90</span></a><span class="sd">        -------</span>
-</span><span id="Model-91"><a href="#Model-91"><span class="linenos"> 91</span></a><span class="sd">        Dict</span>
-</span><span id="Model-92"><a href="#Model-92"><span class="linenos"> 92</span></a><span class="sd">            Dictionary containing:</span>
-</span><span id="Model-93"><a href="#Model-93"><span class="linenos"> 93</span></a><span class="sd">            - response: The model&#39;s response</span>
-</span><span id="Model-94"><a href="#Model-94"><span class="linenos"> 94</span></a><span class="sd">            - prompt: The original prompt</span>
-</span><span id="Model-95"><a href="#Model-95"><span class="linenos"> 95</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
-</span><span id="Model-96"><a href="#Model-96"><span class="linenos"> 96</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
-</span><span id="Model-97"><a href="#Model-97"><span class="linenos"> 97</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
-</span><span id="Model-98"><a href="#Model-98"><span class="linenos"> 98</span></a>
-</span><span id="Model-99"><a href="#Model-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Model-100"><a href="#Model-100"><span class="linenos">100</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_async</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="p">)</span>
-</span><span id="Model-101"><a href="#Model-101"><span class="linenos">101</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
-</span><span id="Model-102"><a href="#Model-102"><span class="linenos">102</span></a>            <span class="n">prompt</span><span class="p">,</span>
-</span><span id="Model-103"><a href="#Model-103"><span class="linenos">103</span></a>            <span class="n">response</span><span class="p">,</span>
-</span><span id="Model-104"><a href="#Model-104"><span class="linenos">104</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span>
-</span><span id="Model-105"><a href="#Model-105"><span class="linenos">105</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-</span><span id="Model-106"><a href="#Model-106"><span class="linenos">106</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span><span class="p">,</span>
-</span><span id="Model-107"><a href="#Model-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span>
-</span><span id="Model-108"><a href="#Model-108"><span class="linenos">108</span></a>        <span class="p">)</span>
-</span><span id="Model-109"><a href="#Model-109"><span class="linenos">109</span></a>
-</span><span id="Model-110"><a href="#Model-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="Model-111"><a href="#Model-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Model-112"><a href="#Model-112"><span class="linenos">112</span></a><span class="sd">        Ask the model.</span>
+</span><span id="Model-78"><a href="#Model-78"><span class="linenos"> 78</span></a>
+</span><span id="Model-79"><a href="#Model-79"><span class="linenos"> 79</span></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_ask_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="Model-80"><a href="#Model-80"><span class="linenos"> 80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Model-81"><a href="#Model-81"><span class="linenos"> 81</span></a><span class="sd">        Ask the model asynchronously.</span>
+</span><span id="Model-82"><a href="#Model-82"><span class="linenos"> 82</span></a>
+</span><span id="Model-83"><a href="#Model-83"><span class="linenos"> 83</span></a><span class="sd">        Parameters</span>
+</span><span id="Model-84"><a href="#Model-84"><span class="linenos"> 84</span></a><span class="sd">        ----------</span>
+</span><span id="Model-85"><a href="#Model-85"><span class="linenos"> 85</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
+</span><span id="Model-86"><a href="#Model-86"><span class="linenos"> 86</span></a><span class="sd">            The prompt to process</span>
+</span><span id="Model-87"><a href="#Model-87"><span class="linenos"> 87</span></a>
+</span><span id="Model-88"><a href="#Model-88"><span class="linenos"> 88</span></a><span class="sd">        Returns</span>
+</span><span id="Model-89"><a href="#Model-89"><span class="linenos"> 89</span></a><span class="sd">        -------</span>
+</span><span id="Model-90"><a href="#Model-90"><span class="linenos"> 90</span></a><span class="sd">        Dict</span>
+</span><span id="Model-91"><a href="#Model-91"><span class="linenos"> 91</span></a><span class="sd">            Dictionary containing:</span>
+</span><span id="Model-92"><a href="#Model-92"><span class="linenos"> 92</span></a><span class="sd">            - response: The model&#39;s response</span>
+</span><span id="Model-93"><a href="#Model-93"><span class="linenos"> 93</span></a><span class="sd">            - prompt: The original prompt</span>
+</span><span id="Model-94"><a href="#Model-94"><span class="linenos"> 94</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
+</span><span id="Model-95"><a href="#Model-95"><span class="linenos"> 95</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
+</span><span id="Model-96"><a href="#Model-96"><span class="linenos"> 96</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
+</span><span id="Model-97"><a href="#Model-97"><span class="linenos"> 97</span></a>
+</span><span id="Model-98"><a href="#Model-98"><span class="linenos"> 98</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Model-99"><a href="#Model-99"><span class="linenos"> 99</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_async</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="Model-100"><a href="#Model-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
+</span><span id="Model-101"><a href="#Model-101"><span class="linenos">101</span></a>            <span class="n">prompt</span><span class="p">,</span>
+</span><span id="Model-102"><a href="#Model-102"><span class="linenos">102</span></a>            <span class="n">response</span><span class="p">,</span>
+</span><span id="Model-103"><a href="#Model-103"><span class="linenos">103</span></a>        <span class="p">)</span>
+</span><span id="Model-104"><a href="#Model-104"><span class="linenos">104</span></a>
+</span><span id="Model-105"><a href="#Model-105"><span class="linenos">105</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="Model-106"><a href="#Model-106"><span class="linenos">106</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Model-107"><a href="#Model-107"><span class="linenos">107</span></a><span class="sd">        Ask the model.</span>
+</span><span id="Model-108"><a href="#Model-108"><span class="linenos">108</span></a>
+</span><span id="Model-109"><a href="#Model-109"><span class="linenos">109</span></a><span class="sd">        Parameters</span>
+</span><span id="Model-110"><a href="#Model-110"><span class="linenos">110</span></a><span class="sd">        ----------</span>
+</span><span id="Model-111"><a href="#Model-111"><span class="linenos">111</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
+</span><span id="Model-112"><a href="#Model-112"><span class="linenos">112</span></a><span class="sd">            The prompt to process</span>
 </span><span id="Model-113"><a href="#Model-113"><span class="linenos">113</span></a>
-</span><span id="Model-114"><a href="#Model-114"><span class="linenos">114</span></a><span class="sd">        Parameters</span>
-</span><span id="Model-115"><a href="#Model-115"><span class="linenos">115</span></a><span class="sd">        ----------</span>
-</span><span id="Model-116"><a href="#Model-116"><span class="linenos">116</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
-</span><span id="Model-117"><a href="#Model-117"><span class="linenos">117</span></a><span class="sd">            The prompt to process</span>
-</span><span id="Model-118"><a href="#Model-118"><span class="linenos">118</span></a>
-</span><span id="Model-119"><a href="#Model-119"><span class="linenos">119</span></a><span class="sd">        Returns</span>
-</span><span id="Model-120"><a href="#Model-120"><span class="linenos">120</span></a><span class="sd">        -------</span>
-</span><span id="Model-121"><a href="#Model-121"><span class="linenos">121</span></a><span class="sd">        Dict</span>
-</span><span id="Model-122"><a href="#Model-122"><span class="linenos">122</span></a><span class="sd">            Dictionary containing:</span>
-</span><span id="Model-123"><a href="#Model-123"><span class="linenos">123</span></a><span class="sd">            - response: The model&#39;s response</span>
-</span><span id="Model-124"><a href="#Model-124"><span class="linenos">124</span></a><span class="sd">            - prompt: The original prompt</span>
-</span><span id="Model-125"><a href="#Model-125"><span class="linenos">125</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
-</span><span id="Model-126"><a href="#Model-126"><span class="linenos">126</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
-</span><span id="Model-127"><a href="#Model-127"><span class="linenos">127</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
-</span><span id="Model-128"><a href="#Model-128"><span class="linenos">128</span></a>
-</span><span id="Model-129"><a href="#Model-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Model-130"><a href="#Model-130"><span class="linenos">130</span></a>
-</span><span id="Model-131"><a href="#Model-131"><span class="linenos">131</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="p">)</span>
-</span><span id="Model-132"><a href="#Model-132"><span class="linenos">132</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
-</span><span id="Model-133"><a href="#Model-133"><span class="linenos">133</span></a>            <span class="n">prompt</span><span class="p">,</span>
-</span><span id="Model-134"><a href="#Model-134"><span class="linenos">134</span></a>            <span class="n">response</span><span class="p">,</span>
-</span><span id="Model-135"><a href="#Model-135"><span class="linenos">135</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span>
-</span><span id="Model-136"><a href="#Model-136"><span class="linenos">136</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-</span><span id="Model-137"><a href="#Model-137"><span class="linenos">137</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span><span class="p">,</span>
-</span><span id="Model-138"><a href="#Model-138"><span class="linenos">138</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span>
-</span><span id="Model-139"><a href="#Model-139"><span class="linenos">139</span></a>        <span class="p">)</span>
-</span><span id="Model-140"><a href="#Model-140"><span class="linenos">140</span></a>
-</span><span id="Model-141"><a href="#Model-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_post_process_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="Model-142"><a href="#Model-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Model-143"><a href="#Model-143"><span class="linenos">143</span></a><span class="sd">        Process the response and add optional token and cost information.</span>
-</span><span id="Model-144"><a href="#Model-144"><span class="linenos">144</span></a>
-</span><span id="Model-145"><a href="#Model-145"><span class="linenos">145</span></a><span class="sd">        Parameters</span>
-</span><span id="Model-146"><a href="#Model-146"><span class="linenos">146</span></a><span class="sd">        ----------</span>
-</span><span id="Model-147"><a href="#Model-147"><span class="linenos">147</span></a><span class="sd">        question : str</span>
-</span><span id="Model-148"><a href="#Model-148"><span class="linenos">148</span></a><span class="sd">            The input question</span>
-</span><span id="Model-149"><a href="#Model-149"><span class="linenos">149</span></a><span class="sd">        answer : str</span>
-</span><span id="Model-150"><a href="#Model-150"><span class="linenos">150</span></a><span class="sd">            The model&#39;s answer</span>
-</span><span id="Model-151"><a href="#Model-151"><span class="linenos">151</span></a>
-</span><span id="Model-152"><a href="#Model-152"><span class="linenos">152</span></a><span class="sd">        Returns</span>
-</span><span id="Model-153"><a href="#Model-153"><span class="linenos">153</span></a><span class="sd">        -------</span>
-</span><span id="Model-154"><a href="#Model-154"><span class="linenos">154</span></a><span class="sd">        Dict</span>
-</span><span id="Model-155"><a href="#Model-155"><span class="linenos">155</span></a><span class="sd">            Dictionary containing:</span>
-</span><span id="Model-156"><a href="#Model-156"><span class="linenos">156</span></a><span class="sd">            - input: The original question</span>
-</span><span id="Model-157"><a href="#Model-157"><span class="linenos">157</span></a><span class="sd">            - output: The model&#39;s answer</span>
-</span><span id="Model-158"><a href="#Model-158"><span class="linenos">158</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
-</span><span id="Model-159"><a href="#Model-159"><span class="linenos">159</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
-</span><span id="Model-160"><a href="#Model-160"><span class="linenos">160</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
-</span><span id="Model-161"><a href="#Model-161"><span class="linenos">161</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Model-162"><a href="#Model-162"><span class="linenos">162</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="Model-163"><a href="#Model-163"><span class="linenos">163</span></a>            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span> 
-</span><span id="Model-164"><a href="#Model-164"><span class="linenos">164</span></a>            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> 
-</span><span id="Model-165"><a href="#Model-165"><span class="linenos">165</span></a>            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="Model-166"><a href="#Model-166"><span class="linenos">166</span></a>                <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> 
-</span><span id="Model-167"><a href="#Model-167"><span class="linenos">167</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
-</span><span id="Model-168"><a href="#Model-168"><span class="linenos">168</span></a>            <span class="p">}</span>
-</span><span id="Model-169"><a href="#Model-169"><span class="linenos">169</span></a>        <span class="p">}</span>
-</span><span id="Model-170"><a href="#Model-170"><span class="linenos">170</span></a>        
-</span><span id="Model-171"><a href="#Model-171"><span class="linenos">171</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span><span class="p">:</span>
-</span><span id="Model-172"><a href="#Model-172"><span class="linenos">172</span></a>            <span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="Model-173"><a href="#Model-173"><span class="linenos">173</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span><span class="p">:</span>
-</span><span id="Model-174"><a href="#Model-174"><span class="linenos">174</span></a>                <span class="n">tokens</span> <span class="o">=</span> <span class="n">TokenCounter</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">)</span>
-</span><span id="Model-175"><a href="#Model-175"><span class="linenos">175</span></a>                <span class="n">response</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokens</span>
+</span><span id="Model-114"><a href="#Model-114"><span class="linenos">114</span></a><span class="sd">        Returns</span>
+</span><span id="Model-115"><a href="#Model-115"><span class="linenos">115</span></a><span class="sd">        -------</span>
+</span><span id="Model-116"><a href="#Model-116"><span class="linenos">116</span></a><span class="sd">        Dict</span>
+</span><span id="Model-117"><a href="#Model-117"><span class="linenos">117</span></a><span class="sd">            Dictionary containing:</span>
+</span><span id="Model-118"><a href="#Model-118"><span class="linenos">118</span></a><span class="sd">            - response: The model&#39;s response</span>
+</span><span id="Model-119"><a href="#Model-119"><span class="linenos">119</span></a><span class="sd">            - prompt: The original prompt</span>
+</span><span id="Model-120"><a href="#Model-120"><span class="linenos">120</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
+</span><span id="Model-121"><a href="#Model-121"><span class="linenos">121</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
+</span><span id="Model-122"><a href="#Model-122"><span class="linenos">122</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
+</span><span id="Model-123"><a href="#Model-123"><span class="linenos">123</span></a>
+</span><span id="Model-124"><a href="#Model-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Model-125"><a href="#Model-125"><span class="linenos">125</span></a>
+</span><span id="Model-126"><a href="#Model-126"><span class="linenos">126</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="Model-127"><a href="#Model-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
+</span><span id="Model-128"><a href="#Model-128"><span class="linenos">128</span></a>            <span class="n">prompt</span><span class="p">,</span>
+</span><span id="Model-129"><a href="#Model-129"><span class="linenos">129</span></a>            <span class="n">response</span>
+</span><span id="Model-130"><a href="#Model-130"><span class="linenos">130</span></a>        <span class="p">)</span>
+</span><span id="Model-131"><a href="#Model-131"><span class="linenos">131</span></a>
+</span><span id="Model-132"><a href="#Model-132"><span class="linenos">132</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_post_process_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="Model-133"><a href="#Model-133"><span class="linenos">133</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Model-134"><a href="#Model-134"><span class="linenos">134</span></a><span class="sd">        Process the response and add optional token and cost information.</span>
+</span><span id="Model-135"><a href="#Model-135"><span class="linenos">135</span></a>
+</span><span id="Model-136"><a href="#Model-136"><span class="linenos">136</span></a><span class="sd">        Parameters</span>
+</span><span id="Model-137"><a href="#Model-137"><span class="linenos">137</span></a><span class="sd">        ----------</span>
+</span><span id="Model-138"><a href="#Model-138"><span class="linenos">138</span></a><span class="sd">        question : str</span>
+</span><span id="Model-139"><a href="#Model-139"><span class="linenos">139</span></a><span class="sd">            The input question</span>
+</span><span id="Model-140"><a href="#Model-140"><span class="linenos">140</span></a><span class="sd">        answer : str</span>
+</span><span id="Model-141"><a href="#Model-141"><span class="linenos">141</span></a><span class="sd">            The model&#39;s answer</span>
+</span><span id="Model-142"><a href="#Model-142"><span class="linenos">142</span></a>
+</span><span id="Model-143"><a href="#Model-143"><span class="linenos">143</span></a><span class="sd">        Returns</span>
+</span><span id="Model-144"><a href="#Model-144"><span class="linenos">144</span></a><span class="sd">        -------</span>
+</span><span id="Model-145"><a href="#Model-145"><span class="linenos">145</span></a><span class="sd">        Dict</span>
+</span><span id="Model-146"><a href="#Model-146"><span class="linenos">146</span></a><span class="sd">            Dictionary containing:</span>
+</span><span id="Model-147"><a href="#Model-147"><span class="linenos">147</span></a><span class="sd">            - input: The original question</span>
+</span><span id="Model-148"><a href="#Model-148"><span class="linenos">148</span></a><span class="sd">            - output: The model&#39;s answer</span>
+</span><span id="Model-149"><a href="#Model-149"><span class="linenos">149</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
+</span><span id="Model-150"><a href="#Model-150"><span class="linenos">150</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
+</span><span id="Model-151"><a href="#Model-151"><span class="linenos">151</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
+</span><span id="Model-152"><a href="#Model-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Model-153"><a href="#Model-153"><span class="linenos">153</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="Model-154"><a href="#Model-154"><span class="linenos">154</span></a>            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">,</span> 
+</span><span id="Model-155"><a href="#Model-155"><span class="linenos">155</span></a>            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">answer</span><span class="p">,</span> 
+</span><span id="Model-156"><a href="#Model-156"><span class="linenos">156</span></a>            <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="Model-157"><a href="#Model-157"><span class="linenos">157</span></a>                <span class="s2">&quot;provider&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> 
+</span><span id="Model-158"><a href="#Model-158"><span class="linenos">158</span></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+</span><span id="Model-159"><a href="#Model-159"><span class="linenos">159</span></a>            <span class="p">}</span>
+</span><span id="Model-160"><a href="#Model-160"><span class="linenos">160</span></a>        <span class="p">}</span>
+</span><span id="Model-161"><a href="#Model-161"><span class="linenos">161</span></a>        
+</span><span id="Model-162"><a href="#Model-162"><span class="linenos">162</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span><span class="p">:</span>
+</span><span id="Model-163"><a href="#Model-163"><span class="linenos">163</span></a>            <span class="n">tokens</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="Model-164"><a href="#Model-164"><span class="linenos">164</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span><span class="p">:</span>
+</span><span id="Model-165"><a href="#Model-165"><span class="linenos">165</span></a>                <span class="n">tokens</span> <span class="o">=</span> <span class="n">TokenCounter</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">answer</span><span class="p">)</span>
+</span><span id="Model-166"><a href="#Model-166"><span class="linenos">166</span></a>                <span class="n">response</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tokens</span>
+</span><span id="Model-167"><a href="#Model-167"><span class="linenos">167</span></a>                
+</span><span id="Model-168"><a href="#Model-168"><span class="linenos">168</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">:</span>
+</span><span id="Model-169"><a href="#Model-169"><span class="linenos">169</span></a>                <span class="n">cost</span> <span class="o">=</span> <span class="n">TokenCost</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span>
+</span><span id="Model-170"><a href="#Model-170"><span class="linenos">170</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> 
+</span><span id="Model-171"><a href="#Model-171"><span class="linenos">171</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> 
+</span><span id="Model-172"><a href="#Model-172"><span class="linenos">172</span></a>                    <span class="n">tokens</span><span class="p">[</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">],</span> 
+</span><span id="Model-173"><a href="#Model-173"><span class="linenos">173</span></a>                    <span class="n">tokens</span><span class="p">[</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">]</span>
+</span><span id="Model-174"><a href="#Model-174"><span class="linenos">174</span></a>                <span class="p">)</span>
+</span><span id="Model-175"><a href="#Model-175"><span class="linenos">175</span></a>                <span class="n">response</span><span class="p">[</span><span class="s2">&quot;cost&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
 </span><span id="Model-176"><a href="#Model-176"><span class="linenos">176</span></a>                
-</span><span id="Model-177"><a href="#Model-177"><span class="linenos">177</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span> <span class="ow">and</span> <span class="n">tokens</span><span class="p">:</span>
-</span><span id="Model-178"><a href="#Model-178"><span class="linenos">178</span></a>                <span class="n">cost</span> <span class="o">=</span> <span class="n">TokenCost</span><span class="p">()</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span>
-</span><span id="Model-179"><a href="#Model-179"><span class="linenos">179</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> 
-</span><span id="Model-180"><a href="#Model-180"><span class="linenos">180</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> 
-</span><span id="Model-181"><a href="#Model-181"><span class="linenos">181</span></a>                    <span class="n">tokens</span><span class="p">[</span><span class="s2">&quot;input_tokens&quot;</span><span class="p">],</span> 
-</span><span id="Model-182"><a href="#Model-182"><span class="linenos">182</span></a>                    <span class="n">tokens</span><span class="p">[</span><span class="s2">&quot;output_tokens&quot;</span><span class="p">]</span>
-</span><span id="Model-183"><a href="#Model-183"><span class="linenos">183</span></a>                <span class="p">)</span>
-</span><span id="Model-184"><a href="#Model-184"><span class="linenos">184</span></a>                <span class="n">response</span><span class="p">[</span><span class="s2">&quot;cost&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
-</span><span id="Model-185"><a href="#Model-185"><span class="linenos">185</span></a>                
-</span><span id="Model-186"><a href="#Model-186"><span class="linenos">186</span></a>        <span class="k">return</span> <span class="n">response</span>
+</span><span id="Model-177"><a href="#Model-177"><span class="linenos">177</span></a>        <span class="k">return</span> <span class="n">response</span>
 </span></pre></div>
 
 
@@ -389,7 +380,6 @@ response = model.ask(prompt)
 </span><span id="Model.__init__-75"><a href="#Model.__init__-75"><span class="linenos">75</span></a>
 </span><span id="Model.__init__-76"><a href="#Model.__init__-76"><span class="linenos">76</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">provider</span> <span class="o">=</span> <span class="n">provider</span>
 </span><span id="Model.__init__-77"><a href="#Model.__init__-77"><span class="linenos">77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-</span><span id="Model.__init__-78"><a href="#Model.__init__-78"><span class="linenos">78</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">provider</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">model</span><span class="p">,</span> <span class="n">system_prompt</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -446,36 +436,32 @@ Whether to calculate costs for each request</li>
 
     </div>
     <a class="headerlink" href="#Model.ask"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Model.ask-110"><a href="#Model.ask-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-</span><span id="Model.ask-111"><a href="#Model.ask-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Model.ask-112"><a href="#Model.ask-112"><span class="linenos">112</span></a><span class="sd">        Ask the model.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Model.ask-105"><a href="#Model.ask-105"><span class="linenos">105</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">PromptChain</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="Model.ask-106"><a href="#Model.ask-106"><span class="linenos">106</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Model.ask-107"><a href="#Model.ask-107"><span class="linenos">107</span></a><span class="sd">        Ask the model.</span>
+</span><span id="Model.ask-108"><a href="#Model.ask-108"><span class="linenos">108</span></a>
+</span><span id="Model.ask-109"><a href="#Model.ask-109"><span class="linenos">109</span></a><span class="sd">        Parameters</span>
+</span><span id="Model.ask-110"><a href="#Model.ask-110"><span class="linenos">110</span></a><span class="sd">        ----------</span>
+</span><span id="Model.ask-111"><a href="#Model.ask-111"><span class="linenos">111</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
+</span><span id="Model.ask-112"><a href="#Model.ask-112"><span class="linenos">112</span></a><span class="sd">            The prompt to process</span>
 </span><span id="Model.ask-113"><a href="#Model.ask-113"><span class="linenos">113</span></a>
-</span><span id="Model.ask-114"><a href="#Model.ask-114"><span class="linenos">114</span></a><span class="sd">        Parameters</span>
-</span><span id="Model.ask-115"><a href="#Model.ask-115"><span class="linenos">115</span></a><span class="sd">        ----------</span>
-</span><span id="Model.ask-116"><a href="#Model.ask-116"><span class="linenos">116</span></a><span class="sd">        prompt : Union[str, Prompt]</span>
-</span><span id="Model.ask-117"><a href="#Model.ask-117"><span class="linenos">117</span></a><span class="sd">            The prompt to process</span>
-</span><span id="Model.ask-118"><a href="#Model.ask-118"><span class="linenos">118</span></a>
-</span><span id="Model.ask-119"><a href="#Model.ask-119"><span class="linenos">119</span></a><span class="sd">        Returns</span>
-</span><span id="Model.ask-120"><a href="#Model.ask-120"><span class="linenos">120</span></a><span class="sd">        -------</span>
-</span><span id="Model.ask-121"><a href="#Model.ask-121"><span class="linenos">121</span></a><span class="sd">        Dict</span>
-</span><span id="Model.ask-122"><a href="#Model.ask-122"><span class="linenos">122</span></a><span class="sd">            Dictionary containing:</span>
-</span><span id="Model.ask-123"><a href="#Model.ask-123"><span class="linenos">123</span></a><span class="sd">            - response: The model&#39;s response</span>
-</span><span id="Model.ask-124"><a href="#Model.ask-124"><span class="linenos">124</span></a><span class="sd">            - prompt: The original prompt</span>
-</span><span id="Model.ask-125"><a href="#Model.ask-125"><span class="linenos">125</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
-</span><span id="Model.ask-126"><a href="#Model.ask-126"><span class="linenos">126</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
-</span><span id="Model.ask-127"><a href="#Model.ask-127"><span class="linenos">127</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
-</span><span id="Model.ask-128"><a href="#Model.ask-128"><span class="linenos">128</span></a>
-</span><span id="Model.ask-129"><a href="#Model.ask-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Model.ask-130"><a href="#Model.ask-130"><span class="linenos">130</span></a>
-</span><span id="Model.ask-131"><a href="#Model.ask-131"><span class="linenos">131</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent</span><span class="p">)</span>
-</span><span id="Model.ask-132"><a href="#Model.ask-132"><span class="linenos">132</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
-</span><span id="Model.ask-133"><a href="#Model.ask-133"><span class="linenos">133</span></a>            <span class="n">prompt</span><span class="p">,</span>
-</span><span id="Model.ask-134"><a href="#Model.ask-134"><span class="linenos">134</span></a>            <span class="n">response</span><span class="p">,</span>
-</span><span id="Model.ask-135"><a href="#Model.ask-135"><span class="linenos">135</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span>
-</span><span id="Model.ask-136"><a href="#Model.ask-136"><span class="linenos">136</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-</span><span id="Model.ask-137"><a href="#Model.ask-137"><span class="linenos">137</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_tokens</span><span class="p">,</span>
-</span><span id="Model.ask-138"><a href="#Model.ask-138"><span class="linenos">138</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_count_cost</span>
-</span><span id="Model.ask-139"><a href="#Model.ask-139"><span class="linenos">139</span></a>        <span class="p">)</span>
+</span><span id="Model.ask-114"><a href="#Model.ask-114"><span class="linenos">114</span></a><span class="sd">        Returns</span>
+</span><span id="Model.ask-115"><a href="#Model.ask-115"><span class="linenos">115</span></a><span class="sd">        -------</span>
+</span><span id="Model.ask-116"><a href="#Model.ask-116"><span class="linenos">116</span></a><span class="sd">        Dict</span>
+</span><span id="Model.ask-117"><a href="#Model.ask-117"><span class="linenos">117</span></a><span class="sd">            Dictionary containing:</span>
+</span><span id="Model.ask-118"><a href="#Model.ask-118"><span class="linenos">118</span></a><span class="sd">            - response: The model&#39;s response</span>
+</span><span id="Model.ask-119"><a href="#Model.ask-119"><span class="linenos">119</span></a><span class="sd">            - prompt: The original prompt</span>
+</span><span id="Model.ask-120"><a href="#Model.ask-120"><span class="linenos">120</span></a><span class="sd">            - model: Dictionary with provider and model name</span>
+</span><span id="Model.ask-121"><a href="#Model.ask-121"><span class="linenos">121</span></a><span class="sd">            - tokens: Token counts (if enabled)</span>
+</span><span id="Model.ask-122"><a href="#Model.ask-122"><span class="linenos">122</span></a><span class="sd">            - cost: Cost calculation (if enabled)</span>
+</span><span id="Model.ask-123"><a href="#Model.ask-123"><span class="linenos">123</span></a>
+</span><span id="Model.ask-124"><a href="#Model.ask-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Model.ask-125"><a href="#Model.ask-125"><span class="linenos">125</span></a>
+</span><span id="Model.ask-126"><a href="#Model.ask-126"><span class="linenos">126</span></a>        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="Model.ask-127"><a href="#Model.ask-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_response</span><span class="p">(</span>
+</span><span id="Model.ask-128"><a href="#Model.ask-128"><span class="linenos">128</span></a>            <span class="n">prompt</span><span class="p">,</span>
+</span><span id="Model.ask-129"><a href="#Model.ask-129"><span class="linenos">129</span></a>            <span class="n">response</span>
+</span><span id="Model.ask-130"><a href="#Model.ask-130"><span class="linenos">130</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 

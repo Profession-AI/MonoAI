@@ -1,13 +1,19 @@
-from coicoi.models import Model
-from coicoi.prompts import Prompt
-<<<<<<< HEAD
-prompt = Prompt(prompt="2+2=", response_type="int")
-model = Model()
-print(model.ask(prompt))
-=======
-from coicoi.tools import WebScraping
+from coicoi.chat import Chat
+from coicoi.chat.history import JSONHistory, SQLiteHistory
+import asyncio
 
-websearch = WebScraping(engine="selenium")
-result = websearch.scrape("https://www.scrapethissite.com/pages/simple/")
-#print(result)
->>>>>>> 8d1c9aebcf9ef3bd2dd163bd9b470fc01fddea17
+history = SQLiteHistory(last_n=1)
+chat = Chat(provider="openai", model="gpt-4o-mini", history_type=history, system_prompt="Sei un esperto di storia, rispondi sempre in italiano")
+print(chat.ask("Ciao!"))
+print(chat.ask("Mi chiamo Giuseppe"))
+print(chat.ask("Come mi chiamo?"))
+print(chat.ask("Quanti anni hai?"))
+print(chat.ask("Cosa fai?"))
+print(chat.ask("Come sei nato?"))
+"""
+async def call():
+    async for response in chat.ask_async("Spiegami qualcosa di lungo"):
+        print(response, end="", flush=True)
+
+asyncio.run(call())
+"""

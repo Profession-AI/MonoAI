@@ -86,3 +86,4 @@ _.py
 
 *.prompts
 prompts/
+histories/

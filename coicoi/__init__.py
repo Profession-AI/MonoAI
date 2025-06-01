@@ -4,4 +4,4 @@
    :end-before: ## 📚 Documentation
 """
 __docformat__ = "numpy"
-__all__ = ["prompts", "models", "tools", "conf"]
+__all__ = ["prompts", "models", "chat", "tools", "conf"]

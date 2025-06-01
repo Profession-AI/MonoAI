@@ -99,11 +99,8 @@ class PromptExecutorMixin:
                 current_prompt = prompt._format(i, memory)
             else:
                 current_prompt = prompt._format(i)
-<<<<<<< HEAD
             current_response = self._completion(current_prompt)
-=======
-            current_response = agent.run_sync(current_prompt).output
->>>>>>> 8d1c9aebcf9ef3bd2dd163bd9b470fc01fddea17
+
             response += current_response
         return response
 

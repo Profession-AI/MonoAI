@@ -45,6 +45,9 @@
                         <li>
                                 <a class="function" href="#PromptChain.__init__">PromptChain</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#PromptChain.response_type">response_type</a>
+                        </li>
                 </ul>
 
             </li>
@@ -422,79 +425,82 @@ Expected type of the response</li>
 </span><span id="PromptChain-43"><a href="#PromptChain-43"><span class="linenos"> 43</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="PromptChain-44"><a href="#PromptChain-44"><span class="linenos"> 44</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="PromptChain-45"><a href="#PromptChain-45"><span class="linenos"> 45</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain-46"><a href="#PromptChain-46"><span class="linenos"> 46</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="PromptChain-47"><a href="#PromptChain-47"><span class="linenos"> 47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PromptChain-48"><a href="#PromptChain-48"><span class="linenos"> 48</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
-</span><span id="PromptChain-49"><a href="#PromptChain-49"><span class="linenos"> 49</span></a>
-</span><span id="PromptChain-50"><a href="#PromptChain-50"><span class="linenos"> 50</span></a><span class="sd">        Parameters</span>
-</span><span id="PromptChain-51"><a href="#PromptChain-51"><span class="linenos"> 51</span></a><span class="sd">        ----------</span>
-</span><span id="PromptChain-52"><a href="#PromptChain-52"><span class="linenos"> 52</span></a><span class="sd">        promptchain_id : str, optional</span>
-</span><span id="PromptChain-53"><a href="#PromptChain-53"><span class="linenos"> 53</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
-</span><span id="PromptChain-54"><a href="#PromptChain-54"><span class="linenos"> 54</span></a><span class="sd">        prompts_data : list[dict], optional</span>
-</span><span id="PromptChain-55"><a href="#PromptChain-55"><span class="linenos"> 55</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
-</span><span id="PromptChain-56"><a href="#PromptChain-56"><span class="linenos"> 56</span></a><span class="sd">        prompts : List[Prompt], optional</span>
-</span><span id="PromptChain-57"><a href="#PromptChain-57"><span class="linenos"> 57</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
-</span><span id="PromptChain-58"><a href="#PromptChain-58"><span class="linenos"> 58</span></a>
-</span><span id="PromptChain-59"><a href="#PromptChain-59"><span class="linenos"> 59</span></a><span class="sd">        Raises</span>
-</span><span id="PromptChain-60"><a href="#PromptChain-60"><span class="linenos"> 60</span></a><span class="sd">        ------</span>
-</span><span id="PromptChain-61"><a href="#PromptChain-61"><span class="linenos"> 61</span></a><span class="sd">        - ValueError</span>
-</span><span id="PromptChain-62"><a href="#PromptChain-62"><span class="linenos"> 62</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
-</span><span id="PromptChain-63"><a href="#PromptChain-63"><span class="linenos"> 63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PromptChain-64"><a href="#PromptChain-64"><span class="linenos"> 64</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-65"><a href="#PromptChain-65"><span class="linenos"> 65</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response_type</span> <span class="o">=</span> <span class="n">_PromptChainParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
-</span><span id="PromptChain-66"><a href="#PromptChain-66"><span class="linenos"> 66</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
-</span><span id="PromptChain-67"><a href="#PromptChain-67"><span class="linenos"> 67</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</span><span id="PromptChain-68"><a href="#PromptChain-68"><span class="linenos"> 68</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-69"><a href="#PromptChain-69"><span class="linenos"> 69</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
-</span><span id="PromptChain-70"><a href="#PromptChain-70"><span class="linenos"> 70</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain-71"><a href="#PromptChain-71"><span class="linenos"> 71</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
-</span><span id="PromptChain-72"><a href="#PromptChain-72"><span class="linenos"> 72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
-</span><span id="PromptChain-73"><a href="#PromptChain-73"><span class="linenos"> 73</span></a>
-</span><span id="PromptChain-74"><a href="#PromptChain-74"><span class="linenos"> 74</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PromptChain-75"><a href="#PromptChain-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PromptChain-76"><a href="#PromptChain-76"><span class="linenos"> 76</span></a><span class="sd">        Format a specific prompt in the chain with optional context.</span>
-</span><span id="PromptChain-77"><a href="#PromptChain-77"><span class="linenos"> 77</span></a>
-</span><span id="PromptChain-78"><a href="#PromptChain-78"><span class="linenos"> 78</span></a><span class="sd">        This method formats the prompt at the specified index, optionally including</span>
-</span><span id="PromptChain-79"><a href="#PromptChain-79"><span class="linenos"> 79</span></a><span class="sd">        context from previous prompts&#39; responses.</span>
+</span><span id="PromptChain-46"><a href="#PromptChain-46"><span class="linenos"> 46</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain-47"><a href="#PromptChain-47"><span class="linenos"> 47</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="PromptChain-48"><a href="#PromptChain-48"><span class="linenos"> 48</span></a>
+</span><span id="PromptChain-49"><a href="#PromptChain-49"><span class="linenos"> 49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-50"><a href="#PromptChain-50"><span class="linenos"> 50</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
+</span><span id="PromptChain-51"><a href="#PromptChain-51"><span class="linenos"> 51</span></a>
+</span><span id="PromptChain-52"><a href="#PromptChain-52"><span class="linenos"> 52</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain-53"><a href="#PromptChain-53"><span class="linenos"> 53</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain-54"><a href="#PromptChain-54"><span class="linenos"> 54</span></a><span class="sd">        promptchain_id : str, optional</span>
+</span><span id="PromptChain-55"><a href="#PromptChain-55"><span class="linenos"> 55</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
+</span><span id="PromptChain-56"><a href="#PromptChain-56"><span class="linenos"> 56</span></a><span class="sd">        prompts_data : list[dict], optional</span>
+</span><span id="PromptChain-57"><a href="#PromptChain-57"><span class="linenos"> 57</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
+</span><span id="PromptChain-58"><a href="#PromptChain-58"><span class="linenos"> 58</span></a><span class="sd">        prompts : List[Prompt], optional</span>
+</span><span id="PromptChain-59"><a href="#PromptChain-59"><span class="linenos"> 59</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
+</span><span id="PromptChain-60"><a href="#PromptChain-60"><span class="linenos"> 60</span></a>
+</span><span id="PromptChain-61"><a href="#PromptChain-61"><span class="linenos"> 61</span></a><span class="sd">        Raises</span>
+</span><span id="PromptChain-62"><a href="#PromptChain-62"><span class="linenos"> 62</span></a><span class="sd">        ------</span>
+</span><span id="PromptChain-63"><a href="#PromptChain-63"><span class="linenos"> 63</span></a><span class="sd">        - ValueError</span>
+</span><span id="PromptChain-64"><a href="#PromptChain-64"><span class="linenos"> 64</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
+</span><span id="PromptChain-65"><a href="#PromptChain-65"><span class="linenos"> 65</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-66"><a href="#PromptChain-66"><span class="linenos"> 66</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-67"><a href="#PromptChain-67"><span class="linenos"> 67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response_type</span> <span class="o">=</span> <span class="n">_PromptChainParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
+</span><span id="PromptChain-68"><a href="#PromptChain-68"><span class="linenos"> 68</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
+</span><span id="PromptChain-69"><a href="#PromptChain-69"><span class="linenos"> 69</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span id="PromptChain-70"><a href="#PromptChain-70"><span class="linenos"> 70</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-71"><a href="#PromptChain-71"><span class="linenos"> 71</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
+</span><span id="PromptChain-72"><a href="#PromptChain-72"><span class="linenos"> 72</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain-73"><a href="#PromptChain-73"><span class="linenos"> 73</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
+</span><span id="PromptChain-74"><a href="#PromptChain-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
+</span><span id="PromptChain-75"><a href="#PromptChain-75"><span class="linenos"> 75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
+</span><span id="PromptChain-76"><a href="#PromptChain-76"><span class="linenos"> 76</span></a>
+</span><span id="PromptChain-77"><a href="#PromptChain-77"><span class="linenos"> 77</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-78"><a href="#PromptChain-78"><span class="linenos"> 78</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-79"><a href="#PromptChain-79"><span class="linenos"> 79</span></a><span class="sd">        Format a specific prompt in the chain with optional context.</span>
 </span><span id="PromptChain-80"><a href="#PromptChain-80"><span class="linenos"> 80</span></a>
-</span><span id="PromptChain-81"><a href="#PromptChain-81"><span class="linenos"> 81</span></a><span class="sd">        Parameters</span>
-</span><span id="PromptChain-82"><a href="#PromptChain-82"><span class="linenos"> 82</span></a><span class="sd">        ----------</span>
-</span><span id="PromptChain-83"><a href="#PromptChain-83"><span class="linenos"> 83</span></a><span class="sd">        index : int</span>
-</span><span id="PromptChain-84"><a href="#PromptChain-84"><span class="linenos"> 84</span></a><span class="sd">            Index of the prompt to format</span>
-</span><span id="PromptChain-85"><a href="#PromptChain-85"><span class="linenos"> 85</span></a><span class="sd">        context : str, optional</span>
-</span><span id="PromptChain-86"><a href="#PromptChain-86"><span class="linenos"> 86</span></a><span class="sd">            Context from previous prompts&#39; responses to include</span>
-</span><span id="PromptChain-87"><a href="#PromptChain-87"><span class="linenos"> 87</span></a>
-</span><span id="PromptChain-88"><a href="#PromptChain-88"><span class="linenos"> 88</span></a><span class="sd">        Returns</span>
-</span><span id="PromptChain-89"><a href="#PromptChain-89"><span class="linenos"> 89</span></a><span class="sd">        -------</span>
-</span><span id="PromptChain-90"><a href="#PromptChain-90"><span class="linenos"> 90</span></a><span class="sd">        str</span>
-</span><span id="PromptChain-91"><a href="#PromptChain-91"><span class="linenos"> 91</span></a><span class="sd">            The formatted prompt text with optional context</span>
-</span><span id="PromptChain-92"><a href="#PromptChain-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PromptChain-93"><a href="#PromptChain-93"><span class="linenos"> 93</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain-94"><a href="#PromptChain-94"><span class="linenos"> 94</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
-</span><span id="PromptChain-95"><a href="#PromptChain-95"><span class="linenos"> 95</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain-96"><a href="#PromptChain-96"><span class="linenos"> 96</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">context</span>
-</span><span id="PromptChain-97"><a href="#PromptChain-97"><span class="linenos"> 97</span></a>
-</span><span id="PromptChain-98"><a href="#PromptChain-98"><span class="linenos"> 98</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PromptChain-99"><a href="#PromptChain-99"><span class="linenos"> 99</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PromptChain-100"><a href="#PromptChain-100"><span class="linenos">100</span></a><span class="sd">        Get the string representation of the prompt chain.</span>
-</span><span id="PromptChain-101"><a href="#PromptChain-101"><span class="linenos">101</span></a>
-</span><span id="PromptChain-102"><a href="#PromptChain-102"><span class="linenos">102</span></a><span class="sd">        Returns</span>
-</span><span id="PromptChain-103"><a href="#PromptChain-103"><span class="linenos">103</span></a><span class="sd">        -------</span>
-</span><span id="PromptChain-104"><a href="#PromptChain-104"><span class="linenos">104</span></a><span class="sd">        str</span>
-</span><span id="PromptChain-105"><a href="#PromptChain-105"><span class="linenos">105</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
-</span><span id="PromptChain-106"><a href="#PromptChain-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PromptChain-107"><a href="#PromptChain-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">])</span>
-</span><span id="PromptChain-108"><a href="#PromptChain-108"><span class="linenos">108</span></a>
-</span><span id="PromptChain-109"><a href="#PromptChain-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="PromptChain-110"><a href="#PromptChain-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PromptChain-111"><a href="#PromptChain-111"><span class="linenos">111</span></a><span class="sd">        Get the official string representation of the prompt chain.</span>
-</span><span id="PromptChain-112"><a href="#PromptChain-112"><span class="linenos">112</span></a>
-</span><span id="PromptChain-113"><a href="#PromptChain-113"><span class="linenos">113</span></a><span class="sd">        Returns</span>
-</span><span id="PromptChain-114"><a href="#PromptChain-114"><span class="linenos">114</span></a><span class="sd">        -------</span>
-</span><span id="PromptChain-115"><a href="#PromptChain-115"><span class="linenos">115</span></a><span class="sd">        str</span>
-</span><span id="PromptChain-116"><a href="#PromptChain-116"><span class="linenos">116</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
-</span><span id="PromptChain-117"><a href="#PromptChain-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PromptChain-118"><a href="#PromptChain-118"><span class="linenos">118</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="PromptChain-81"><a href="#PromptChain-81"><span class="linenos"> 81</span></a><span class="sd">        This method formats the prompt at the specified index, optionally including</span>
+</span><span id="PromptChain-82"><a href="#PromptChain-82"><span class="linenos"> 82</span></a><span class="sd">        context from previous prompts&#39; responses.</span>
+</span><span id="PromptChain-83"><a href="#PromptChain-83"><span class="linenos"> 83</span></a>
+</span><span id="PromptChain-84"><a href="#PromptChain-84"><span class="linenos"> 84</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain-85"><a href="#PromptChain-85"><span class="linenos"> 85</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain-86"><a href="#PromptChain-86"><span class="linenos"> 86</span></a><span class="sd">        index : int</span>
+</span><span id="PromptChain-87"><a href="#PromptChain-87"><span class="linenos"> 87</span></a><span class="sd">            Index of the prompt to format</span>
+</span><span id="PromptChain-88"><a href="#PromptChain-88"><span class="linenos"> 88</span></a><span class="sd">        context : str, optional</span>
+</span><span id="PromptChain-89"><a href="#PromptChain-89"><span class="linenos"> 89</span></a><span class="sd">            Context from previous prompts&#39; responses to include</span>
+</span><span id="PromptChain-90"><a href="#PromptChain-90"><span class="linenos"> 90</span></a>
+</span><span id="PromptChain-91"><a href="#PromptChain-91"><span class="linenos"> 91</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-92"><a href="#PromptChain-92"><span class="linenos"> 92</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-93"><a href="#PromptChain-93"><span class="linenos"> 93</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-94"><a href="#PromptChain-94"><span class="linenos"> 94</span></a><span class="sd">            The formatted prompt text with optional context</span>
+</span><span id="PromptChain-95"><a href="#PromptChain-95"><span class="linenos"> 95</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-96"><a href="#PromptChain-96"><span class="linenos"> 96</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain-97"><a href="#PromptChain-97"><span class="linenos"> 97</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+</span><span id="PromptChain-98"><a href="#PromptChain-98"><span class="linenos"> 98</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain-99"><a href="#PromptChain-99"><span class="linenos"> 99</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">context</span>
+</span><span id="PromptChain-100"><a href="#PromptChain-100"><span class="linenos">100</span></a>
+</span><span id="PromptChain-101"><a href="#PromptChain-101"><span class="linenos">101</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-102"><a href="#PromptChain-102"><span class="linenos">102</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-103"><a href="#PromptChain-103"><span class="linenos">103</span></a><span class="sd">        Get the string representation of the prompt chain.</span>
+</span><span id="PromptChain-104"><a href="#PromptChain-104"><span class="linenos">104</span></a>
+</span><span id="PromptChain-105"><a href="#PromptChain-105"><span class="linenos">105</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-106"><a href="#PromptChain-106"><span class="linenos">106</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-107"><a href="#PromptChain-107"><span class="linenos">107</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-108"><a href="#PromptChain-108"><span class="linenos">108</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
+</span><span id="PromptChain-109"><a href="#PromptChain-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-110"><a href="#PromptChain-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span> <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">])</span>
+</span><span id="PromptChain-111"><a href="#PromptChain-111"><span class="linenos">111</span></a>
+</span><span id="PromptChain-112"><a href="#PromptChain-112"><span class="linenos">112</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PromptChain-113"><a href="#PromptChain-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain-114"><a href="#PromptChain-114"><span class="linenos">114</span></a><span class="sd">        Get the official string representation of the prompt chain.</span>
+</span><span id="PromptChain-115"><a href="#PromptChain-115"><span class="linenos">115</span></a>
+</span><span id="PromptChain-116"><a href="#PromptChain-116"><span class="linenos">116</span></a><span class="sd">        Returns</span>
+</span><span id="PromptChain-117"><a href="#PromptChain-117"><span class="linenos">117</span></a><span class="sd">        -------</span>
+</span><span id="PromptChain-118"><a href="#PromptChain-118"><span class="linenos">118</span></a><span class="sd">        str</span>
+</span><span id="PromptChain-119"><a href="#PromptChain-119"><span class="linenos">119</span></a><span class="sd">            All prompts in the chain joined by newlines</span>
+</span><span id="PromptChain-120"><a href="#PromptChain-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain-121"><a href="#PromptChain-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -537,7 +543,7 @@ chain = PromptChain(prompts=prompts)
                                         <input id="PromptChain.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">PromptChain</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Prompt">Prompt</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PromptChain</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Prompt">Prompt</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
                 <label class="view-source-button" for="PromptChain.__init__-view-source"><span>View Source</span></label>
 
@@ -546,33 +552,36 @@ chain = PromptChain(prompts=prompts)
             <div class="pdoc-code codehilite"><pre><span></span><span id="PromptChain.__init__-43"><a href="#PromptChain.__init__-43"><span class="linenos">43</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
 </span><span id="PromptChain.__init__-44"><a href="#PromptChain.__init__-44"><span class="linenos">44</span></a>                 <span class="n">promptchain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="PromptChain.__init__-45"><a href="#PromptChain.__init__-45"><span class="linenos">45</span></a>                 <span class="n">prompts_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PromptChain.__init__-46"><a href="#PromptChain.__init__-46"><span class="linenos">46</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="PromptChain.__init__-47"><a href="#PromptChain.__init__-47"><span class="linenos">47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PromptChain.__init__-48"><a href="#PromptChain.__init__-48"><span class="linenos">48</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
-</span><span id="PromptChain.__init__-49"><a href="#PromptChain.__init__-49"><span class="linenos">49</span></a>
-</span><span id="PromptChain.__init__-50"><a href="#PromptChain.__init__-50"><span class="linenos">50</span></a><span class="sd">        Parameters</span>
-</span><span id="PromptChain.__init__-51"><a href="#PromptChain.__init__-51"><span class="linenos">51</span></a><span class="sd">        ----------</span>
-</span><span id="PromptChain.__init__-52"><a href="#PromptChain.__init__-52"><span class="linenos">52</span></a><span class="sd">        promptchain_id : str, optional</span>
-</span><span id="PromptChain.__init__-53"><a href="#PromptChain.__init__-53"><span class="linenos">53</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
-</span><span id="PromptChain.__init__-54"><a href="#PromptChain.__init__-54"><span class="linenos">54</span></a><span class="sd">        prompts_data : list[dict], optional</span>
-</span><span id="PromptChain.__init__-55"><a href="#PromptChain.__init__-55"><span class="linenos">55</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
-</span><span id="PromptChain.__init__-56"><a href="#PromptChain.__init__-56"><span class="linenos">56</span></a><span class="sd">        prompts : List[Prompt], optional</span>
-</span><span id="PromptChain.__init__-57"><a href="#PromptChain.__init__-57"><span class="linenos">57</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
-</span><span id="PromptChain.__init__-58"><a href="#PromptChain.__init__-58"><span class="linenos">58</span></a>
-</span><span id="PromptChain.__init__-59"><a href="#PromptChain.__init__-59"><span class="linenos">59</span></a><span class="sd">        Raises</span>
-</span><span id="PromptChain.__init__-60"><a href="#PromptChain.__init__-60"><span class="linenos">60</span></a><span class="sd">        ------</span>
-</span><span id="PromptChain.__init__-61"><a href="#PromptChain.__init__-61"><span class="linenos">61</span></a><span class="sd">        - ValueError</span>
-</span><span id="PromptChain.__init__-62"><a href="#PromptChain.__init__-62"><span class="linenos">62</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
-</span><span id="PromptChain.__init__-63"><a href="#PromptChain.__init__-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PromptChain.__init__-64"><a href="#PromptChain.__init__-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-65"><a href="#PromptChain.__init__-65"><span class="linenos">65</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response_type</span> <span class="o">=</span> <span class="n">_PromptChainParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
-</span><span id="PromptChain.__init__-66"><a href="#PromptChain.__init__-66"><span class="linenos">66</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
-</span><span id="PromptChain.__init__-67"><a href="#PromptChain.__init__-67"><span class="linenos">67</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</span><span id="PromptChain.__init__-68"><a href="#PromptChain.__init__-68"><span class="linenos">68</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-69"><a href="#PromptChain.__init__-69"><span class="linenos">69</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
-</span><span id="PromptChain.__init__-70"><a href="#PromptChain.__init__-70"><span class="linenos">70</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="PromptChain.__init__-71"><a href="#PromptChain.__init__-71"><span class="linenos">71</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
-</span><span id="PromptChain.__init__-72"><a href="#PromptChain.__init__-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-46"><a href="#PromptChain.__init__-46"><span class="linenos">46</span></a>                 <span class="n">prompts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Prompt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PromptChain.__init__-47"><a href="#PromptChain.__init__-47"><span class="linenos">47</span></a>                 <span class="n">response_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="PromptChain.__init__-48"><a href="#PromptChain.__init__-48"><span class="linenos">48</span></a>
+</span><span id="PromptChain.__init__-49"><a href="#PromptChain.__init__-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PromptChain.__init__-50"><a href="#PromptChain.__init__-50"><span class="linenos">50</span></a><span class="sd">        Initialize a new PromptChain instance.</span>
+</span><span id="PromptChain.__init__-51"><a href="#PromptChain.__init__-51"><span class="linenos">51</span></a>
+</span><span id="PromptChain.__init__-52"><a href="#PromptChain.__init__-52"><span class="linenos">52</span></a><span class="sd">        Parameters</span>
+</span><span id="PromptChain.__init__-53"><a href="#PromptChain.__init__-53"><span class="linenos">53</span></a><span class="sd">        ----------</span>
+</span><span id="PromptChain.__init__-54"><a href="#PromptChain.__init__-54"><span class="linenos">54</span></a><span class="sd">        promptchain_id : str, optional</span>
+</span><span id="PromptChain.__init__-55"><a href="#PromptChain.__init__-55"><span class="linenos">55</span></a><span class="sd">            A .prompt file name for loading a prompt chain from file</span>
+</span><span id="PromptChain.__init__-56"><a href="#PromptChain.__init__-56"><span class="linenos">56</span></a><span class="sd">        prompts_data : list[dict], optional</span>
+</span><span id="PromptChain.__init__-57"><a href="#PromptChain.__init__-57"><span class="linenos">57</span></a><span class="sd">            List of dictionaries containing formatting data for each prompt</span>
+</span><span id="PromptChain.__init__-58"><a href="#PromptChain.__init__-58"><span class="linenos">58</span></a><span class="sd">        prompts : List[Prompt], optional</span>
+</span><span id="PromptChain.__init__-59"><a href="#PromptChain.__init__-59"><span class="linenos">59</span></a><span class="sd">            Direct list of Prompt objects to form the chain if promptchain_id is not provided</span>
+</span><span id="PromptChain.__init__-60"><a href="#PromptChain.__init__-60"><span class="linenos">60</span></a>
+</span><span id="PromptChain.__init__-61"><a href="#PromptChain.__init__-61"><span class="linenos">61</span></a><span class="sd">        Raises</span>
+</span><span id="PromptChain.__init__-62"><a href="#PromptChain.__init__-62"><span class="linenos">62</span></a><span class="sd">        ------</span>
+</span><span id="PromptChain.__init__-63"><a href="#PromptChain.__init__-63"><span class="linenos">63</span></a><span class="sd">        - ValueError</span>
+</span><span id="PromptChain.__init__-64"><a href="#PromptChain.__init__-64"><span class="linenos">64</span></a><span class="sd">            If neither promptchain_id nor prompts is provided</span>
+</span><span id="PromptChain.__init__-65"><a href="#PromptChain.__init__-65"><span class="linenos">65</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PromptChain.__init__-66"><a href="#PromptChain.__init__-66"><span class="linenos">66</span></a>        <span class="k">if</span> <span class="n">promptchain_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-67"><a href="#PromptChain.__init__-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_response_type</span> <span class="o">=</span> <span class="n">_PromptChainParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">promptchain_id</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-68"><a href="#PromptChain.__init__-68"><span class="linenos">68</span></a>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)):</span>
+</span><span id="PromptChain.__init__-69"><a href="#PromptChain.__init__-69"><span class="linenos">69</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">prompt_data</span><span class="o">=</span><span class="n">prompts_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span id="PromptChain.__init__-70"><a href="#PromptChain.__init__-70"><span class="linenos">70</span></a>        <span class="k">elif</span> <span class="n">prompts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-71"><a href="#PromptChain.__init__-71"><span class="linenos">71</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span> <span class="o">=</span> <span class="n">prompts</span>
+</span><span id="PromptChain.__init__-72"><a href="#PromptChain.__init__-72"><span class="linenos">72</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="PromptChain.__init__-73"><a href="#PromptChain.__init__-73"><span class="linenos">73</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either promptchain_id or prompts must be provided&quot;</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-74"><a href="#PromptChain.__init__-74"><span class="linenos">74</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prompts</span><span class="p">)</span>
+</span><span id="PromptChain.__init__-75"><a href="#PromptChain.__init__-75"><span class="linenos">75</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">response_type</span> <span class="o">=</span> <span class="n">response_type</span>
 </span></pre></div>
 
 
@@ -596,6 +605,17 @@ Direct list of Prompt objects to form the chain if promptchain_id is not provide
 </ul>
 </div>
 
+
+                            </div>
+                            <div id="PromptChain.response_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">response_type</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PromptChain.response_type"></a>
+    
+    
 
                             </div>
                 </section>

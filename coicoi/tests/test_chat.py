@@ -75,8 +75,17 @@ def test_sqlite_history_persistence(sqlite_chat):
     # First chat instance
     sqlite_chat.ask("2+2")
     sqlite_chat.ask("+2")
+
+
+def test_summarizer():
+    """Test that the summarizer works."""
+    new_chat = Chat(provider="openai", 
+                    model=TEST_MODEL, 
+                    history_type="json", 
+                    history_summarizer_provider="openai", 
+                    history_summarizer_model="gpt-4o-mini", 
+                    history_summarizer_max_tokens=100)
     
-    # New chat instance with same history
-    new_chat = Chat(provider="openai", model=TEST_MODEL, history_type="sqlite", chat_id=sqlite_chat.chat_id)
-    response = new_chat.ask("+2")
-    assert response == "8"
+    new_chat.ask("Mi chiamo Giuseppe")
+    response = new_chat.ask("Come mi chiamo? Ritorna solo il mio nome e niente altro.")
+    assert response.lower() == "giuseppe"

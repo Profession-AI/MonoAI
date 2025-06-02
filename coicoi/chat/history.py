@@ -3,9 +3,16 @@ import os
 import json
 import uuid
 import sqlite3
+from coicoi.models import Model
 
 class BaseHistory:
 
+    def __init__(self, 
+                 history_path: str, 
+                 last_n: int=None): 
+        self._history_path = history_path
+        self._last_n = last_n
+        
     def generate_chat_id(self):
         return str(uuid.uuid4())
 
@@ -20,7 +27,9 @@ class BaseHistory:
 
 class JSONHistory(BaseHistory):
     
-    def __init__(self, history_path: str="histories/", last_n: int=None):
+    def __init__(self, 
+                 history_path: str="histories/", 
+                 last_n: int=None): 
         self._history_path = history_path
         self._last_n = last_n
         if not os.path.exists(self._history_path):
@@ -122,3 +131,15 @@ class SQLiteHistory(BaseHistory):
                 )
                 conn.commit()
         
+
+class HistorySummarizer():
+
+    def __init__(self, model: Model, max_tokens: int=None):
+        self._model = model
+        self._max_tokens = max_tokens
+
+    def summarize(self, messages: list):
+        response = self._model.ask("Summarize the following conversation: "+json.dumps(messages))
+        response = response["response"]
+        return response
+

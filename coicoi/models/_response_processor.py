@@ -24,7 +24,7 @@ class ResponseProcessorMixin:
         Returns:
             Dictionary containing the response and optional stats
         """
-        print(response)
+
         response = response["choices"][0]["message"]["content"]
         
         if isinstance(prompt, Prompt):

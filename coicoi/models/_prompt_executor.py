@@ -115,4 +115,7 @@ class PromptExecutorMixin:
             response_type = Response
         
         messages = [{ "content": prompt,"role": "user"}]
-        return completion(model=self.provider+"/"+self.model, messages=messages, response_format=response_type)
+        return completion(model=self.provider+"/"+self.model, 
+                          messages=messages, 
+                          response_format=response_type,
+                          max_tokens=self._max_tokens)

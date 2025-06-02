@@ -45,7 +45,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         model: str | None = None, 
         system_prompt: str | Sequence[str] = (),
         count_tokens: bool = False, 
-        count_cost: bool = False
+        count_cost: bool = False,
+        max_tokens: int = None
     ):
         """
         Initialize a new Model instance.
@@ -62,8 +63,10 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             Whether to count tokens for each request
         count_cost : bool, optional
             Whether to calculate costs for each request
+        max_tokens : int, optional
+            Maximum number of tokens for each request
         """
-        super().__init__(count_tokens, count_cost)
+        super().__init__(count_tokens, count_cost, max_tokens)
         
         if provider is None:
             provider = CoiConf()["base_model"]["provider"]

@@ -1,11 +1,8 @@
-from coicoi.chat import Chat
+from coicoi.rag import RAG
 
+rag = RAG("openai", "text-embedding-ada-002", "sqlite")
 
-chat = Chat(provider="openai", 
-            model="gpt-4o-mini", 
-            history_type="sqlite",
-            system_prompt="Sei un esperto di storia, rispondi sempre in italiano")
-
-chat.ask("Mi chiamo Giuseppe")
-response = chat.ask("Come mi chiamo?")
-print(response)
+embedding = rag.embed(["Le lezioni live sono il Giovedì alle 14", 
+                       "Il corso di Python inizia a Settembre",
+                       "I docenti non fanno consulenze private"])
+print(embedding)

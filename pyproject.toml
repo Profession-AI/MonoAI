@@ -18,7 +18,7 @@ dependencies = [
   "duckduckgo-search",
   "tavily-python",
   "xmltodict",
-  "python-whois"
+  "python-whois",
   "litellm"
 ]
 

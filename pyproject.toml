@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "COICOI"
-version = "0.0.9"
+version = "0.0.10"
 description = "Pacchetto COICOI sviluppato da ProfessionAI"
 authors = [
   { name = "ProfessionAI Tech", email = "tech@profession.ai" }
@@ -17,7 +17,8 @@ dependencies = [
   "pydantic-ai",
   "duckduckgo-search",
   "tavily-python",
-  "xmltodict"
+  "xmltodict",
+  "python-whois"
 ]
 
 [project.urls]

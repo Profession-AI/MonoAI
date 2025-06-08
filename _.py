@@ -1,8 +1,9 @@
-from coicoi.rag import RAG
+from coicoi.tools.domain_whois import DomainWhois
 
-rag = RAG("openai", "text-embedding-ada-002", "sqlite")
+domain_whois = DomainWhois()
+result = domain_whois.whois("profession.ai")
+print(result)
 
-embedding = rag.embed(["Le lezioni live sono il Giovedì alle 14", 
-                       "Il corso di Python inizia a Settembre",
-                       "I docenti non fanno consulenze private"])
-print(embedding)
+
+
+

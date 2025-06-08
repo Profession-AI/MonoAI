@@ -1,8 +1,0 @@
-<promptchain response_type="int">
-<prompt>
-2+2
-</prompt>
-<prompt>
-+2
-</prompt>
-</promptchain>

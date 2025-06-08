@@ -1,5 +1,6 @@
 from litellm import embedding
 from coicoi.keys.keys_manager import load_key
+import chromadb
 
 class RAG:
 
@@ -20,4 +21,4 @@ class RAG:
         )
         return result
 
-    
+    def create(self, name)    

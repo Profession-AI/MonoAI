@@ -6,3 +6,4 @@ xmltodict
 pytest
 beautifulsoup4
 selenium
+python-whois

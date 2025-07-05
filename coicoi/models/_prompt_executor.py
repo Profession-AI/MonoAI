@@ -34,6 +34,16 @@ class PromptExecutorMixin:
         Returns:
             Dictionary containing the response
         """
+
+        if self._rag:
+            response = self._rag.query(prompt)
+            print(response)
+            if len(response["documents"])>0:
+                documents = response.get('documents', [])
+                documents = [s for doc_list in documents for s in doc_list]
+                documents = '\n'.join(documents)
+                prompt += "\nUse also the following information to answer the question: " + documents
+
         if isinstance(prompt, PromptChain):
             return self._execute_chain(prompt)
         elif isinstance(prompt, IterativePrompt):

@@ -7,3 +7,4 @@ pytest
 beautifulsoup4
 selenium
 python-whois
+chromadb

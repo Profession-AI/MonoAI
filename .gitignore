@@ -87,3 +87,6 @@ _.py
 *.prompts
 prompts/
 histories/
+
+
+chroma_db/

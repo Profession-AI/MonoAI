@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/Profession-AI/MonoAI/refs/heads/main/docs/res/logo.png" alt="alt text" width="500"/>
 
-### Collective Intelligence via Collaborative Inference
+### The complete framework to build AI-powered applications
 
 
 **MonoAI** is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.
@@ -164,4 +164,4 @@ base_model:
 ## 📚 Documentation
 
 Full documentation is available at:  
-👉 [MonoAI Documentation](http://Profession-AI.github.io/MonoAI)
+👉 [MonoAI Documentation](https://profession-ai.github.io/MonoAI/monoai.html)

@@ -1,18 +1,18 @@
-# COICOI
+# MonoAI
 
-<img src="https://raw.githubusercontent.com/Profession-AI/COICOI/refs/heads/main/docs/res/coicoi.png" alt="alt text" width="500"/>
+<img src="https://raw.githubusercontent.com/Profession-AI/MonoAI/refs/heads/main/docs/res/logo.png" alt="alt text" width="500"/>
 
 ### Collective Intelligence via Collaborative Inference
 
 
-**COICOI** is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.
+**MonoAI** is a Python library that enables structured, standardized, and efficient interactions with multiple AI models, harnessing their collective intelligence to deliver richer, more accurate responses.
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prompts
-In COICOI, a **prompt** is the request you send to a model.  
+In MonoAI, a **prompt** is the request you send to a model.  
 You can define prompts in three different ways:
 
 ---
@@ -20,7 +20,7 @@ You can define prompts in three different ways:
 #### 1. Plain Text
 Directly write the prompt inside the `ask` method:
 ```python
-from coicoi.models import Model
+from MonoAI.models import Model
 
 model = Model()
 response = model.ask("What is 2 + 2?")
@@ -31,8 +31,8 @@ response = model.ask("What is 2 + 2?")
 #### 2. `Prompt` Class
 Use the `Prompt` class to enhance your prompts with additional parameters such as response types, chaining, and iteration control:
 ```python
-from coicoi.models import Model
-from coicoi.prompts import Prompt
+from MonoAI.models import Model
+from MonoAI.prompts import Prompt
 
 model = Model()
 prompt = Prompt("What is 2 + 2?", response_type=int)
@@ -50,8 +50,8 @@ What is 2 + 2?
 ```
 
 ```python
-from coicoi.models import Model
-from coicoi.prompts import Prompt
+from MonoAI.models import Model
+from MonoAI.prompts import Prompt
 
 model = Model()
 prompt = Prompt(prompt_id="sum", response_type=int)
@@ -71,7 +71,7 @@ What is 2 + 2?
 ---
 
 ### Models
-COICOI provides multiple model interfaces to handle different use cases, from basic generation to multi-model aggregation:
+MonoAI provides multiple model interfaces to handle different use cases, from basic generation to multi-model aggregation:
 
 ---
 
@@ -83,7 +83,7 @@ The standard interface for interacting with a single AI model.
 #### `MultiModel`
 Send a prompt to multiple models asynchronously and retrieve their individual outputs:
 ```python
-from coicoi.models import MultiModel
+from MonoAI.models import MultiModel
 
 model = MultiModel(models=[
     {"provider": "openai", "model": "gpt-4o"},
@@ -97,7 +97,7 @@ response = model.ask("What is the capital of Italy?")
 #### `CollectiveModel`
 Send a prompt to multiple models and aggregate their outputs using a separate aggregator model for a richer, consolidated answer:
 ```python
-from coicoi.models import CollectiveModel
+from MonoAI.models import CollectiveModel
 
 model = CollectiveModel(
     models=[
@@ -114,7 +114,7 @@ response = model.ask("What is the capital of Italy?")
 #### `AutoModel`
 Automatically select the best model for a given prompt based on configuration or inference:
 ```python
-from coicoi.models import AutoModel
+from MonoAI.models import AutoModel
 
 model = AutoModel()
 response = model.ask("What is the capital of Italy?")
@@ -123,7 +123,7 @@ response = model.ask("What is the capital of Italy?")
 ---
 
 ### 🔑 API Key Management
-COICOI simplifies API key management through a `providers.keys` file in the root directory.  
+MonoAI simplifies API key management through a `providers.keys` file in the root directory.  
 Each line should follow this format:
 ```
 PROVIDER_NAME=API_KEY
@@ -135,13 +135,13 @@ OPENAI=sk-proj-ABCDE12345
 DEEPSEEK=sk-proj-FGHIJ67890
 ```
 
-COICOI automatically loads these keys at runtime — no extra setup needed.
+MonoAI automatically loads these keys at runtime — no extra setup needed.
 
 ---
 
 ## ⚙️ Configuration
 
-Configure COICOI globally via a `coiconf.yaml` file.  
+Configure MonoAI globally via a `monoai.yaml` file.  
 Supported fields:
 
 | Field             | Description                                          | Default             |
@@ -150,7 +150,7 @@ Supported fields:
 | `keysfile_path`   | Path to the API keys file                            | `"providers.keys"`  |
 | `base_model`      | Default model to use when no model is specified      | None                |
 
-**Example `coiconf.yaml`:**
+**Example `monoai.yaml`:**
 ```yaml
 prompts_path: prompts
 keysfile_path: providers.keys
@@ -164,4 +164,4 @@ base_model:
 ## 📚 Documentation
 
 Full documentation is available at:  
-👉 [COICOI Documentation](http://Profession-AI.github.io/COICOI)
+👉 [MonoAI Documentation](http://Profession-AI.github.io/MonoAI)

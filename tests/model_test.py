@@ -1,5 +1,5 @@
-from coicoi.models import Model
-from coicoi.prompts.prompt_chain import PromptChain
+from monoai.models import Model
+from monoai.prompts.prompt_chain import PromptChain
 
 model = Model(
     provider="openai",

@@ -3,9 +3,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "COICOI"
-version = "0.0.11"
-description = "Pacchetto COICOI sviluppato da ProfessionAI"
+name = "monoai"
+version = "0.0.12"
+description = "Pacchetto MonoAI sviluppato da ProfessionAI"
 authors = [
   { name = "ProfessionAI Tech", email = "tech@profession.ai" }
 ]
@@ -14,13 +14,20 @@ requires-python = ">=3.8"
 
 # 📦 Dipendenze di runtime
 dependencies = [
-  "pydantic-ai",
-  "duckduckgo-search",
-  "tavily-python",
-  "xmltodict",
-  "python-whois",
-  "litellm"
+    "litellm",
+    "duckduckgo-search",
+    "tavily-python",
+    "typing-extensions",
+    "xmltodict",
+    "pytest",
+    "beautifulsoup4",
+    "selenium",
+    "python-whois",
+    "chromadb",
+    "python-docx",
+    "docx2txt",
+    "PyPDF2"
 ]
 
 [project.urls]
-Homepage = "https://github.com/Profession-AI/COICOI"
+Homepage = "https://github.com/Profession-AI/MONOAI"

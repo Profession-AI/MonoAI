@@ -1,5 +1,5 @@
-from coicoi.models import CollectiveModel
-from coicoi.prompts.prompt_chain import PromptChain
+from monoai.models import CollectiveModel
+from monoai.prompts.prompt_chain import PromptChain
 
 collective_model = CollectiveModel(
     models=[

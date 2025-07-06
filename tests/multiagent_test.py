@@ -1,6 +1,6 @@
-from coicoi._agents import MultiAgent
-from coicoi.prompts.prompt_chain import PromptChain
-from coicoi.tools import WebSearch
+from monoai._agents import MultiAgent
+from monoai.prompts.prompt_chain import PromptChain
+from monoai.tools import WebSearch
 
 
 multi_agent = MultiAgent(

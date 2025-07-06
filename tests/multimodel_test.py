@@ -1,5 +1,5 @@
-from coicoi.models import MultiModel
-from coicoi.prompts.prompt_chain import PromptChain
+from monoai.models import MultiModel
+from monoai.prompts.prompt_chain import PromptChain
 
 multi_model = MultiModel(
     models=[

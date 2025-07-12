@@ -20,6 +20,7 @@ class BaseModel(ABC):
         self._count_tokens = count_tokens
         self._count_cost = count_cost
         self._max_tokens = max_tokens
+        self._rag = None
         
     @abstractmethod
     def ask(self, prompt: str) -> Union[List[Dict], Dict]:

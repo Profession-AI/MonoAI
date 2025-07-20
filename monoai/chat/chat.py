@@ -2,6 +2,9 @@ from litellm import completion, acompletion
 from monoai.keys.keys_manager import load_key
 from monoai.chat.history import JSONHistory, SQLiteHistory, BaseHistory, HistorySummarizer
 from monoai.models import Model
+from monoai.conf.conf import Conf
+from monoai.prompts.prompt import Prompt
+import os
 
 class Chat():
     """
@@ -52,7 +55,7 @@ class Chat():
     def __init__(self, 
                  provider: str, 
                  model: str, 
-                 system_prompt: str = "You are a helpful assistant.",
+                 system_prompt: Prompt | str = None,
                  max_tokens: int = None,
                  history_type: str | BaseHistory = "json", 
                  history_summarizer_provider: str = None, 
@@ -85,7 +88,8 @@ class Chat():
             The id of the chat to load, if not provided a new chat will be created
         """
 
-        self._model = model
+        
+        self._model = provider + "/" + model
         self._max_tokens = max_tokens
         load_key(provider)
         self._history_summarizer = None
@@ -99,6 +103,14 @@ class Chat():
             self._history_summarizer = HistorySummarizer(Model(provider=history_summarizer_provider, 
                                                                model=history_summarizer_model,
                                                                max_tokens=history_summarizer_max_tokens))
+
+        prompt_path = Conf()["prompts_path"]
+        if system_prompt is None:
+            system_prompt = open(os.path.join(prompt_path,"system.prompt"), "r").read()
+        elif isinstance(system_prompt, str) and system_prompt.endswith(".prompt"):
+            system_prompt = open(os.path.join(prompt_path,system_prompt), "r").read()
+        elif isinstance(system_prompt, Prompt):
+            system_prompt = str(system_prompt)
 
         if chat_id is None:
             self.chat_id = self._history.new(system_prompt)

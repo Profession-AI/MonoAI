@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monoai"
-version = "0.0.12"
+version = "0.0.14"
 description = "Pacchetto MonoAI sviluppato da ProfessionAI"
 authors = [
   { name = "ProfessionAI Tech", email = "tech@profession.ai" }
@@ -26,7 +26,9 @@ dependencies = [
     "chromadb",
     "python-docx",
     "docx2txt",
-    "PyPDF2"
+    "PyPDF2",
+    "nbconvert",
+    "nbformat"
 ]
 
 [project.urls]

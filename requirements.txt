@@ -11,3 +11,5 @@ chromadb
 python-docx
 docx2txt
 PyPDF2
+nbformat
+nbconvert

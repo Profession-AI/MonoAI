@@ -132,7 +132,7 @@ class KeyManager:
 
 def load_key(provider: str):
 
-    key_name = provider + _KEY_EXT
+    key_name = provider.upper() + _KEY_EXT
 
     if key_name in environ:
         return

@@ -4,6 +4,8 @@ import json
 import uuid
 import sqlite3
 from monoai.models import Model
+from pymongo import MongoClient
+import datetime
 
 class BaseHistory:
 
@@ -19,8 +21,13 @@ class BaseHistory:
     def load(self):
         pass
 
-    def save(self):
-        pass
+    def store(self, chat_id: str, messages: list):
+        # Aggiungi un timestamp ISO 8601 a ciascun messaggio
+        now = datetime.datetime.utcnow().isoformat() + 'Z'
+        for msg in messages:
+            if 'timestamp' not in msg:
+                msg['timestamp'] = now
+        return messages
 
     def clear(self):
         pass
@@ -48,8 +55,19 @@ class JSONHistory(BaseHistory):
         return chat_id
 
     def store(self, chat_id: str, messages: list):
+        messages = super().store(chat_id, messages)
+        # Load existing messages
+        try:
+            with open(self._history_path+chat_id+".json", "r") as f:
+                existing_messages = json.load(f)
+        except FileNotFoundError:
+            existing_messages = []
+        
+        # Add the new messages (già con timestamp)
+        new_messages = existing_messages + messages
+        
         with open(self._history_path+chat_id+".json", "w") as f:
-            json.dump(messages, f, indent=4)
+            json.dump(new_messages, f, indent=4)
 
 class SQLiteHistory(BaseHistory):
     
@@ -111,6 +129,7 @@ class SQLiteHistory(BaseHistory):
         return chat_id
 
     def store(self, chat_id: str, messages: list):
+        messages = super().store(chat_id, messages)
         with sqlite3.connect(self._db_path) as conn:
             # Get the last order_index
             cursor = conn.execute(
@@ -123,14 +142,57 @@ class SQLiteHistory(BaseHistory):
             if last_index is None:
                 last_index = -1
             
-            # Insert the last two messages with incremented order_index
-            for i, message in enumerate(messages[-2:], start=last_index + 1):
+            # Insert the new messages con timestamp
+            for i, message in enumerate(messages, start=last_index + 1):
                 conn.execute(
                     "INSERT INTO messages (chat_id, order_index, role, content) VALUES (?, ?, ?, ?)",
                     (chat_id, i, message["role"], message["content"])
                 )
                 conn.commit()
         
+
+class MongoDBHistory(BaseHistory):
+    def __init__(self, db_path, db_name: str = "chat", collection_name: str = "histories", last_n: int = None):
+        self._uri = db_path
+        self._db_name = db_name
+        self._collection_name = collection_name
+        self._last_n = last_n
+        self._client = MongoClient(self._uri)
+        self._db = self._client[self._db_name]
+        self._collection = self._db[self._collection_name]
+
+    def load(self, chat_id: str):
+        doc = self._collection.find_one({"chat_id": chat_id})
+        if not doc:
+            self.messages = []
+            return self.messages
+        messages = doc.get("messages", [])
+        if self._last_n is not None and len(messages) > (self._last_n + 1) * 2:
+            messages = [messages[0]] + messages[-self._last_n * 2:]
+        self.messages = messages
+        return self.messages
+
+    def new(self, system_prompt: str):
+        chat_id = self.generate_chat_id()
+        messages = [{"role": "system", "content": system_prompt}]
+        self.store(chat_id, messages)
+        return chat_id
+
+    def store(self, chat_id: str, messages: list):
+        messages = super().store(chat_id, messages)
+        # Get existing messages
+        doc = self._collection.find_one({"chat_id": chat_id})
+        existing_messages = doc.get("messages", []) if doc else []
+        
+        # Add the new messages (già con timestamp)
+        new_messages = existing_messages + messages
+        
+        self._collection.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"messages": new_messages}},
+            upsert=True
+        )
+
 
 class HistorySummarizer():
 

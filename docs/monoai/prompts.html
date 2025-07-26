@@ -184,8 +184,8 @@ Prompt can be provided as a string or as a xml-like .prompt file.</p>
 </span><span id="Prompt-80"><a href="#Prompt-80"><span class="linenos"> 80</span></a><span class="sd">            Dictionary of values for formatting the prompt</span>
 </span><span id="Prompt-81"><a href="#Prompt-81"><span class="linenos"> 81</span></a><span class="sd">        prompt : str, optional</span>
 </span><span id="Prompt-82"><a href="#Prompt-82"><span class="linenos"> 82</span></a><span class="sd">            Direct prompt text if prompt_id is not provided</span>
-</span><span id="Prompt-83"><a href="#Prompt-83"><span class="linenos"> 83</span></a><span class="sd">        response_type : type, optional</span>
-</span><span id="Prompt-84"><a href="#Prompt-84"><span class="linenos"> 84</span></a><span class="sd">            Expected type of the response</span>
+</span><span id="Prompt-83"><a href="#Prompt-83"><span class="linenos"> 83</span></a><span class="sd">        response_type : type | BaseModel, optional</span>
+</span><span id="Prompt-84"><a href="#Prompt-84"><span class="linenos"> 84</span></a><span class="sd">            Expected type of the response or a Pydantic BaseModel for json schema response</span>
 </span><span id="Prompt-85"><a href="#Prompt-85"><span class="linenos"> 85</span></a>
 </span><span id="Prompt-86"><a href="#Prompt-86"><span class="linenos"> 86</span></a><span class="sd">        Raises</span>
 </span><span id="Prompt-87"><a href="#Prompt-87"><span class="linenos"> 87</span></a><span class="sd">        ------</span>
@@ -322,8 +322,8 @@ data formatting through Python's string formatting.</p>
 </span><span id="Prompt.__init__-80"><a href="#Prompt.__init__-80"><span class="linenos"> 80</span></a><span class="sd">            Dictionary of values for formatting the prompt</span>
 </span><span id="Prompt.__init__-81"><a href="#Prompt.__init__-81"><span class="linenos"> 81</span></a><span class="sd">        prompt : str, optional</span>
 </span><span id="Prompt.__init__-82"><a href="#Prompt.__init__-82"><span class="linenos"> 82</span></a><span class="sd">            Direct prompt text if prompt_id is not provided</span>
-</span><span id="Prompt.__init__-83"><a href="#Prompt.__init__-83"><span class="linenos"> 83</span></a><span class="sd">        response_type : type, optional</span>
-</span><span id="Prompt.__init__-84"><a href="#Prompt.__init__-84"><span class="linenos"> 84</span></a><span class="sd">            Expected type of the response</span>
+</span><span id="Prompt.__init__-83"><a href="#Prompt.__init__-83"><span class="linenos"> 83</span></a><span class="sd">        response_type : type | BaseModel, optional</span>
+</span><span id="Prompt.__init__-84"><a href="#Prompt.__init__-84"><span class="linenos"> 84</span></a><span class="sd">            Expected type of the response or a Pydantic BaseModel for json schema response</span>
 </span><span id="Prompt.__init__-85"><a href="#Prompt.__init__-85"><span class="linenos"> 85</span></a>
 </span><span id="Prompt.__init__-86"><a href="#Prompt.__init__-86"><span class="linenos"> 86</span></a><span class="sd">        Raises</span>
 </span><span id="Prompt.__init__-87"><a href="#Prompt.__init__-87"><span class="linenos"> 87</span></a><span class="sd">        ------</span>
@@ -359,8 +359,8 @@ A .prompt file name for loading a prompt from file</li>
 Dictionary of values for formatting the prompt</li>
 <li><strong>prompt</strong> (str, optional):
 Direct prompt text if prompt_id is not provided</li>
-<li><strong>response_type</strong> (type, optional):
-Expected type of the response</li>
+<li><strong>response_type</strong> (type | BaseModel, optional):
+Expected type of the response or a Pydantic BaseModel for json schema response</li>
 </ul>
 
 <h6 id="raises">Raises</h6>

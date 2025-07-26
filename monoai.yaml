@@ -2,4 +2,6 @@ base_model:
   provider: openai
   model: gpt-4o-mini
 prompts_path: prompts
-
+supported_files: 
+  text: ["txt", "py", "md"]
+  image: ["png", "jpg", "jpeg", "gif", "webp"]

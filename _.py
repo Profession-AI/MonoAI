@@ -1,11 +1,10 @@
-from monoai.models import Model
-from monoai.prompts import Prompt
-from pydantic import BaseModel
+from monoai.chat import Chat
 
-class Response(BaseModel):
-    result: float
-
-
-model = Model(provider="mistral", model="mistral-tiny")
-prompt = Prompt(prompt="3+2.5=", response_type=Response)
-print(model.ask(prompt))
+chat = Chat(provider="openai", 
+            model="gpt-4o-mini", 
+            history_type="mongodb", 
+            history_path="mongodb+srv://gfgullo:aYBSjqaQ4s3I7p0g@cluster0.hbajnzz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+        )
+print(chat.chat_id)
+response = chat.ask("What's in this image?", file="todo.md")
+print(response)

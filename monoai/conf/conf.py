@@ -28,6 +28,10 @@ class Conf:
     _instance = None
     _DEFAULT_CONFIG = {
         'keysfile_path': "providers.keys",
+        'supported_files': {
+            "text": ["txt", "py", "md"],
+            "image": ["png", "jpg", "jpeg", "gif", "webp"]
+        },
         'prompts_path': ""
     }
     

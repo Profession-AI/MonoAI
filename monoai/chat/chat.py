@@ -1,6 +1,6 @@
 from litellm import completion, acompletion
 from monoai.keys.keys_manager import load_key
-from monoai.chat.history import JSONHistory, SQLiteHistory, BaseHistory, HistorySummarizer
+from monoai.chat.history import *
 from monoai.models import Model
 from monoai.conf.conf import Conf
 from monoai.prompts.prompt import Prompt
@@ -49,7 +49,8 @@ class Chat():
 
     _HISTORY_MAP = {
         "json": JSONHistory,
-        "sqlite": SQLiteHistory
+        "sqlite": SQLiteHistory,
+        "mongodb": MongoDBHistory
     }
 
     def __init__(self, 
@@ -58,6 +59,8 @@ class Chat():
                  system_prompt: Prompt | str = None,
                  max_tokens: int = None,
                  history_type: str | BaseHistory = "json", 
+                 history_last_n: int = None,
+                 history_path: str = None,
                  history_summarizer_provider: str = None, 
                  history_summarizer_model: str = None,
                  history_summarizer_max_tokens: int = None,
@@ -78,6 +81,10 @@ class Chat():
             Maximum number of tokens for each request
         history_type : str | BaseHistory, optional
             The type of history to use for the chat.
+        history_last_n : int, optional
+            The last n messages to keep in the history.
+        history_path : str, optional
+            The path to the history.
         history_summarizer_provider : str, optional
             The provider of the history summarizer.
         history_summarizer_model : str, optional
@@ -95,7 +102,7 @@ class Chat():
         self._history_summarizer = None
 
         if isinstance(history_type, str):
-            self._history = self._HISTORY_MAP[history_type]()
+            self._history = self._HISTORY_MAP[history_type](last_n=history_last_n, db_path=history_path)
         else:
             self._history = history_type
 
@@ -106,7 +113,11 @@ class Chat():
 
         prompt_path = Conf()["prompts_path"]
         if system_prompt is None:
-            system_prompt = open(os.path.join(prompt_path,"system.prompt"), "r").read()
+            prompt_path = os.path.join(prompt_path,"system.prompt")
+            if os.path.exists(prompt_path):
+                system_prompt = open(prompt_path, "r").read()
+            else:
+                system_prompt = ""
         elif isinstance(system_prompt, str) and system_prompt.endswith(".prompt"):
             system_prompt = open(os.path.join(prompt_path,system_prompt), "r").read()
         elif isinstance(system_prompt, Prompt):
@@ -117,7 +128,7 @@ class Chat():
         else:
             self.chat_id = chat_id
 
-    def ask(self, prompt: str, return_history: bool = False) -> str:
+    def ask(self, prompt: str, file: str = None, return_history: bool = False) -> str:
         
         """
         Ask the model a question.
@@ -126,6 +137,8 @@ class Chat():
         ----------
         prompt : str
             The question to ask the model
+        file : str, optional
+            The file to attach to the message
         return_history : bool, optional
             Whether to return the full history of the chat or only the response
 
@@ -138,18 +151,30 @@ class Chat():
         """
 
         messages = self._history.load(self.chat_id)
+        if file is not None:
+            ext = file.split(".")[-1]
 
+            if ext in Conf()["supported_text_files"]:
+                prompt += "\n\nHere is the content of the file:\n\n" + open(file, "r").read()
+            elif ext in Conf()["supported_image_files"]:
+                prompt = [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": file}
+                ]
+            else:
+                raise ValueError(f"File type {ext} not supported")
+
+        print(prompt)
         if self._history_summarizer is not None:
             summarized = self._history_summarizer.summarize(messages)
             messages.append({"role": "user", "content": prompt})
             ask_messages = [messages[0], messages[-1]]
-            print(summarized)
-            print(ask_messages[0])
             ask_messages[0]["content"] += "\n\nHere is the summary of the conversation so far:\n\n" + summarized
         else:
             messages.append({"role": "user", "content": prompt})
             ask_messages = messages
 
+        print(ask_messages)
         response = completion(
             model=self._model,
             messages=ask_messages,
@@ -159,7 +184,7 @@ class Chat():
         response = response["choices"][0]["message"]["content"]
         messages.append({"role": "assistant", "content": response})
         
-        self._history.store(self.chat_id, messages)
+        self._history.store(self.chat_id, messages[-2:])
         if return_history:
             return messages
         else:
@@ -196,7 +221,8 @@ class Chat():
             response_text += part
             yield part
         messages.append({"role": "assistant", "content": response_text})
-        self._history.store(self.chat_id, messages)
+        # Pass only the last two messages (user question and assistant response)
+        self._history.store(self.chat_id, messages[-2:])
 
 
 

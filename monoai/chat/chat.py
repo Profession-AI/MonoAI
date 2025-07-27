@@ -154,9 +154,9 @@ class Chat():
         if file is not None:
             ext = file.split(".")[-1]
 
-            if ext in Conf()["supported_text_files"]:
-                prompt += "\n\nHere is the content of the file:\n\n" + open(file, "r").read()
-            elif ext in Conf()["supported_image_files"]:
+            if ext in Conf()["supported_files"]["text"]:
+                prompt += Conf()["default_prompt"]["file"] + open(file, "r").read()
+            elif ext in Conf()["supported_files"]["image"]:
                 prompt = [
                     {"type": "text", "text": prompt},
                     {"type": "image_url", "image_url": file}
@@ -164,17 +164,15 @@ class Chat():
             else:
                 raise ValueError(f"File type {ext} not supported")
 
-        print(prompt)
         if self._history_summarizer is not None:
             summarized = self._history_summarizer.summarize(messages)
             messages.append({"role": "user", "content": prompt})
             ask_messages = [messages[0], messages[-1]]
-            ask_messages[0]["content"] += "\n\nHere is the summary of the conversation so far:\n\n" + summarized
+            ask_messages[0]["content"] += Conf()["default_prompt"]["summary"] + summarized
         else:
             messages.append({"role": "user", "content": prompt})
             ask_messages = messages
 
-        print(ask_messages)
         response = completion(
             model=self._model,
             messages=ask_messages,
@@ -189,8 +187,66 @@ class Chat():
             return messages
         else:
             return response
+
+    async def ask_stream(self, prompt: str, file: str = None):
+        
+        """
+        Ask the model a question and stream the response.
+
+        Parameters
+        ----------
+        prompt : str
+            The question to ask the model
+        file : str, optional
+            The file to attach to the message
+
+        Returns
+        -------
+        AsyncGenerator[str, None]
+            A generator that yields the response from the model
+        """
+
+        messages = self._history.load(self.chat_id)
+        if file is not None:
+            ext = file.split(".")[-1]
+
+            if ext in Conf()["supported_files"]["text"]:
+                prompt += Conf()["default_prompt"]["file"] + open(file, "r").read()
+            elif ext in Conf()["supported_files"]["image"]:
+                prompt = [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": file}
+                ]
+            else:
+                raise ValueError(f"File type {ext} not supported")
+
+        if self._history_summarizer is not None:
+            summarized = self._history_summarizer.summarize(messages)
+            messages.append({"role": "user", "content": prompt})
+            ask_messages = [messages[0], messages[-1]]
+            ask_messages[0]["content"] += Conf()["default_prompt"]["summary"] + summarized
+        else:
+            messages.append({"role": "user", "content": prompt})
+            ask_messages = messages
+
+        response = await acompletion(
+            model=self._model,
+            messages=ask_messages,
+            max_tokens=self._max_tokens,
+            stream=True
+        )
+
+        response_text = ""
+        async for chunk in response: 
+            part = chunk["choices"][0]["delta"]["content"] or ""
+            response_text += part
+            yield json.dumps({"answer": part})
+
+        messages.append({"role": "assistant", "content": response_text})
+
+        self._history.store(self.chat_id, messages[-2:])
     
-    async def ask_async(self, prompt: str):
+    async def ask_async(self, prompt: str, file: str = None):
 
         """
         Ask the model a question and stream the response.
@@ -199,6 +255,8 @@ class Chat():
         ----------
         prompt : str
             The question to ask the model
+        file : str, optional
+            The file to attach to the message
 
         Returns
         -------
@@ -206,11 +264,32 @@ class Chat():
             A generator that yields the response from the model
         """
         messages = self._history.load(self.chat_id)
-        messages.append({"role": "user", "content": prompt})
+        
+        if file is not None:
+            ext = file.split(".")[-1]
+
+            if ext in Conf()["supported_files"]["text"]:
+                prompt += Conf()["default_prompt"]["file"] + open(file, "r").read()
+            elif ext in Conf()["supported_files"]["image"]:
+                prompt = [
+                    {"type": "text", "text": prompt},
+                    {"type": "image_url", "image_url": file}
+                ]
+            else:
+                raise ValueError(f"File type {ext} not supported")
+
+        if self._history_summarizer is not None:
+            summarized = self._history_summarizer.summarize(messages)
+            messages.append({"role": "user", "content": prompt})
+            ask_messages = [messages[0], messages[-1]]
+            ask_messages[0]["content"] += Conf()["default_prompt"]["summary"] + summarized
+        else:
+            messages.append({"role": "user", "content": prompt})
+            ask_messages = messages
 
         response = await acompletion(
             model=self._model,
-            messages=messages,
+            messages=ask_messages,
             stream=True,
             max_tokens=self._max_tokens
         )
@@ -223,6 +302,3 @@ class Chat():
         messages.append({"role": "assistant", "content": response_text})
         # Pass only the last two messages (user question and assistant response)
         self._history.store(self.chat_id, messages[-2:])
-
-
-

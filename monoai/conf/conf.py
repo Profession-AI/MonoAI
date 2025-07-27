@@ -32,7 +32,12 @@ class Conf:
             "text": ["txt", "py", "md"],
             "image": ["png", "jpg", "jpeg", "gif", "webp"]
         },
-        'prompts_path': ""
+        'prompts_path': "",
+        'default_prompt': {
+            "rag": "Use also the following information to answer the question: ",
+            "summary":"Here is the summary of the conversation so far:\n\n",
+            "file":"Here is the content of the file:\n\n"
+        }
     }
     
     def __new__(cls):

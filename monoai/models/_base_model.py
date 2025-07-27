@@ -8,7 +8,8 @@ class BaseModel(ABC):
         self, 
         count_tokens: bool = False, 
         count_cost: bool = False,
-        max_tokens: int = None
+        max_tokens: int = None,
+        rag: RAG = None
     ):
         """
         Initialize base model with counting preferences.
@@ -16,12 +17,14 @@ class BaseModel(ABC):
         Args:
             count_tokens: Whether to count tokens for each request
             count_cost: Whether to calculate costs for each request
+            max_tokens: Maximum number of tokens to generate
+            rag: RAG object
         """
         self._count_tokens = count_tokens
         self._count_cost = count_cost
         self._max_tokens = max_tokens
-        self._rag = None
-        
+        self._rag = rag
+
     @abstractmethod
     def ask(self, prompt: str) -> Union[List[Dict], Dict]:
         """Ask the model synchronously."""

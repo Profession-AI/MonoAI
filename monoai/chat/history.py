@@ -4,8 +4,14 @@ import json
 import uuid
 import sqlite3
 from monoai.models import Model
-from pymongo import MongoClient
 import datetime
+
+# Conditional import for MongoDB
+try:
+    from pymongo import MongoClient
+    MONGODB_AVAILABLE = True
+except ImportError:
+    MONGODB_AVAILABLE = False
 
 class BaseHistory:
 

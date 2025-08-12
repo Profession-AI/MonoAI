@@ -1,0 +1,17 @@
+[
+    {
+        "role": "system",
+        "content": "You are an helpful assistant",
+        "timestamp": "2025-08-12T15:06:14.200930Z"
+    },
+    {
+        "role": "user",
+        "content": "ci sei ?",
+        "timestamp": "2025-08-12T15:06:14.765242Z"
+    },
+    {
+        "role": "assistant",
+        "content": "S\u00ec, ci sono! Come posso aiutarti?",
+        "timestamp": "2025-08-12T15:06:14.765242Z"
+    }
+]

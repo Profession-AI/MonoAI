@@ -1,17 +1,10 @@
-from monoai.chat.base_history import BaseHistory
 import os
 import json
 import uuid
 import sqlite3
 from monoai.models import Model
 import datetime
-
-# Conditional import for MongoDB
-try:
-    from pymongo import MongoClient
-    MONGODB_AVAILABLE = True
-except ImportError:
-    MONGODB_AVAILABLE = False
+from pymongo import MongoClient
 
 class BaseHistory:
 
@@ -38,12 +31,13 @@ class BaseHistory:
     def clear(self):
         pass
 
+
 class JSONHistory(BaseHistory):
     
     def __init__(self, 
-                 history_path: str="histories/", 
+                 path: str="histories/", 
                  last_n: int=None): 
-        self._history_path = history_path
+        self._history_path = path
         self._last_n = last_n
         if not os.path.exists(self._history_path):
             os.makedirs(self._history_path)
@@ -77,8 +71,8 @@ class JSONHistory(BaseHistory):
 
 class SQLiteHistory(BaseHistory):
     
-    def __init__(self, db_path: str="histories/chat.db", last_n: int=None):
-        self._db_path = db_path
+    def __init__(self, path: str="histories/chat.db", last_n: int=None):
+        self._db_path = path
         self._last_n = last_n
         self._init_db()
     
@@ -156,6 +150,61 @@ class SQLiteHistory(BaseHistory):
                 )
                 conn.commit()
         
+
+class DictHistory(BaseHistory):
+    """
+    In-memory history storage using Python dictionaries.
+    Useful for testing and temporary conversations.
+    """
+    
+    def __init__(self, last_n: int = None):
+        self._last_n = last_n
+        self._histories = {}  # Dictionary to store chat histories
+    
+    def load(self, chat_id: str):
+        if chat_id not in self._histories:
+            self.messages = []
+            return self.messages
+        
+        messages = self._histories[chat_id]
+        if self._last_n is not None and len(messages) > (self._last_n + 1) * 2:
+            messages = [messages[0]] + messages[-self._last_n * 2:]
+        
+        self.messages = messages
+        return self.messages
+    
+    def new(self, system_prompt: str):
+        chat_id = self.generate_chat_id()
+        messages = [{"role": "system", "content": system_prompt}]
+        self.store(chat_id, messages)
+        return chat_id
+    
+    def store(self, chat_id: str, messages: list):
+        messages = super().store(chat_id, messages)
+        
+        if chat_id not in self._histories:
+            self._histories[chat_id] = []
+        
+        # Add the new messages (già con timestamp)
+        self._histories[chat_id].extend(messages)
+    
+    def clear(self, chat_id: str):
+        """Clear history for a specific chat."""
+        if chat_id in self._histories:
+            del self._histories[chat_id]
+    
+    def clear_all(self):
+        """Clear all chat histories."""
+        self._histories.clear()
+    
+    def get_all_chat_ids(self):
+        """Get all chat IDs currently stored."""
+        return list(self._histories.keys())
+    
+    def get_chat_count(self):
+        """Get the total number of chats stored."""
+        return len(self._histories)
+
 
 class MongoDBHistory(BaseHistory):
     def __init__(self, db_path, db_name: str = "chat", collection_name: str = "histories", last_n: int = None):

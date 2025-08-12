@@ -35,14 +35,19 @@ class Chat():
     With history:
     ```
 
-    # Create a new chat
+    # Create a new chat with JSON history
     chat = Chat(provider="openai", model="gpt-4o-mini", history_type="json")
     print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
     response = chat.ask("Hello! I'm Giuseppe") # Hello!
 
-    # Load a chat
+    # Load a chat with JSON history
     chat = Chat(provider="openai", model="gpt-4o-mini", history_type="json", chat_id="8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3")
     response = chat.ask("What's my name?") # Your name is Giuseppe
+
+    # Create a new chat with in-memory dictionary history
+    chat = Chat(provider="openai", model="gpt-4o-mini", history_type="dict")
+    print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
+    response = chat.ask("Hello! I'm Giuseppe") # Hello!
     ```
 
     With history summarizer:
@@ -63,15 +68,15 @@ class Chat():
     _HISTORY_MAP = {
         "json": JSONHistory,
         "sqlite": SQLiteHistory,
-        "mongodb": MongoDBHistory
+        "mongodb": MongoDBHistory,
+        "dict": DictHistory
     }
 
     def __init__(self, 
-                 provider: str, 
-                 model: str, 
-                 system_prompt: Optional[Union[Prompt, str]] = None,
+                 model,
+                 system_prompt: Optional[Union[Prompt, str]] = "You are an helpful assistant",
                  max_tokens: Optional[int] = None,
-                 history_type: Union[str, BaseHistory] = "json", 
+                 history_type: Union[str, BaseHistory] = "dict", 
                  history_last_n: Optional[int] = None,
                  history_path: Optional[str] = None,
                  history_summarizer_provider: Optional[str] = None, 
@@ -84,20 +89,18 @@ class Chat():
 
         Parameters
         ----------
-        provider : str
-            Name of the provider (e.g., 'openai', 'anthropic')
-        model : str
-            Name of the model (e.g., 'gpt-4', 'claude-3')
+        model : Model
+            Model instance to use for the chat
         system_prompt : str | Prompt, optional
             System prompt or Prompt object
         max_tokens : int, optional
             Maximum number of tokens for each request
         history_type : str | BaseHistory, optional
-            The type of history to use for the chat.
+            The type of history to use for the chat. Options: "json", "sqlite", "mongodb", "dict"
         history_last_n : int, optional
             The last n messages to keep in the history.
         history_path : str, optional
-            The path to the history.
+            The path to the history (not used for "dict" history type)
         history_summarizer_provider : str, optional
             The provider of the history summarizer.
         history_summarizer_model : str, optional
@@ -113,14 +116,10 @@ class Chat():
             If invalid parameters are provided or initialization fails
         """
         try:
-            self._validate_parameters(provider, model, max_tokens, history_type)
             
-            self._model = f"{provider}/{model}"
             self._max_tokens = max_tokens
-            self._provider = provider
-            self._model_name = model
+            self._model = model
             
-            load_key(provider)
             self._history_summarizer = None
 
             # Initialize history
@@ -146,25 +145,16 @@ class Chat():
             logger.error(f"Failed to initialize Chat: {e}")
             raise ChatError(f"Chat initialization failed: {e}")
 
-    def _validate_parameters(self, provider: str, model: str, max_tokens: Optional[int], history_type: Union[str, BaseHistory]) -> None:
-        """Validate input parameters."""
-        if not provider or not isinstance(provider, str):
-            raise ChatError("Provider must be a non-empty string")
-        
-        if not model or not isinstance(model, str):
-            raise ChatError("Model must be a non-empty string")
-            
-        if max_tokens is not None and (not isinstance(max_tokens, int) or max_tokens <= 0):
-            raise ChatError("max_tokens must be a positive integer")
-            
-        if isinstance(history_type, str) and history_type not in self._HISTORY_MAP:
-            raise ChatError(f"Unsupported history type: {history_type}. Supported types: {list(self._HISTORY_MAP.keys())}")
 
     def _initialize_history(self, history_type: Union[str, BaseHistory], history_last_n: Optional[int], history_path: Optional[str]) -> None:
         """Initialize the history system."""
         try:
             if isinstance(history_type, str):
-                self._history = self._HISTORY_MAP[history_type](last_n=history_last_n, db_path=history_path)
+                if history_type == "dict":
+                    # DictHistory doesn't need db_path
+                    self._history = self._HISTORY_MAP[history_type](last_n=history_last_n)
+                else:
+                    self._history = self._HISTORY_MAP[history_type](last_n=history_last_n, path=history_path)
             else:
                 self._history = history_type
         except Exception as e:
@@ -303,13 +293,8 @@ class Chat():
             messages = self._history.load(self.chat_id)
             messages = [{'role': d.get('role'), 'content': d.get('content')} for d in messages]
 
-            # Add user message
-            if isinstance(prompt, str):
-                messages.append({"role": "user", "content": prompt})
-            else:
-                # Handle multimodal content
-                messages.append({"role": "user", "content": prompt})
-
+            messages.append({"role": "user", "content": prompt})
+            print(messages)
             # Apply history summarization if enabled
             if self._history_summarizer is not None:
                 return self._apply_history_summarization(messages)
@@ -371,13 +356,8 @@ class Chat():
             messages = self._prepare_messages(processed_prompt)
             
             # Make API call
-            response = completion(
-                model=self._model,
-                messages=messages,
-                max_tokens=self._max_tokens
-            )
-            
-            response_content = response["choices"][0]["message"]["content"]
+            response = self._model.ask(messages)
+            response_content = response["response"]
             
             # Store messages
             self._store_messages(messages, response_content)
@@ -420,18 +400,13 @@ class Chat():
             messages = self._prepare_messages(processed_prompt)
             
             # Make streaming API call
-            response = await acompletion(
-                model=self._model,
-                messages=messages,
-                max_tokens=self._max_tokens,
-                stream=True
-            )
+            response = self._model.ask_stream(messages)
 
             response_text = ""
             async for chunk in response: 
-                part = chunk["choices"][0]["delta"]["content"] or ""
-                response_text += part
-                yield json.dumps({"answer": part})
+                if "delta" in chunk:
+                    response_text += chunk["delta"]
+                yield chunk
 
             # Store messages
             self._store_messages(messages, response_text)

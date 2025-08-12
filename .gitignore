@@ -84,7 +84,6 @@ settings_local.py
 _.py
 **/_.py
 
-*.prompts
 prompts/
 histories/
 

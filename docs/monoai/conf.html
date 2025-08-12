@@ -102,89 +102,98 @@
 </span><span id="Conf-29"><a href="#Conf-29"><span class="linenos"> 29</span></a>    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Conf-30"><a href="#Conf-30"><span class="linenos"> 30</span></a>    <span class="n">_DEFAULT_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
 </span><span id="Conf-31"><a href="#Conf-31"><span class="linenos"> 31</span></a>        <span class="s1">&#39;keysfile_path&#39;</span><span class="p">:</span> <span class="s2">&quot;providers.keys&quot;</span><span class="p">,</span>
-</span><span id="Conf-32"><a href="#Conf-32"><span class="linenos"> 32</span></a>        <span class="s1">&#39;prompts_path&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
-</span><span id="Conf-33"><a href="#Conf-33"><span class="linenos"> 33</span></a>    <span class="p">}</span>
-</span><span id="Conf-34"><a href="#Conf-34"><span class="linenos"> 34</span></a>    
-</span><span id="Conf-35"><a href="#Conf-35"><span class="linenos"> 35</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-</span><span id="Conf-36"><a href="#Conf-36"><span class="linenos"> 36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Conf-37"><a href="#Conf-37"><span class="linenos"> 37</span></a><span class="sd">        Create or return the singleton instance.</span>
-</span><span id="Conf-38"><a href="#Conf-38"><span class="linenos"> 38</span></a>
-</span><span id="Conf-39"><a href="#Conf-39"><span class="linenos"> 39</span></a><span class="sd">        Returns</span>
-</span><span id="Conf-40"><a href="#Conf-40"><span class="linenos"> 40</span></a><span class="sd">        -------</span>
-</span><span id="Conf-41"><a href="#Conf-41"><span class="linenos"> 41</span></a><span class="sd">        Config</span>
-</span><span id="Conf-42"><a href="#Conf-42"><span class="linenos"> 42</span></a><span class="sd">            The singleton instance</span>
-</span><span id="Conf-43"><a href="#Conf-43"><span class="linenos"> 43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Conf-44"><a href="#Conf-44"><span class="linenos"> 44</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Conf-45"><a href="#Conf-45"><span class="linenos"> 45</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Conf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span id="Conf-46"><a href="#Conf-46"><span class="linenos"> 46</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
-</span><span id="Conf-47"><a href="#Conf-47"><span class="linenos"> 47</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
-</span><span id="Conf-48"><a href="#Conf-48"><span class="linenos"> 48</span></a>    
-</span><span id="Conf-49"><a href="#Conf-49"><span class="linenos"> 49</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Conf-50"><a href="#Conf-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Conf-51"><a href="#Conf-51"><span class="linenos"> 51</span></a><span class="sd">        Initialize the Config instance.</span>
-</span><span id="Conf-52"><a href="#Conf-52"><span class="linenos"> 52</span></a><span class="sd">        </span>
-</span><span id="Conf-53"><a href="#Conf-53"><span class="linenos"> 53</span></a><span class="sd">        Loads and validates the configuration file, setting up defaults</span>
-</span><span id="Conf-54"><a href="#Conf-54"><span class="linenos"> 54</span></a><span class="sd">        and performing environment variable interpolation.</span>
-</span><span id="Conf-55"><a href="#Conf-55"><span class="linenos"> 55</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Conf-56"><a href="#Conf-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;monoai.yaml&#39;</span><span class="p">)</span>
-</span><span id="Conf-57"><a href="#Conf-57"><span class="linenos"> 57</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_CONFIG</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span id="Conf-58"><a href="#Conf-58"><span class="linenos"> 58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config</span><span class="p">()</span>
-</span><span id="Conf-59"><a href="#Conf-59"><span class="linenos"> 59</span></a>    
-</span><span id="Conf-60"><a href="#Conf-60"><span class="linenos"> 60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Conf-61"><a href="#Conf-61"><span class="linenos"> 61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Conf-62"><a href="#Conf-62"><span class="linenos"> 62</span></a><span class="sd">        Load configuration from the YAML file.</span>
-</span><span id="Conf-63"><a href="#Conf-63"><span class="linenos"> 63</span></a><span class="sd">        </span>
-</span><span id="Conf-64"><a href="#Conf-64"><span class="linenos"> 64</span></a><span class="sd">        Handles file reading, YAML parsing, environment variable interpolation,</span>
-</span><span id="Conf-65"><a href="#Conf-65"><span class="linenos"> 65</span></a><span class="sd">        and configuration validation.</span>
-</span><span id="Conf-66"><a href="#Conf-66"><span class="linenos"> 66</span></a>
-</span><span id="Conf-67"><a href="#Conf-67"><span class="linenos"> 67</span></a><span class="sd">        Raises</span>
-</span><span id="Conf-68"><a href="#Conf-68"><span class="linenos"> 68</span></a><span class="sd">        ------</span>
-</span><span id="Conf-69"><a href="#Conf-69"><span class="linenos"> 69</span></a><span class="sd">        FileNotFoundError</span>
-</span><span id="Conf-70"><a href="#Conf-70"><span class="linenos"> 70</span></a><span class="sd">            If the configuration file doesn&#39;t exist</span>
-</span><span id="Conf-71"><a href="#Conf-71"><span class="linenos"> 71</span></a><span class="sd">        yaml.ParserError</span>
-</span><span id="Conf-72"><a href="#Conf-72"><span class="linenos"> 72</span></a><span class="sd">            If the YAML syntax is invalid</span>
-</span><span id="Conf-73"><a href="#Conf-73"><span class="linenos"> 73</span></a><span class="sd">        ValueError</span>
-</span><span id="Conf-74"><a href="#Conf-74"><span class="linenos"> 74</span></a><span class="sd">            If the configuration structure is invalid</span>
-</span><span id="Conf-75"><a href="#Conf-75"><span class="linenos"> 75</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Conf-76"><a href="#Conf-76"><span class="linenos"> 76</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="Conf-77"><a href="#Conf-77"><span class="linenos"> 77</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="Conf-78"><a href="#Conf-78"><span class="linenos"> 78</span></a>                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="Conf-79"><a href="#Conf-79"><span class="linenos"> 79</span></a>                    <span class="n">file_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span id="Conf-80"><a href="#Conf-80"><span class="linenos"> 80</span></a>                <span class="k">if</span> <span class="n">file_config</span><span class="p">:</span>
-</span><span id="Conf-81"><a href="#Conf-81"><span class="linenos"> 81</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">file_config</span><span class="p">)</span>            
-</span><span id="Conf-82"><a href="#Conf-82"><span class="linenos"> 82</span></a>            
-</span><span id="Conf-83"><a href="#Conf-83"><span class="linenos"> 83</span></a>        <span class="k">except</span> <span class="n">ParserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="Conf-84"><a href="#Conf-84"><span class="linenos"> 84</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid YAML syntax in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="Conf-85"><a href="#Conf-85"><span class="linenos"> 85</span></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="Conf-86"><a href="#Conf-86"><span class="linenos"> 86</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading configuration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="Conf-87"><a href="#Conf-87"><span class="linenos"> 87</span></a>    
-</span><span id="Conf-88"><a href="#Conf-88"><span class="linenos"> 88</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">override</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Conf-89"><a href="#Conf-89"><span class="linenos"> 89</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Conf-90"><a href="#Conf-90"><span class="linenos"> 90</span></a><span class="sd">        Recursively merge override configuration into base configuration.</span>
-</span><span id="Conf-91"><a href="#Conf-91"><span class="linenos"> 91</span></a>
-</span><span id="Conf-92"><a href="#Conf-92"><span class="linenos"> 92</span></a><span class="sd">        Parameters</span>
-</span><span id="Conf-93"><a href="#Conf-93"><span class="linenos"> 93</span></a><span class="sd">        ----------</span>
-</span><span id="Conf-94"><a href="#Conf-94"><span class="linenos"> 94</span></a><span class="sd">        base : Dict</span>
-</span><span id="Conf-95"><a href="#Conf-95"><span class="linenos"> 95</span></a><span class="sd">            The base configuration dictionary</span>
-</span><span id="Conf-96"><a href="#Conf-96"><span class="linenos"> 96</span></a><span class="sd">        override : Dict</span>
-</span><span id="Conf-97"><a href="#Conf-97"><span class="linenos"> 97</span></a><span class="sd">            The override configuration dictionary</span>
-</span><span id="Conf-98"><a href="#Conf-98"><span class="linenos"> 98</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Conf-99"><a href="#Conf-99"><span class="linenos"> 99</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">override</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="Conf-100"><a href="#Conf-100"><span class="linenos">100</span></a>            <span class="k">if</span> <span class="p">(</span>
-</span><span id="Conf-101"><a href="#Conf-101"><span class="linenos">101</span></a>                <span class="n">key</span> <span class="ow">in</span> <span class="n">base</span> <span class="ow">and</span> 
-</span><span id="Conf-102"><a href="#Conf-102"><span class="linenos">102</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> 
-</span><span id="Conf-103"><a href="#Conf-103"><span class="linenos">103</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-</span><span id="Conf-104"><a href="#Conf-104"><span class="linenos">104</span></a>            <span class="p">):</span>
-</span><span id="Conf-105"><a href="#Conf-105"><span class="linenos">105</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="Conf-106"><a href="#Conf-106"><span class="linenos">106</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="Conf-107"><a href="#Conf-107"><span class="linenos">107</span></a>                <span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="Conf-108"><a href="#Conf-108"><span class="linenos">108</span></a>        
-</span><span id="Conf-109"><a href="#Conf-109"><span class="linenos">109</span></a>        
-</span><span id="Conf-110"><a href="#Conf-110"><span class="linenos">110</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="Conf-111"><a href="#Conf-111"><span class="linenos">111</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-</span><span id="Conf-112"><a href="#Conf-112"><span class="linenos">112</span></a>    
-</span><span id="Conf-113"><a href="#Conf-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Conf-114"><a href="#Conf-114"><span class="linenos">114</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="Conf-32"><a href="#Conf-32"><span class="linenos"> 32</span></a>        <span class="s1">&#39;supported_files&#39;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="Conf-33"><a href="#Conf-33"><span class="linenos"> 33</span></a>            <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;txt&quot;</span><span class="p">,</span> <span class="s2">&quot;py&quot;</span><span class="p">,</span> <span class="s2">&quot;md&quot;</span><span class="p">],</span>
+</span><span id="Conf-34"><a href="#Conf-34"><span class="linenos"> 34</span></a>            <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;gif&quot;</span><span class="p">,</span> <span class="s2">&quot;webp&quot;</span><span class="p">]</span>
+</span><span id="Conf-35"><a href="#Conf-35"><span class="linenos"> 35</span></a>        <span class="p">},</span>
+</span><span id="Conf-36"><a href="#Conf-36"><span class="linenos"> 36</span></a>        <span class="s1">&#39;prompts_path&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+</span><span id="Conf-37"><a href="#Conf-37"><span class="linenos"> 37</span></a>        <span class="s1">&#39;default_prompt&#39;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="Conf-38"><a href="#Conf-38"><span class="linenos"> 38</span></a>            <span class="s2">&quot;rag&quot;</span><span class="p">:</span> <span class="s2">&quot;Use also the following information to answer the question: &quot;</span><span class="p">,</span>
+</span><span id="Conf-39"><a href="#Conf-39"><span class="linenos"> 39</span></a>            <span class="s2">&quot;summary&quot;</span><span class="p">:</span><span class="s2">&quot;Here is the summary of the conversation so far:</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="Conf-40"><a href="#Conf-40"><span class="linenos"> 40</span></a>            <span class="s2">&quot;file&quot;</span><span class="p">:</span><span class="s2">&quot;Here is the content of the file:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+</span><span id="Conf-41"><a href="#Conf-41"><span class="linenos"> 41</span></a>        <span class="p">}</span>
+</span><span id="Conf-42"><a href="#Conf-42"><span class="linenos"> 42</span></a>    <span class="p">}</span>
+</span><span id="Conf-43"><a href="#Conf-43"><span class="linenos"> 43</span></a>    
+</span><span id="Conf-44"><a href="#Conf-44"><span class="linenos"> 44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span id="Conf-45"><a href="#Conf-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Conf-46"><a href="#Conf-46"><span class="linenos"> 46</span></a><span class="sd">        Create or return the singleton instance.</span>
+</span><span id="Conf-47"><a href="#Conf-47"><span class="linenos"> 47</span></a>
+</span><span id="Conf-48"><a href="#Conf-48"><span class="linenos"> 48</span></a><span class="sd">        Returns</span>
+</span><span id="Conf-49"><a href="#Conf-49"><span class="linenos"> 49</span></a><span class="sd">        -------</span>
+</span><span id="Conf-50"><a href="#Conf-50"><span class="linenos"> 50</span></a><span class="sd">        Config</span>
+</span><span id="Conf-51"><a href="#Conf-51"><span class="linenos"> 51</span></a><span class="sd">            The singleton instance</span>
+</span><span id="Conf-52"><a href="#Conf-52"><span class="linenos"> 52</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Conf-53"><a href="#Conf-53"><span class="linenos"> 53</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Conf-54"><a href="#Conf-54"><span class="linenos"> 54</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Conf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="Conf-55"><a href="#Conf-55"><span class="linenos"> 55</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
+</span><span id="Conf-56"><a href="#Conf-56"><span class="linenos"> 56</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+</span><span id="Conf-57"><a href="#Conf-57"><span class="linenos"> 57</span></a>    
+</span><span id="Conf-58"><a href="#Conf-58"><span class="linenos"> 58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Conf-59"><a href="#Conf-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Conf-60"><a href="#Conf-60"><span class="linenos"> 60</span></a><span class="sd">        Initialize the Config instance.</span>
+</span><span id="Conf-61"><a href="#Conf-61"><span class="linenos"> 61</span></a><span class="sd">        </span>
+</span><span id="Conf-62"><a href="#Conf-62"><span class="linenos"> 62</span></a><span class="sd">        Loads and validates the configuration file, setting up defaults</span>
+</span><span id="Conf-63"><a href="#Conf-63"><span class="linenos"> 63</span></a><span class="sd">        and performing environment variable interpolation.</span>
+</span><span id="Conf-64"><a href="#Conf-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Conf-65"><a href="#Conf-65"><span class="linenos"> 65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;monoai.yaml&#39;</span><span class="p">)</span>
+</span><span id="Conf-66"><a href="#Conf-66"><span class="linenos"> 66</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_CONFIG</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="Conf-67"><a href="#Conf-67"><span class="linenos"> 67</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_load_config</span><span class="p">()</span>
+</span><span id="Conf-68"><a href="#Conf-68"><span class="linenos"> 68</span></a>    
+</span><span id="Conf-69"><a href="#Conf-69"><span class="linenos"> 69</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_load_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Conf-70"><a href="#Conf-70"><span class="linenos"> 70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Conf-71"><a href="#Conf-71"><span class="linenos"> 71</span></a><span class="sd">        Load configuration from the YAML file.</span>
+</span><span id="Conf-72"><a href="#Conf-72"><span class="linenos"> 72</span></a><span class="sd">        </span>
+</span><span id="Conf-73"><a href="#Conf-73"><span class="linenos"> 73</span></a><span class="sd">        Handles file reading, YAML parsing, environment variable interpolation,</span>
+</span><span id="Conf-74"><a href="#Conf-74"><span class="linenos"> 74</span></a><span class="sd">        and configuration validation.</span>
+</span><span id="Conf-75"><a href="#Conf-75"><span class="linenos"> 75</span></a>
+</span><span id="Conf-76"><a href="#Conf-76"><span class="linenos"> 76</span></a><span class="sd">        Raises</span>
+</span><span id="Conf-77"><a href="#Conf-77"><span class="linenos"> 77</span></a><span class="sd">        ------</span>
+</span><span id="Conf-78"><a href="#Conf-78"><span class="linenos"> 78</span></a><span class="sd">        FileNotFoundError</span>
+</span><span id="Conf-79"><a href="#Conf-79"><span class="linenos"> 79</span></a><span class="sd">            If the configuration file doesn&#39;t exist</span>
+</span><span id="Conf-80"><a href="#Conf-80"><span class="linenos"> 80</span></a><span class="sd">        yaml.ParserError</span>
+</span><span id="Conf-81"><a href="#Conf-81"><span class="linenos"> 81</span></a><span class="sd">            If the YAML syntax is invalid</span>
+</span><span id="Conf-82"><a href="#Conf-82"><span class="linenos"> 82</span></a><span class="sd">        ValueError</span>
+</span><span id="Conf-83"><a href="#Conf-83"><span class="linenos"> 83</span></a><span class="sd">            If the configuration structure is invalid</span>
+</span><span id="Conf-84"><a href="#Conf-84"><span class="linenos"> 84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Conf-85"><a href="#Conf-85"><span class="linenos"> 85</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="Conf-86"><a href="#Conf-86"><span class="linenos"> 86</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="Conf-87"><a href="#Conf-87"><span class="linenos"> 87</span></a>                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="Conf-88"><a href="#Conf-88"><span class="linenos"> 88</span></a>                    <span class="n">file_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="Conf-89"><a href="#Conf-89"><span class="linenos"> 89</span></a>                <span class="k">if</span> <span class="n">file_config</span><span class="p">:</span>
+</span><span id="Conf-90"><a href="#Conf-90"><span class="linenos"> 90</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">file_config</span><span class="p">)</span>            
+</span><span id="Conf-91"><a href="#Conf-91"><span class="linenos"> 91</span></a>            
+</span><span id="Conf-92"><a href="#Conf-92"><span class="linenos"> 92</span></a>        <span class="k">except</span> <span class="n">ParserError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="Conf-93"><a href="#Conf-93"><span class="linenos"> 93</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid YAML syntax in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="Conf-94"><a href="#Conf-94"><span class="linenos"> 94</span></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="Conf-95"><a href="#Conf-95"><span class="linenos"> 95</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading configuration: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="Conf-96"><a href="#Conf-96"><span class="linenos"> 96</span></a>    
+</span><span id="Conf-97"><a href="#Conf-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">override</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Conf-98"><a href="#Conf-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Conf-99"><a href="#Conf-99"><span class="linenos"> 99</span></a><span class="sd">        Recursively merge override configuration into base configuration.</span>
+</span><span id="Conf-100"><a href="#Conf-100"><span class="linenos">100</span></a>
+</span><span id="Conf-101"><a href="#Conf-101"><span class="linenos">101</span></a><span class="sd">        Parameters</span>
+</span><span id="Conf-102"><a href="#Conf-102"><span class="linenos">102</span></a><span class="sd">        ----------</span>
+</span><span id="Conf-103"><a href="#Conf-103"><span class="linenos">103</span></a><span class="sd">        base : Dict</span>
+</span><span id="Conf-104"><a href="#Conf-104"><span class="linenos">104</span></a><span class="sd">            The base configuration dictionary</span>
+</span><span id="Conf-105"><a href="#Conf-105"><span class="linenos">105</span></a><span class="sd">        override : Dict</span>
+</span><span id="Conf-106"><a href="#Conf-106"><span class="linenos">106</span></a><span class="sd">            The override configuration dictionary</span>
+</span><span id="Conf-107"><a href="#Conf-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Conf-108"><a href="#Conf-108"><span class="linenos">108</span></a>        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">override</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="Conf-109"><a href="#Conf-109"><span class="linenos">109</span></a>            <span class="k">if</span> <span class="p">(</span>
+</span><span id="Conf-110"><a href="#Conf-110"><span class="linenos">110</span></a>                <span class="n">key</span> <span class="ow">in</span> <span class="n">base</span> <span class="ow">and</span> 
+</span><span id="Conf-111"><a href="#Conf-111"><span class="linenos">111</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> 
+</span><span id="Conf-112"><a href="#Conf-112"><span class="linenos">112</span></a>                <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+</span><span id="Conf-113"><a href="#Conf-113"><span class="linenos">113</span></a>            <span class="p">):</span>
+</span><span id="Conf-114"><a href="#Conf-114"><span class="linenos">114</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_merge_config</span><span class="p">(</span><span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="Conf-115"><a href="#Conf-115"><span class="linenos">115</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="Conf-116"><a href="#Conf-116"><span class="linenos">116</span></a>                <span class="n">base</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="Conf-117"><a href="#Conf-117"><span class="linenos">117</span></a>        
+</span><span id="Conf-118"><a href="#Conf-118"><span class="linenos">118</span></a>        
+</span><span id="Conf-119"><a href="#Conf-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="Conf-120"><a href="#Conf-120"><span class="linenos">120</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="Conf-121"><a href="#Conf-121"><span class="linenos">121</span></a>    
+</span><span id="Conf-122"><a href="#Conf-122"><span class="linenos">122</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Conf-123"><a href="#Conf-123"><span class="linenos">123</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -217,19 +226,19 @@ Conf()["prompts_path"] = "prompts"
 
     </div>
     <a class="headerlink" href="#Conf.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Conf.__init__-35"><a href="#Conf.__init__-35"><span class="linenos">35</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-</span><span id="Conf.__init__-36"><a href="#Conf.__init__-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Conf.__init__-37"><a href="#Conf.__init__-37"><span class="linenos">37</span></a><span class="sd">        Create or return the singleton instance.</span>
-</span><span id="Conf.__init__-38"><a href="#Conf.__init__-38"><span class="linenos">38</span></a>
-</span><span id="Conf.__init__-39"><a href="#Conf.__init__-39"><span class="linenos">39</span></a><span class="sd">        Returns</span>
-</span><span id="Conf.__init__-40"><a href="#Conf.__init__-40"><span class="linenos">40</span></a><span class="sd">        -------</span>
-</span><span id="Conf.__init__-41"><a href="#Conf.__init__-41"><span class="linenos">41</span></a><span class="sd">        Config</span>
-</span><span id="Conf.__init__-42"><a href="#Conf.__init__-42"><span class="linenos">42</span></a><span class="sd">            The singleton instance</span>
-</span><span id="Conf.__init__-43"><a href="#Conf.__init__-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Conf.__init__-44"><a href="#Conf.__init__-44"><span class="linenos">44</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Conf.__init__-45"><a href="#Conf.__init__-45"><span class="linenos">45</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Conf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-</span><span id="Conf.__init__-46"><a href="#Conf.__init__-46"><span class="linenos">46</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
-</span><span id="Conf.__init__-47"><a href="#Conf.__init__-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Conf.__init__-44"><a href="#Conf.__init__-44"><span class="linenos">44</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+</span><span id="Conf.__init__-45"><a href="#Conf.__init__-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Conf.__init__-46"><a href="#Conf.__init__-46"><span class="linenos">46</span></a><span class="sd">        Create or return the singleton instance.</span>
+</span><span id="Conf.__init__-47"><a href="#Conf.__init__-47"><span class="linenos">47</span></a>
+</span><span id="Conf.__init__-48"><a href="#Conf.__init__-48"><span class="linenos">48</span></a><span class="sd">        Returns</span>
+</span><span id="Conf.__init__-49"><a href="#Conf.__init__-49"><span class="linenos">49</span></a><span class="sd">        -------</span>
+</span><span id="Conf.__init__-50"><a href="#Conf.__init__-50"><span class="linenos">50</span></a><span class="sd">        Config</span>
+</span><span id="Conf.__init__-51"><a href="#Conf.__init__-51"><span class="linenos">51</span></a><span class="sd">            The singleton instance</span>
+</span><span id="Conf.__init__-52"><a href="#Conf.__init__-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Conf.__init__-53"><a href="#Conf.__init__-53"><span class="linenos">53</span></a>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Conf.__init__-54"><a href="#Conf.__init__-54"><span class="linenos">54</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Conf</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+</span><span id="Conf.__init__-55"><a href="#Conf.__init__-55"><span class="linenos">55</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
+</span><span id="Conf.__init__-56"><a href="#Conf.__init__-56"><span class="linenos">56</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 </span></pre></div>
 
 

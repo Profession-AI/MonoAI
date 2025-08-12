@@ -2,7 +2,7 @@ from ._base_model import BaseModel
 from ..keys.keys_manager import load_key
 from ._response_processor import ResponseProcessorMixin
 from ._prompt_executor import PromptExecutorMixin
-from typing import Sequence, Dict, Union
+from typing import Sequence, Dict, Union, AsyncGenerator
 from ..tokens.token_counter import TokenCounter
 from ..tokens.token_cost import TokenCost
 from ..prompts.prompt_chain import PromptChain
@@ -104,6 +104,27 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             response,
         )
 
+    
+    async def ask_stream(self, prompt: Union[str, Prompt, PromptChain]) -> AsyncGenerator[Dict, None]:
+        """
+        Ask the model with streaming response.
+
+        Parameters
+        ----------
+        prompt : Union[str, Prompt, PromptChain]
+            The prompt to process
+
+        Yields
+        ------
+        Dict
+            Streaming response chunks
+        """
+        yield {"provider":self.provider, "model":self.model}
+        async for chunk in self._execute_stream(prompt):
+            processed_chunk = self._process_chunk(chunk)
+            if processed_chunk["delta"] is not None:
+                yield processed_chunk
+
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask the model.
@@ -130,50 +151,3 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             prompt,
             response
         )
-
-    def _post_process_response(self, question: str, answer: str) -> Dict:
-        """
-        Process the response and add optional token and cost information.
-
-        Parameters
-        ----------
-        question : str
-            The input question
-        answer : str
-            The model's answer
-
-        Returns
-        -------
-        Dict
-            Dictionary containing:
-            - input: The original question
-            - output: The model's answer
-            - model: Dictionary with provider and model name
-            - tokens: Token counts (if enabled)
-            - cost: Cost calculation (if enabled)
-        """
-        response = {
-            "input": question, 
-            "output": answer, 
-            "model": {
-                "provider": self.provider, 
-                "name": self.model
-            }
-        }
-        
-        if self._count_tokens or self._count_cost:
-            tokens = None
-            if self._count_tokens:
-                tokens = TokenCounter().count(self.model, question, answer)
-                response["tokens"] = tokens
-                
-            if self._count_cost and tokens:
-                cost = TokenCost().compute(
-                    self.provider, 
-                    self.model, 
-                    tokens["input_tokens"], 
-                    tokens["output_tokens"]
-                )
-                response["cost"] = cost
-                
-        return response

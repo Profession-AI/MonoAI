@@ -24,8 +24,6 @@ class ResponseProcessorMixin:
         Returns:
             Dictionary containing the response and optional stats
         """
-
-        response = response["choices"][0]["message"]["content"]
         
         if isinstance(prompt, Prompt):
             if prompt.response_type != None:
@@ -33,12 +31,24 @@ class ResponseProcessorMixin:
 
         processed_response = {
             "prompt": str(prompt), 
-            "response": response,
+            "response": response["choices"][0]["message"]["content"],
             #"messages_trace": response.all_messages(),
             "model": {
                 "provider": self.provider, 
                 "name": self.model
             }
         }
+
+        if self._count_tokens:
+            processed_response["usage"]={
+                "completion_tokens":response["usage"]["completion_tokens"],
+                "prompt_tokens":response["usage"]["prompt_tokens"],
+                "total_tokens=": response["usage"]["total_tokens"]
+                }
                         
         return processed_response 
+
+
+    def _process_chunk(self, chunk):
+        delta = chunk["choices"][0]["delta"]["content"]
+        return {"delta":delta}

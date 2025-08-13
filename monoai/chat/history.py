@@ -9,9 +9,9 @@ from pymongo import MongoClient
 class BaseHistory:
 
     def __init__(self, 
-                 history_path: str, 
+                 path: str, 
                  last_n: int=None): 
-        self._history_path = history_path
+        self._history_path = path
         self._last_n = last_n
         
     def generate_chat_id(self):
@@ -35,7 +35,7 @@ class BaseHistory:
 class JSONHistory(BaseHistory):
     
     def __init__(self, 
-                 path: str="histories/", 
+                 path, 
                  last_n: int=None): 
         self._history_path = path
         self._last_n = last_n
@@ -43,7 +43,9 @@ class JSONHistory(BaseHistory):
             os.makedirs(self._history_path)
 
     def load(self, chat_id: str):
-        with open(self._history_path+chat_id+".json", "r") as f:
+        # Ensure proper path construction with os.path.join
+        file_path = os.path.join(self._history_path, chat_id + ".json")
+        with open(file_path, "r") as f:
             self.messages = json.load(f)
         if self._last_n is not None and len(self.messages) > (self._last_n+1)*2:
             self.messages = [self.messages[0]]+self.messages[-self._last_n*2:]
@@ -51,14 +53,18 @@ class JSONHistory(BaseHistory):
     
     def new(self, system_prompt: str):
         chat_id = self.generate_chat_id()
+        # Ensure directory exists before storing
+        if not os.path.exists(self._history_path):
+            os.makedirs(self._history_path, exist_ok=True)
         self.store(chat_id, [{"role": "system", "content": system_prompt}])
         return chat_id
 
     def store(self, chat_id: str, messages: list):
         messages = super().store(chat_id, messages)
         # Load existing messages
+        file_path = os.path.join(self._history_path, chat_id + ".json")
         try:
-            with open(self._history_path+chat_id+".json", "r") as f:
+            with open(file_path, "r") as f:
                 existing_messages = json.load(f)
         except FileNotFoundError:
             existing_messages = []
@@ -66,7 +72,7 @@ class JSONHistory(BaseHistory):
         # Add the new messages (già con timestamp)
         new_messages = existing_messages + messages
         
-        with open(self._history_path+chat_id+".json", "w") as f:
+        with open(file_path, "w") as f:
             json.dump(new_messages, f, indent=4)
 
 class SQLiteHistory(BaseHistory):

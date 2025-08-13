@@ -78,7 +78,7 @@ class Chat():
                  max_tokens: Optional[int] = None,
                  history_type: Union[str, BaseHistory] = "dict", 
                  history_last_n: Optional[int] = None,
-                 history_path: Optional[str] = None,
+                 history_path: Optional[str] = "histories",
                  history_summarizer_provider: Optional[str] = None, 
                  history_summarizer_model: Optional[str] = None,
                  history_summarizer_max_tokens: Optional[int] = None,

@@ -125,6 +125,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             if processed_chunk["delta"] is not None:
                 yield processed_chunk
 
+
+
     def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
         """
         Ask the model.

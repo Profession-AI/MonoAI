@@ -37,3 +37,6 @@ class BaseModel(ABC):
 
     def _add_rag(self, rag:RAG):
         self._rag=rag
+
+    def _add_tools(self, tools):
+        self._tools=tools

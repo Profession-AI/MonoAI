@@ -2,6 +2,7 @@ from typing import Dict, Union, AsyncGenerator
 from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
+from ..tools._tool_parser import ToolParser
 from litellm import completion, acompletion
 import litellm
 from ..conf import Conf
@@ -196,10 +197,19 @@ class PromptExecutorMixin:
 
         url = None
         model = self.provider+"/"+self.model
+        
         if hasattr(self, "url") and self.url != None:
             url = self.url+"/v"+str(self.version)
             model = "hosted_vllm/"+model
         
+        tools = None
+
+        if hasattr(self, "_tools"):
+            tools = []
+            tp = ToolParser()
+            for tool in self._tools:
+                tools.append(tp.parse(tool))      
+
         if isinstance(prompt, str):
             messages = [{ "content": prompt,"role": "user"}]
         else:
@@ -209,6 +219,7 @@ class PromptExecutorMixin:
                           messages=messages, 
                           response_format=response_type,
                           base_url = url,
+                          tools=tools,
                           max_tokens=self._max_tokens)
 
 

@@ -11,29 +11,31 @@ Per ogni ciclo:
 
 ### Strumenti disponibili:
 
-{available_tools}
+- **Search[query]**: Cerca su internet informazioni relative a [query].
+- **Calculator[expression]**: Calcola un'espressione matematica [expression].
+- **WikipediaLookup[topic]**: Cerca informazioni concise su [topic] da Wikipedia.
+- **KnowledgeBaseLookup[question]**: Cerca la risposta a una domanda nei dati interni.
 
 **Formato obbligatorio:**
 
 Al primo messaggio
 {{
     "thought": <il tuo pensiero su cosa fare>,
-    "action": {{
-        "name":<nome dello strumento da usare>,
-        "arguments":{{
-            <argument_name>:<argument_value>
-        }}
-    }}
+    "action": <nome dello strumento da usare>
 }}
 
-Il sistema eseguirà lo strumento e ti restituirà il risultato nell'observation con il seguente formato:
+Al secondo messaggio aggiungi l'osservazione sul risultato dello strumento
 {{
-    "observation:<risultato restituito dallo strumento>
+    "Observation": <risultato ricevuto>,
+    "thought": <il tuo pensiero su cosa fare>,
+    "action": <nome dello strumento da usare>
 }}
 
 Quando hai abbastanza informazioni includi la risposta finale:
 {{
+    "Observation": <risultato ricevuto>,
     "thought": <il tuo pensiero su cosa fare>,
+    "action": <nome dello strumento da usare>,
     "final_answer": <risposta finale alla richiesta iniziale dell'utente>
 }}
 

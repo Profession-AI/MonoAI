@@ -89,3 +89,5 @@ class ToolParser:
             tool["function"]["parameters"]["required"] = required
 
         return tool
+
+    

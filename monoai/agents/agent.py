@@ -1,24 +1,20 @@
 from ..models import Model
-from .agentic_loop import FunctionCallingAgenticLoop, ReactAgenticLoop
+from .agentic_loop import FunctionCallingAgenticLoop, ReactAgenticLoop, ReactWithFCAgenticLoop
 
 class Agent():
 
-    def __init__(self, model:Model, tools=None, paradigm="function_call", debug=False, max_iter=None):
+    def __init__(self, model:Model, tools=None, paradigm="function_calling", debug=False, max_iter=None):
         
         self._model = model
-        self._model._add_tools(tools)
-        self._available_tools = {}
-        
-        for tool in tools:
-            self._available_tools[tool.__name__]=tool
 
-        loop_kwargs = self._model, self._available_tools, debug, max_iter
+        loop_kwargs = self._model, tools, debug, max_iter
         
-        if paradigm=="function_call":
+        if paradigm=="function_calling":
             self._loop = FunctionCallingAgenticLoop(*loop_kwargs)
         elif paradigm=="react":
             self._loop = ReactAgenticLoop(*loop_kwargs)
-
+        elif paredigm=="react_with_function_calling":
+            self.loop = ReactWithFCAgenticLoop(*loop_kwargs)
             
     def run(self, prompt: str):
         return self._loop.start(prompt)

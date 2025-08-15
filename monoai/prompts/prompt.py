@@ -126,11 +126,17 @@ class Prompt:
         return self.__str__()
 
 
+    def as_dict(self)->dict:
+        return {"type":"user", "content":self.__str__()}
+
+
 class _PromptParser:
     def parse(self, prompt_id: str):
-        prompt_path = join(Conf()["prompts_path"], prompt_id+".prompt")
-        if not prompt_path.endswith(".prompt"):
-            prompt_path = prompt_path+".prompt"
+        
+        if prompt_id.endswith(".prompt"):
+            prompt_path=prompt_id
+        else:
+            prompt_path = join(Conf()["prompts_path"], prompt_id+".prompt")
         prompt_file = open(prompt_path)
         prompt_text = prompt_file.read()        
         if self._very_dumb_xml_check(prompt_text):

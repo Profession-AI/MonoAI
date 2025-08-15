@@ -18,25 +18,30 @@ Per ogni ciclo:
 
 **Formato obbligatorio:**
 
-Thought: [Il tuo pensiero su cosa fare]
-Action: [Nome dello strumento e query]
-Observation: [Risultato ricevuto]
+Al primo messaggio
+{{
+    "thought": <il tuo pensiero su cosa fare>,
+    "action": <nome dello strumento da usare>
+}}
 
+Al secondo messaggio aggiungi l'osservazione sul risultato dello strumento
+{{
+    "Observation": <risultato ricevuto>,
+    "thought": <il tuo pensiero su cosa fare>,
+    "action": <nome dello strumento da usare>
+}}
 
-Quando hai abbastanza informazioni:
-
-Final Answer: [Risposta finale chiara e completa]
-
-### Regole:
-- Se non sai qualcosa, cerca!
-- Se devi calcolare, usa il Calculator!
-- Se hai bisogno di un'informazione enciclopedica, usa WikipediaLookup!
-- Se fallisci un'azione o non ottieni risposta utile, rifletti e riprova.
+Quando hai abbastanza informazioni includi la risposta finale:
+{{
+    "Observation": <risultato ricevuto>,
+    "thought": <il tuo pensiero su cosa fare>,
+    "action": <nome dello strumento da usare>,
+    "final_answer": <risposta finale alla richiesta iniziale dell'utente>
+}}
 
 ---
-
-**Domanda:**  
-"Qual è il paese con la popolazione più alta in Africa, e qual è la sua capitale?"
+**Richiesta:**  
+"{query}"
 
 ---
 

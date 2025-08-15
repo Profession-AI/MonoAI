@@ -1,7 +1,7 @@
 import os
 import uuid
 from typing import List, Dict, Tuple, Optional
-from monoai.tools.webscraping import WebScraping
+#from monoai.tools.webscraping import WebScraping
 
 try:
     from docx import Document
@@ -815,12 +815,9 @@ class DocumentsBuilder:
         - Selenium requires Chrome/Chromium to be installed
         - Tavily requires an API key to be configured
         """
-        # Initialize WebScraping with specified engine
-        scraper = WebScraping(engine=engine, deep=deep)
-        
-        # Scrape the URL
-        result = scraper.scrape(url)
-        
+
+        result = scrape_web(url, engine=engine, deep=deep)
+                
         if not result or not result.get("text"):
             raise ValueError(f"Failed to extract text content from URL: {url}")
         

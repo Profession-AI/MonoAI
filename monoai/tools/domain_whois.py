@@ -1,12 +1,13 @@
 from whois import whois
 
-class DomainWhois:
+def domain_whois(domain:str):
 
-    def whois(self, domain: str):
-        result = whois(domain)
-        return result
+    """
+    Get the whois for a given domain:
     
+    Args:
+        domain (string): the domain
+    """
 
-
-
-
+    result = whois(domain)
+    return str(result)

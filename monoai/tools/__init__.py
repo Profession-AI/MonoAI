@@ -2,7 +2,7 @@
 Tools are used to extend the capabilities of the model.
 """
 
-from .websearch import WebSearch
-from .webscraping import WebScraping
+from .domain_whois import domain_whois
+from .websearch import search_web
 
-__all__ = ["WebSearch", "WebScraping"]
+__all__ = ["domain_whois", "search_web"]

@@ -1,5 +1,12 @@
 from ..models import Model
-from .agentic_loop import FunctionCallingAgenticLoop, ReactAgenticLoop, ReactWithFCAgenticLoop
+from .agentic_loop import (
+    FunctionCallingAgenticLoop, 
+    ReactAgenticLoop, 
+    ReactWithFCAgenticLoop,
+    PlanAndExecuteAgenticLoop,
+    ProgrammaticAgenticLoop,
+    ReflexionAgenticLoop
+)
 
 class Agent():
 
@@ -13,8 +20,15 @@ class Agent():
             self._loop = FunctionCallingAgenticLoop(*loop_kwargs)
         elif paradigm=="react":
             self._loop = ReactAgenticLoop(*loop_kwargs)
-        elif paredigm=="react_with_function_calling":
-            self.loop = ReactWithFCAgenticLoop(*loop_kwargs)
+        elif paradigm=="react_with_function_calling":
+            self._loop = ReactWithFCAgenticLoop(*loop_kwargs)
+        elif paradigm=="plan-and-execute":
+            self._loop = PlanAndExecuteAgenticLoop(*loop_kwargs)
+        elif paradigm=="programmatic":
+            self._loop = ProgrammaticAgenticLoop(*loop_kwargs)
+        elif paradigm=="reflexion":
+            self._loop = ReflexionAgenticLoop(*loop_kwargs)
+
             
     def run(self, prompt: str):
         return self._loop.start(prompt)

@@ -6,7 +6,6 @@ class _AgenticLoop:
     
     def __init__(self, model, available_tools, debug, max_iter):
         self._model = model
-        self._available_tools = available_tools
         self._debug = debug
         self._max_iter = max_iter
         
@@ -37,8 +36,9 @@ class FunctionCallingAgenticLoop(_AgenticLoop):
     
     def start(self, prompt):
         
-        self._model._add_tools(self._available_tools)
-        messages = [{"type":"user", "content":prompt}] 
+        self._model._add_tools(list(self._available_tools.values()))
+        messages = [{"type":"user", "content":prompt}]
+        response = {"prompt":prompt, "iterations":[]} 
         
         while True:
 
@@ -52,15 +52,20 @@ class FunctionCallingAgenticLoop(_AgenticLoop):
                 print("-------")
 
             if content is not None:
+                response["response"] = content
                 break
             
             if resp["tool_calls"] is not None:
                 tool_calls = resp["tool_calls"]
                 for tool_call in tool_calls:
                     tool_result = self._call_tool(tool_call)
+                    response["iterations"].append({
+                        "name":tool_call.function.name , 
+                        "arguments":tool_call.function.arguments,
+                        "result":tool_result["content"]})
                     messages.append(tool_result)
         
-        return content
+        return response
 
 
 class ReactAgenticLoop(_AgenticLoop):
@@ -90,16 +95,16 @@ class ReactAgenticLoop(_AgenticLoop):
                                      "available_tools":tools
                                      })
         
-        print(prompt)
         messages = [prompt.as_dict()]
         
         current_iter = 0
+        response = {"prompt":prompt, "iterations":[]} 
 
         while True:
 
             if self._max_iter is not None and current_iter>=self._max_iter:
                 break
-
+            
             resp = self._model._execute(messages)
             
             resp = resp["choices"][0]["message"]
@@ -111,23 +116,181 @@ class ReactAgenticLoop(_AgenticLoop):
                 print("-------")
 
             if content is not None:
-                content_json = json.loads(content)
-                if "final_answer" in content_json:
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
                     break
-            
-                elif "action" in content_json:
-                    tool_call = content_json["action"]
+                elif "action" in iteration:
+                    tool_call = iteration["action"]
                     tool_result = self._call_tool(tool_call)
+                    iteration["observation"]=tool_result
+                    response["iterations"].append(iteration)
                     msg = json.dumps({"observation":tool_result})
-                    print(msg)
                     messages.append({"type":"user","content":msg})
 
             current_iter+=1
 
-        return content
+        return response
     
-    
+
 class ReactWithFCAgenticLoop(_AgenticLoop):
     
     def run(self, prompt):
         pass
+
+
+class ProgrammaticAgenticLoop(_AgenticLoop):
+
+    def start(self, prompt):
+
+        self._model._add_tools(list(self._available_tools.values()))
+        messages = [{"type":"user", "content":prompt}]
+        response = {"prompt":prompt, "iterations":[]} 
+        
+        while True:
+
+            resp = self._model._execute(messages)
+            resp = resp["choices"][0]["message"]
+            messages.append(resp)
+            content = resp["content"]
+
+            if self._debug:
+                print(content)
+                print("-------")
+
+
+class PlanAndExecuteAgenticLoop(_AgenticLoop):
+
+    def _encode_tool(self, func):
+        sig = inspect.signature(func)
+        doc = inspect.getdoc(func)
+        encoded = func.__name__+str(sig)+": "+doc
+        encoded = encoded.replace("\n"," ")
+        return encoded
+
+    def _call_tool(self, tool_call):
+        tool = self._available_tools[tool_call["name"]]
+        kwargs = list(tool_call["arguments"].values())
+        return tool(*kwargs)
+
+    def start(self, query):
+        tools = ""
+        if self._available_tools != None:
+
+            for tool in self._available_tools:
+                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
+                
+        prompt = Prompt(prompt_id="monoai/agents/prompts/plan_and_execute.prompt", 
+                        prompt_data={"query":query, 
+                                     "available_tools":tools
+                                     })
+        
+        messages = [prompt.as_dict()]
+        
+        current_iter = 0
+        response = {"prompt":prompt, "iterations":[]} 
+
+        while True:
+
+            if self._max_iter is not None and current_iter>=self._max_iter:
+                break
+            
+            resp = self._model._execute(messages)
+            
+            resp = resp["choices"][0]["message"]
+            messages.append(resp)
+            content = resp["content"]
+
+            if self._debug:
+                print(content)
+                print("-------")
+
+            if content is not None:
+                print(content)
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
+                    break
+                elif "action" in iteration:
+                    tool_call = iteration["action"]
+                    tool_result = self._call_tool(tool_call)
+                    iteration["observation"]=tool_result
+                    response["iterations"].append(iteration)
+                    msg = json.dumps({"observation":tool_result})
+                    messages.append({"type":"user","content":msg})
+                else:
+                    messages.append({"type":"user","content":content})
+
+            current_iter+=1
+
+        return response
+
+
+class ReflexionAgenticLoop(_AgenticLoop):
+
+    def _encode_tool(self, func):
+        sig = inspect.signature(func)
+        doc = inspect.getdoc(func)
+        encoded = func.__name__+str(sig)+": "+doc
+        encoded = encoded.replace("\n"," ")
+        return encoded
+
+    def _call_tool(self, tool_call):
+        tool = self._available_tools[tool_call["name"]]
+        kwargs = list(tool_call["arguments"].values())
+        return tool(*kwargs)
+
+    def start(self, query):
+        tools = ""
+        if self._available_tools != None:
+
+            for tool in self._available_tools:
+                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
+                
+        prompt = Prompt(prompt_id="monoai/agents/prompts/reflexion.prompt", 
+                        prompt_data={"query":query, 
+                                     "available_tools":tools
+                                     })
+        
+        messages = [prompt.as_dict()]
+        
+        current_iter = 0
+        response = {"prompt":prompt, "iterations":[]} 
+
+        while True:
+
+            if self._max_iter is not None and current_iter>=self._max_iter:
+                break
+            
+            resp = self._model._execute(messages)
+            
+            resp = resp["choices"][0]["message"]
+            messages.append(resp)
+            content = resp["content"]
+
+            if self._debug:
+                print(content)
+                print("-------")
+
+            if content is not None:
+                print(content)
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
+                    break
+                elif "action" in iteration:
+                    tool_call = iteration["action"]
+                    tool_result = self._call_tool(tool_call)
+                    iteration["observation"]=tool_result
+                    response["iterations"].append(iteration)
+                    msg = json.dumps({"observation":tool_result})
+                    messages.append({"type":"user","content":msg})
+                else:
+                    messages.append({"type":"user","content":content})
+
+            current_iter+=1
+
+        return response

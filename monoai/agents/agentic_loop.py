@@ -1,21 +1,11 @@
 import json
 import inspect
+from typing import Any, Dict, List, Optional
 from ..prompts import Prompt
 
-class _AgenticLoop:
+class _FunctionCallingMixin:
     
-    def __init__(self, model, available_tools, debug, max_iter):
-        self._model = model
-        self._debug = debug
-        self._max_iter = max_iter
-        
-        self._available_tools = {}
-        
-        for tool in available_tools:
-            self._available_tools[tool.__name__]=tool
-
-    
-    def _call_tool(self, tool_call):
+    def _call_tool(self, tool_call: Any) -> Dict[str, str]:
         function_name = tool_call.function.name
         function_to_call = self._available_tools[function_name]
         function_args = json.loads(tool_call.function.arguments)                
@@ -27,18 +17,44 @@ class _AgenticLoop:
                     "content": function_response,
                 }
 
+class _ReactMixin:
     
-    def start(self):
+    def _encode_tool(self, func: Any) -> str:
+        sig = inspect.signature(func)
+        doc = inspect.getdoc(func)
+        encoded = func.__name__+str(sig)+": "+doc
+        encoded = encoded.replace("\n"," ")
+        return encoded
+    
+    def _call_tool(self, tool_call: Dict[str, Any]) -> Any:
+        tool = self._available_tools[tool_call["name"]]
+        kwargs = list(tool_call["arguments"].values())
+        return tool(*kwargs)
+
+class _AgenticLoop:
+    
+    def __init__(self, model: Any, available_tools: List[Any], debug: bool, max_iter: Optional[int]) -> None:
+        self._model = model
+        self._debug = debug
+        self._max_iter = max_iter
+        
+        self._available_tools = {}
+        
+        for tool in available_tools:
+            self._available_tools[tool.__name__]=tool
+
+    
+    def start(self, query: str) -> Dict[str, Any]:
         pass
     
 
-class FunctionCallingAgenticLoop(_AgenticLoop):
+class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
     
-    def start(self, prompt):
+    def start(self, query: str) -> Dict[str, Any]:
         
         self._model._add_tools(list(self._available_tools.values()))
-        messages = [{"type":"user", "content":prompt}]
-        response = {"prompt":prompt, "iterations":[]} 
+        messages = [{"type":"user", "content":query}]
+        response = {"prompt":query, "iterations":[]} 
         
         while True:
 
@@ -68,21 +84,9 @@ class FunctionCallingAgenticLoop(_AgenticLoop):
         return response
 
 
-class ReactAgenticLoop(_AgenticLoop):
-    
-    def _encode_tool(self, func):
-        sig = inspect.signature(func)
-        doc = inspect.getdoc(func)
-        encoded = func.__name__+str(sig)+": "+doc
-        encoded = encoded.replace("\n"," ")
-        return encoded
-    
-    def _call_tool(self, tool_call):
-        tool = self._available_tools[tool_call["name"]]
-        kwargs = list(tool_call["arguments"].values())
-        return tool(*kwargs)
-    
-    def start(self, query):
+class ReactAgenticLoop(_AgenticLoop, _ReactMixin):
+        
+    def start(self, query: str) -> Dict[str, Any]:
 
         tools = ""
         if self._available_tools != None:
@@ -134,23 +138,38 @@ class ReactAgenticLoop(_AgenticLoop):
         return response
     
 
-class ReactWithFCAgenticLoop(_AgenticLoop):
+class ReactWithFCAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
     
-    def run(self, prompt):
+    def start(self, query: str) -> Dict[str, Any]:
         pass
 
 
-class ProgrammaticAgenticLoop(_AgenticLoop):
+class ProgrammaticAgenticLoop(_AgenticLoop, _ReactMixin):
 
-    def start(self, prompt):
+    def start(self, query: str) -> Dict[str, Any]:
+        tools = ""
+        if self._available_tools != None:
 
-        self._model._add_tools(list(self._available_tools.values()))
-        messages = [{"type":"user", "content":prompt}]
-        response = {"prompt":prompt, "iterations":[]} 
+            for tool in self._available_tools:
+                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
+                
+        prompt = Prompt(prompt_id="monoai/agents/prompts/programmatic.prompt", 
+                        prompt_data={"query":query, 
+                                     "available_tools":tools
+                                     })
         
+        messages = [prompt.as_dict()]
+        
+        current_iter = 0
+        response = {"prompt":prompt, "iterations":[]} 
+
         while True:
 
+            if self._max_iter is not None and current_iter>=self._max_iter:
+                break
+            
             resp = self._model._execute(messages)
+            
             resp = resp["choices"][0]["message"]
             messages.append(resp)
             content = resp["content"]
@@ -159,22 +178,32 @@ class ProgrammaticAgenticLoop(_AgenticLoop):
                 print(content)
                 print("-------")
 
+            if content is not None:
+                print(content)
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
+                    break
+                elif "action" in iteration and iteration["action"]["name"] is not None:
+                    tool_call = iteration["action"]
+                    tool_result = self._call_tool(tool_call)
+                    iteration["observation"]=tool_result
+                    response["iterations"].append(iteration)
+                    msg = json.dumps({"observation":tool_result})
+                    messages.append({"type":"user","content":msg})
+                else:
+                    messages.append({"type":"user","content":content})
 
-class PlanAndExecuteAgenticLoop(_AgenticLoop):
+            current_iter+=1
 
-    def _encode_tool(self, func):
-        sig = inspect.signature(func)
-        doc = inspect.getdoc(func)
-        encoded = func.__name__+str(sig)+": "+doc
-        encoded = encoded.replace("\n"," ")
-        return encoded
+        return response
 
-    def _call_tool(self, tool_call):
-        tool = self._available_tools[tool_call["name"]]
-        kwargs = list(tool_call["arguments"].values())
-        return tool(*kwargs)
 
-    def start(self, query):
+class PlanAndExecuteAgenticLoop(_AgenticLoop, _ReactMixin):
+
+
+    def start(self, query: str) -> Dict[str, Any]:
         tools = ""
         if self._available_tools != None:
 
@@ -213,7 +242,7 @@ class PlanAndExecuteAgenticLoop(_AgenticLoop):
                     response["iterations"].append(iteration)
                     response["response"] = iteration["final_answer"]
                     break
-                elif "action" in iteration:
+                elif "action" in iteration and iteration["action"]["name"] is not None:
                     tool_call = iteration["action"]
                     tool_result = self._call_tool(tool_call)
                     iteration["observation"]=tool_result
@@ -228,21 +257,9 @@ class PlanAndExecuteAgenticLoop(_AgenticLoop):
         return response
 
 
-class ReflexionAgenticLoop(_AgenticLoop):
+class ReflexionAgenticLoop(_AgenticLoop, _ReactMixin):
 
-    def _encode_tool(self, func):
-        sig = inspect.signature(func)
-        doc = inspect.getdoc(func)
-        encoded = func.__name__+str(sig)+": "+doc
-        encoded = encoded.replace("\n"," ")
-        return encoded
-
-    def _call_tool(self, tool_call):
-        tool = self._available_tools[tool_call["name"]]
-        kwargs = list(tool_call["arguments"].values())
-        return tool(*kwargs)
-
-    def start(self, query):
+    def start(self, query: str) -> Dict[str, Any]:
         tools = ""
         if self._available_tools != None:
 
@@ -257,7 +274,7 @@ class ReflexionAgenticLoop(_AgenticLoop):
         messages = [prompt.as_dict()]
         
         current_iter = 0
-        response = {"prompt":prompt, "iterations":[]} 
+        response = {"iterations":[]} 
 
         while True:
 
@@ -275,7 +292,6 @@ class ReflexionAgenticLoop(_AgenticLoop):
                 print("-------")
 
             if content is not None:
-                print(content)
                 iteration = json.loads(content)
                 if "final_answer" in iteration:
                     response["iterations"].append(iteration)
@@ -285,10 +301,12 @@ class ReflexionAgenticLoop(_AgenticLoop):
                     tool_call = iteration["action"]
                     tool_result = self._call_tool(tool_call)
                     iteration["observation"]=tool_result
+                    iteration["observation"]=tool_result
                     response["iterations"].append(iteration)
                     msg = json.dumps({"observation":tool_result})
                     messages.append({"type":"user","content":msg})
                 else:
+                    response["iterations"].append(iteration)
                     messages.append({"type":"user","content":content})
 
             current_iter+=1

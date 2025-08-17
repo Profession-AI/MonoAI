@@ -31,10 +31,12 @@ class _ReactMixin:
         kwargs = list(tool_call["arguments"].values())
         return tool(*kwargs)
 
+
 class _AgenticLoop:
     
-    def __init__(self, model: Any, available_tools: List[Any], debug: bool, max_iter: Optional[int]) -> None:
+    def __init__(self, model: Any, available_tools: List[Any], agentic_prompt:str, debug: bool, max_iter: Optional[int]) -> None:
         self._model = model
+        self._agentic_prompt = agentic_prompt
         self._debug = debug
         self._max_iter = max_iter
         
@@ -43,7 +45,25 @@ class _AgenticLoop:
         for tool in available_tools:
             self._available_tools[tool.__name__]=tool
 
-    
+    def _get_tools(self)->str:
+        tools = ""
+        if self._available_tools != None:
+
+            for tool in self._available_tools:
+                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
+        return tools
+
+
+    def _get_base_messages(self, agent_type:str, query:str)->str:
+        tools = self._get_tools()
+        prompt = Prompt(prompt_id=f"monoai/agents/prompts/{agent_type}"+".prompt" if self._agentic_prompt is None else self._agentic_prompt, 
+                        prompt_data={"query":query, 
+                                     "available_tools":tools
+                                     })
+        
+        messages = [prompt.as_dict()]
+        return messages
+
     def start(self, query: str) -> Dict[str, Any]:
         pass
     
@@ -87,22 +107,11 @@ class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
 class ReactAgenticLoop(_AgenticLoop, _ReactMixin):
         
     def start(self, query: str) -> Dict[str, Any]:
-
-        tools = ""
-        if self._available_tools != None:
-
-            for tool in self._available_tools:
-                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
-                
-        prompt = Prompt(prompt_id="monoai/agents/prompts/react.prompt", 
-                        prompt_data={"query":query, 
-                                     "available_tools":tools
-                                     })
         
-        messages = [prompt.as_dict()]
+        messages = self._get_base_messages("react", query)
         
         current_iter = 0
-        response = {"prompt":prompt, "iterations":[]} 
+        response = {"prompt":query, "iterations":[]} 
 
         while True:
 
@@ -147,21 +156,11 @@ class ReactWithFCAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
 class ProgrammaticAgenticLoop(_AgenticLoop, _ReactMixin):
 
     def start(self, query: str) -> Dict[str, Any]:
-        tools = ""
-        if self._available_tools != None:
 
-            for tool in self._available_tools:
-                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
-                
-        prompt = Prompt(prompt_id="monoai/agents/prompts/programmatic.prompt", 
-                        prompt_data={"query":query, 
-                                     "available_tools":tools
-                                     })
-        
-        messages = [prompt.as_dict()]
+        messages = self._get_base_messages("programmatic", query)        
         
         current_iter = 0
-        response = {"prompt":prompt, "iterations":[]} 
+        response = {"prompt":query, "iterations":[]} 
 
         while True:
 
@@ -204,21 +203,11 @@ class PlanAndExecuteAgenticLoop(_AgenticLoop, _ReactMixin):
 
 
     def start(self, query: str) -> Dict[str, Any]:
-        tools = ""
-        if self._available_tools != None:
 
-            for tool in self._available_tools:
-                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
-                
-        prompt = Prompt(prompt_id="monoai/agents/prompts/plan_and_execute.prompt", 
-                        prompt_data={"query":query, 
-                                     "available_tools":tools
-                                     })
-        
-        messages = [prompt.as_dict()]
+        messages = self._get_base_messages("plan_and_execute", query)          
         
         current_iter = 0
-        response = {"prompt":prompt, "iterations":[]} 
+        response = {"prompt":query, "iterations":[]} 
 
         while True:
 
@@ -260,18 +249,8 @@ class PlanAndExecuteAgenticLoop(_AgenticLoop, _ReactMixin):
 class ReflexionAgenticLoop(_AgenticLoop, _ReactMixin):
 
     def start(self, query: str) -> Dict[str, Any]:
-        tools = ""
-        if self._available_tools != None:
-
-            for tool in self._available_tools:
-                tools+=" - "+self._encode_tool(self._available_tools[tool])+"\n"
-                
-        prompt = Prompt(prompt_id="monoai/agents/prompts/reflexion.prompt", 
-                        prompt_data={"query":query, 
-                                     "available_tools":tools
-                                     })
         
-        messages = [prompt.as_dict()]
+        messages = self._get_base_messages("reflexion", query)  
         
         current_iter = 0
         response = {"iterations":[]} 
@@ -305,6 +284,93 @@ class ReflexionAgenticLoop(_AgenticLoop, _ReactMixin):
                     response["iterations"].append(iteration)
                     msg = json.dumps({"observation":tool_result})
                     messages.append({"type":"user","content":msg})
+                else:
+                    response["iterations"].append(iteration)
+                    messages.append({"type":"user","content":content})
+
+            current_iter+=1
+
+        return response
+ 
+
+class SelfAskAgenticLoop(_AgenticLoop, _ReactMixin):
+
+    def start(self, query: str) -> Dict[str, Any]:
+        
+        messages = self._get_base_messages("self_ask", query)  
+        
+        current_iter = 0
+        response = {"iterations":[]} 
+
+        while True:
+
+            if self._max_iter is not None and current_iter>=self._max_iter:
+                break
+            
+            resp = self._model._execute(messages)
+            
+            resp = resp["choices"][0]["message"]
+            messages.append(resp)
+            content = resp["content"]
+
+            if self._debug:
+                print(content)
+                print("-------")
+
+            if content is not None:
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
+                    break
+                else:
+                    response["iterations"].append(iteration)
+                    messages.append({"type":"user","content":content})
+
+            current_iter+=1
+
+        return response
+
+
+class SelfAskWithSearchLoop(_AgenticLoop, _ReactMixin):
+
+    def start(self, query: str) -> Dict[str, Any]:
+        
+        messages = self._get_base_messages("self_ask_with_search", query)  
+        
+        current_iter = 0
+        response = {"iterations":[]} 
+
+        while True:
+
+            if self._max_iter is not None and current_iter>=self._max_iter:
+                break
+            
+            resp = self._model._execute(messages)
+            
+            resp = resp["choices"][0]["message"]
+            messages.append(resp)
+            content = resp["content"]
+
+            if self._debug:
+                print(content)
+                print("-------")
+
+            if content is not None:
+                iteration = json.loads(content)
+                if "final_answer" in iteration:
+                    response["iterations"].append(iteration)
+                    response["response"] = iteration["final_answer"]
+                    break
+                elif "search_query" in iteration and iteration["search_query"] is not None:
+                    from ..tools.websearch import search_web
+                    
+                    query = iteration["search_query"] 
+                    result = search_web(query, engine="tavily")["text"]
+                    iteration["search_result"] = result
+                    result = json.dumps({"query_results":result})
+                    messages.append({"type":"user", "content":result})
+                    response["iterations"].append(iteration)
                 else:
                     response["iterations"].append(iteration)
                     messages.append({"type":"user","content":content})

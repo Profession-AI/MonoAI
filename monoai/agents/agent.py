@@ -5,16 +5,18 @@ from .agentic_loop import (
     ReactWithFCAgenticLoop,
     PlanAndExecuteAgenticLoop,
     ProgrammaticAgenticLoop,
-    ReflexionAgenticLoop
+    ReflexionAgenticLoop,
+    SelfAskAgenticLoop,
+    SelfAskWithSearchLoop
 )
 
 class Agent():
 
-    def __init__(self, model:Model, tools=None, paradigm="function_calling", debug=False, max_iter=None):
+    def __init__(self, model:Model, tools=None, paradigm="function_calling", agent_prompt=None, debug=False, max_iter=None):
         
         self._model = model
 
-        loop_kwargs = self._model, tools, debug, max_iter
+        loop_kwargs = self._model, tools, agent_prompt, debug, max_iter
         
         if paradigm=="function_calling":
             self._loop = FunctionCallingAgenticLoop(*loop_kwargs)
@@ -28,6 +30,10 @@ class Agent():
             self._loop = ProgrammaticAgenticLoop(*loop_kwargs)
         elif paradigm=="reflexion":
             self._loop = ReflexionAgenticLoop(*loop_kwargs)
+        elif paradigm=="self_ask":
+            self._loop = SelfAskAgenticLoop(*loop_kwargs)
+        elif paradigm=="self_ask_with_search":
+            self._loop = SelfAskWithSearchLoop(*loop_kwargs)
 
             
     def run(self, prompt: str):

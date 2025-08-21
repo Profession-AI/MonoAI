@@ -6,7 +6,7 @@ from pathlib import Path
 from monoai.chat import Chat
 from monoai.models import Model
 
-TEST_MODEL = "gpt-4o-mini"
+TEST_MODEL = "gpt-4o-nano"
 TEST_SYSTEM_PROMPT = "You are a calculator, return only the number without any any other text"
 
 """

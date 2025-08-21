@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Union
-from monoai.rag.rag import RAG
+from typing import List, Dict, Union, Optional, TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+	from monoai.rag.rag import RAG  # pragma: no cover
+else:
+	RAG = Any  # type: ignore
 
 class BaseModel(ABC):
 
@@ -9,7 +13,7 @@ class BaseModel(ABC):
         count_tokens: bool = False, 
         count_cost: bool = False,
         max_tokens: int = None,
-        rag: RAG = None
+        rag: Optional['RAG'] = None
     ):
         """
         Initialize base model with counting preferences.
@@ -35,7 +39,7 @@ class BaseModel(ABC):
         """Ask the model asynchronously."""
         pass
 
-    def _add_rag(self, rag:RAG):
+    def _add_rag(self, rag: 'RAG'):
         self._rag=rag
 
     def _add_tools(self, tools):

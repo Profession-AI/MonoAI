@@ -13,3 +13,4 @@ docx2txt
 PyPDF2
 nbformat
 nbconvert
+elevenlabs

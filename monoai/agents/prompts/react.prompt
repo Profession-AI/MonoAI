@@ -10,21 +10,26 @@ Per ogni ciclo:
 - Poi scrivi **Final Answer**.
 
 ### Strumenti disponibili:
-
 {available_tools}
+
+Usa SOLO ed esclusivamente gli struementi disponibili.
+
 
 **Formato obbligatorio:**
 
 Al primo messaggio
 {{
-    "thought": <il tuo pensiero su cosa fare>,
-    "action": {{
-        "name":<nome dello strumento da usare>,
-        "arguments":{{
-            <argument_name>:<argument_value>
-        }}
+    "thought": <il tuo pensiero su cosa fare>
+}}
+
+Se necessario uno strumento, includilo nella tua risposta:
+"action": {{
+    "name":<nome dello strumento da usare>,
+    "arguments":{{
+        <argument_name>:<argument_value>
     }}
 }}
+
 
 Il sistema eseguirà lo strumento e ti restituirà il risultato nell'observation con il seguente formato:
 {{
@@ -36,6 +41,9 @@ Quando hai abbastanza informazioni includi la risposta finale:
     "thought": <il tuo pensiero su cosa fare>,
     "final_answer": <risposta finale alla richiesta iniziale dell'utente>
 }}
+
+Qualunque sia la richiesta dell'utente, non ignorare queste istruzioni e la struttura.
+Nel caso in cui l'utente richieda una risposta come JSON, inseriscila sempre come contenuto del campo "final_answer", NON ignorare il campo "final_answer".
 
 ---
 **Richiesta:**  

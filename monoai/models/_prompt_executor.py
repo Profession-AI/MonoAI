@@ -3,8 +3,6 @@ from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
 from ..tools._tool_parser import ToolParser
-from litellm import completion, acompletion
-import litellm
 from ..conf import Conf
 
 class PromptExecutorMixin:
@@ -215,6 +213,8 @@ class PromptExecutorMixin:
         else:
             messages = prompt
 
+        from litellm import completion
+
         return completion(model=model, 
                           messages=messages, 
                           response_format=response_type,
@@ -246,6 +246,7 @@ class PromptExecutorMixin:
             messages = prompt
 
         self._disable_logging()
+        from litellm import acompletion
 
         response = await acompletion(
             model=model, 

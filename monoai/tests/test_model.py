@@ -3,7 +3,7 @@ from monoai.prompts import Prompt, PromptChain
 
 TEST_PROMPT = "This is a test"
 TEST_PROMPT_FOLDER = "monoai/tests/prompts"
-TEST_MODEL = "gpt-4o-mini"
+TEST_MODEL = "gpt-4o-nano"
 
 def test_base_model():
     assert "response" in Model(provider="openai", model=TEST_MODEL).ask(TEST_PROMPT)

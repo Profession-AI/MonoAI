@@ -2,7 +2,6 @@ from os import environ
 import sys
 import os
 from typing import Dict, Optional
-from monoai.conf import Conf
 
 _KEY_EXT = "_API_KEY"
 
@@ -28,7 +27,8 @@ class KeyManager:
 
     _instance = None
     _keys = None
-    _key_file_path = Conf()["keysfile_path"]
+    # Avoid loading configuration at import time; use default and optionally override on first use
+    _key_file_path = "providers.keys"
     _is_enabled = True
 
     def __new__(cls):
@@ -96,6 +96,15 @@ class KeyManager:
         key_name = provider.upper() + _KEY_EXT
 
         if self._keys is None:
+            # Optionally pick key file path from configuration lazily on first use
+            try:
+                from monoai.conf import Conf  # local import to avoid eager YAML load
+                cfg_path = Conf()["keysfile_path"]
+                if cfg_path:
+                    self._key_file_path = cfg_path
+            except Exception:
+                # Fallback to default path if configuration is unavailable
+                pass
             self._load_keys_from_file()            
 
         key = self._keys.get(key_name)

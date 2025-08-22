@@ -1,0 +1,118 @@
+Capitolo 1: Introduzione a Python
+
+In questo capitolo introduttivo, esploreremo le basi di Python, un linguaggio di programmazione popolare e versatile. Impareremo perché Python è una scelta eccellente per principianti e professionisti, e installeremo l'ambiente di sviluppo necessario per iniziare a programmare.
+
+Sezione 1.1: Perché Python?
+Python è facile da imparare, legibile e supportato da una vasta comunità. Viene utilizzato in diversi campi, tra cui lo sviluppo web, l'analisi dei dati, l'apprendimento automatico e molto altro.
+
+Sezione 1.2: Installazione di Python
+Per iniziare, scarica e installa Python dal sito ufficiale https://www.python.org/. Segui le istruzioni per la tua piattaforma (Windows, MacOS, Linux).
+
+Sezione 1.3: Primo programma Python
+Apri il terminale o l'interprete Python e digita:
+"""
+print("Ciao, mondo!")
+"""
+Questo semplice codice visualizza il messaggio "Ciao, mondo!" sullo schermo.
+
+In questo capitolo abbiamo introdotto i concetti di base di Python e preparato l'ambiente di sviluppo. Nel prossimo capitolo approfondiremo le variabili e i tipi di dati.
+
+Capitolo 1: Introduzione a Python
+
+In questo capitolo introduttivo, esploreremo le basi di Python, un linguaggio di programmazione popolare e versatile. Impareremo perché Python è una scelta eccellente per principianti e professionisti, e installeremo l'ambiente di sviluppo necessario per iniziare a programmare.
+
+Sezione 1.1: Perché Python?
+Python è facile da imparare, legibile e supportato da una vasta comunità. Viene utilizzato in diversi campi, tra cui lo sviluppo web, l'analisi dei dati, l'apprendimento automatico e molto altro.
+
+Sezione 1.2: Installazione di Python
+Per iniziare, scarica e installa Python dal sito ufficiale https://www.python.org/. Segui le istruzioni per la tua piattaforma (Windows, MacOS, Linux).
+
+Sezione 1.3: Primo programma Python
+Apri il terminale o l'interprete Python e digita:
+"""
+print("Ciao, mondo!")
+"""
+Questo semplice codice visualizza il messaggio "Ciao, mondo!" sullo schermo.
+
+In questo capitolo abbiamo introdotto i concetti di base di Python e preparato l'ambiente di sviluppo. Nel prossimo capitolo approfondiremo le variabili e i tipi di dati.
+
+Capitolo 2: Variabili e Tipi di Dati
+
+In questo capitolo esploreremo le variabili e i tipi di dati in Python, fondamentali per qualsiasi programma.
+
+Sezione 2.1: Variabili
+Le variabili sono contenitori per memorizzare valori. In Python, non è necessario dichiarare il tipo di variabile prima di usarla.
+
+Esempio:
+
+x = 10
+nome = 'Alice'
+
+Sezione 2.2: Tipi di Dati
+I principali tipi di dati in Python includono:
+- int: numeri interi (es. 5, -3)
+- float: numeri decimali (es. 3.14, -0.001)
+- str: stringhe di testo (es. 'ciao')
+- bool: valori booleani (True, False)
+
+Sezione 2.3: Conversione di Tipi di Dati
+Puoi convertire i tipi di dati usando le funzioni int(), float(), str(), bool().
+
+In questo capitolo abbiamo visto come usare variabili e tipi di dati in Python. Nel prossimo capitolo, parleremo di operatori e espressioni.
+
+Capitolo 2: Variabili e Tipi di Dati
+
+In questo capitolo esploreremo le variabili e i tipi di dati in Python, fondamentali per qualsiasi programma.
+
+Sezione 2.1: Variabili
+Le variabili sono contenitori per memorizzare valori. In Python, non è necessario dichiarare il tipo di variabile prima di usarla.
+
+Esempio:
+
+x = 10
+nome = 'Alice'
+
+Sezione 2.2: Tipi di Dati
+I principali tipi di dati in Python includono:
+- int: numeri interi (es. 5, -3)
+- float: numeri decimali (es. 3.14, -0.001)
+- str: stringhe di testo (es. 'ciao')
+- bool: valori booleani (True, False)
+
+Sezione 2.3: Conversione di Tipi di Dati
+Puoi convertire i tipi di dati usando le funzioni int(), float(), str(), bool().
+
+In questo capitolo abbiamo visto come usare variabili e tipi di dati in Python. Nel prossimo capitolo, parleremo di operatori e espressioni.
+
+Capitolo 3: Operatorà e Espressioni
+
+In questo capitolo, parleremo degli operatori e come usarli per costruire espressioni in Python.
+
+Sezione 3.1: Operatori aritmetici
+Python supporta gli operatori +, -, *, /, // (dividendo intero), % (resto), ** (potenza).
+
+Esempio:
+
+a = 5
+b = 2
+somma = a + b  # 7
+potenza = a ** b  # 25
+
+Sezione 3.2: Operatori di confronto
+Utilizzati per confrontare valori: ==, !=, >, <, >=, <=.
+
+Esempio:
+
+x = 10
+y = 20
+x != y  # True
+
+Sezione 3.3: Operatori logici
+and, or, not vengono usati per combinare condizioni.
+
+Esempio:
+
+condizione = (x > 5) and (y < 30)
+
+In questo capitolo, abbiamo visto come usare operatori e espressioni per costruire logiche di programmazione. Il prossimo capitolo tratterà delle strutture di controllo.
+

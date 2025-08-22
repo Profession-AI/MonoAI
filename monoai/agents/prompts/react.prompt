@@ -51,4 +51,6 @@ Nel caso in cui l'utente richieda una risposta come JSON, inseriscila sempre com
 
 ---
 
+NON emettere "final_answer" finché non si verifica la seguente condizione di terminazione: tutti e 5 i capitoli sono stati scritti
+
 **Inizia ora.**

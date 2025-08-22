@@ -7,7 +7,7 @@ from yaml.parser import ParserError
 class Conf:
     """
     A singleton class for managing configuration in a programmatic way.
-    Configuration defined here overrides the configuration in monoai.yaml file.
+    Configuration defined here overrides the configuration in ai.yaml file.
 
     Examples
     --------
@@ -61,7 +61,7 @@ class Conf:
         Loads and validates the configuration file, setting up defaults
         and performing environment variable interpolation.
         """
-        self._config_path = Path('monoai.yaml')
+        self._config_path = Path('ai.yaml')
         self._config = self._DEFAULT_CONFIG.copy()
         self._load_config()
     

@@ -1,4 +1,3 @@
-import chromadb
 from litellm import embedding
 from typing import List, Dict, Any, Optional, Union
 
@@ -254,6 +253,11 @@ class ChromaVectorDB(_BaseVectorDB):
         ```
         """
         super().__init__(name, vectorizer_provider, vectorizer_model)
+        try:
+            import chromadb
+        except ImportError:
+            raise ImportError("chromadb is not installed. Please install it with 'pip install chromadb'")
+
         self._client = chromadb.PersistentClient()
         if name:
             try:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monoai"
-version = "0.0.18"
+version = "0.0.21"
 description = "MonoAI - The complete framework to build AI-powered applications"
 authors = [
   { name = "ProfessionAI Tech", email = "tech@profession.ai" }

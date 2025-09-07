@@ -35,7 +35,6 @@ Per ogni ciclo:
 
 **Formato obbligatorio:**
 
-
 {{
     "step": <numero dello step corrente>,
     "thought": <il tuo pensiero su cosa fare>,

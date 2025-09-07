@@ -1,6 +1,4 @@
 import requests
-import nbformat
-from nbconvert import PythonExporter
 
 def colab_downloader(colab_url):
     """
@@ -11,6 +9,13 @@ def colab_downloader(colab_url):
     """
     
     BASE_URL = "https://docs.google.com/uc?export=download&id="
+
+    try:
+        import nbformat
+        from nbconvert import PythonExporter
+    except ImportError:
+        raise ImportError("nbformat and nbconvert are not installed. Please install them with 'pip install nbformat nbconvert'")
+
     try:
         file_id = colab_url.split("drive/")[1].split("?")[0]
     except Exception:

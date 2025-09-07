@@ -1,16 +1,4 @@
 litellm
-duckduckgo-search
-tavily-python
 typing-extensions
 xmltodict
 pytest
-beautifulsoup4
-selenium
-python-whois
-chromadb
-python-docx
-docx2txt
-PyPDF2
-nbformat
-nbconvert
-elevenlabs

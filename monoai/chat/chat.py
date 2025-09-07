@@ -36,16 +36,16 @@ class Chat():
     ```
 
     # Create a new chat with JSON history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history_type="json")
+    chat = Chat(provider="openai", model="gpt-4o-mini", history="json")
     print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
     response = chat.ask("Hello! I'm Giuseppe") # Hello!
 
     # Load a chat with JSON history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history_type="json", chat_id="8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3")
+    chat = Chat(provider="openai", model="gpt-4o-mini", history="json", chat_id="8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3")
     response = chat.ask("What's my name?") # Your name is Giuseppe
 
     # Create a new chat with in-memory dictionary history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history_type="dict")
+    chat = Chat(provider="openai", model="gpt-4o-mini", history="dict")
     print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
     response = chat.ask("Hello! I'm Giuseppe") # Hello!
     ```
@@ -55,13 +55,36 @@ class Chat():
     ```
     chat = Chat(provider="openai", 
                 model="gpt-4o-mini", 
-                history_type="json", 
+                history="json", 
                 history_summarizer_provider="openai", 
                 history_summarizer_model="gpt-4o-mini", 
                 history_summarizer_max_tokens=100)
                 
     response = chat.ask("Hello! I'm Giuseppe") # Hello!
     response = chat.ask("What's my name?") # Your name is Giuseppe
+    ```
+
+    With metadata for observability:
+
+    ```
+    chat = Chat(provider="openai", model="gpt-4o-mini")
+    
+    # Pass metadata for tracking
+    response = chat.ask(
+        "Hello! I'm Giuseppe", 
+        metadata={
+            "user_id": "12345",
+            "session_id": "abc-def-ghi",
+            "feature": "chat"
+        }
+    )
+    
+    # Streaming with metadata
+    async for chunk in chat.ask_stream(
+        "Tell me a story",
+        metadata={"user_id": "12345", "request_type": "story_generation"}
+    ):
+        print(chunk)
     ```
     """
 
@@ -76,7 +99,7 @@ class Chat():
                  model,
                  system_prompt: Optional[Union[Prompt, str]] = "You are an helpful assistant",
                  max_tokens: Optional[int] = None,
-                 history_type: Union[str, BaseHistory] = "dict", 
+                 history: Union[str, BaseHistory] = "dict", 
                  history_last_n: Optional[int] = None,
                  history_path: Optional[str] = "histories",
                  history_summarizer_provider: Optional[str] = None, 
@@ -95,7 +118,7 @@ class Chat():
             System prompt or Prompt object
         max_tokens : int, optional
             Maximum number of tokens for each request
-        history_type : str | BaseHistory, optional
+        history : str | BaseHistory, optional
             The type of history to use for the chat. Options: "json", "sqlite", "mongodb", "dict"
         history_last_n : int, optional
             The last n messages to keep in the history.
@@ -123,7 +146,7 @@ class Chat():
             self._history_summarizer = None
 
             # Initialize history
-            self._initialize_history(history_type, history_last_n, history_path)
+            self._initialize_history(history, history_last_n, history_path)
             
             # Initialize history summarizer
             self._initialize_history_summarizer(
@@ -139,24 +162,88 @@ class Chat():
             if chat_id is None:
                 self.chat_id = self._history.new(processed_system_prompt)
             else:
-                self.chat_id = chat_id
-                
+                # Check if chat exists, if not create it
+                self.chat_id = self._initialize_or_create_chat(chat_id, processed_system_prompt)
+            
+            self._metadata = {"session_id": self.chat_id}
+
         except Exception as e:
             logger.error(f"Failed to initialize Chat: {e}")
             raise ChatError(f"Chat initialization failed: {e}")
 
+    def _initialize_or_create_chat(self, chat_id: str, system_prompt: str) -> str:
+        """Initialize existing chat or create new one with specified ID.
+        
+        Parameters
+        ----------
+        chat_id : str
+            The chat ID to check/create
+        system_prompt : str
+            System prompt to use if creating new chat
+            
+        Returns
+        -------
+        str
+            The chat ID (either existing or newly created)
+        """
+        try:
+            # Try to load existing chat
+            existing_messages = self._history.load(chat_id)
+            
+            # Check if chat exists and has messages
+            if existing_messages and len(existing_messages) > 0:
+                logger.info(f"Loaded existing chat: {chat_id}")
+                return chat_id
+            else:
+                # Chat doesn't exist, create it with the specified ID
+                logger.info(f"Creating new chat with ID: {chat_id}")
+                return self._create_chat_with_id(chat_id, system_prompt)
+                
+        except Exception as e:
+            # If loading fails, assume chat doesn't exist and create it
+            logger.info(f"Failed to load chat {chat_id}, creating new one: {e}")
+            return self._create_chat_with_id(chat_id, system_prompt)
+    
+    def _create_chat_with_id(self, chat_id: str, system_prompt: str) -> str:
+        """Create a new chat with a specific ID.
+        
+        Parameters
+        ----------
+        chat_id : str
+            The specific chat ID to use
+        system_prompt : str
+            System prompt for the new chat
+            
+        Returns
+        -------
+        str
+            The chat ID
+        """
+        try:
+            # Create system message
+            system_message = {"role": "system", "content": system_prompt}
+            
+            # Store the system message with the specific chat_id
+            self._history.store(chat_id, [system_message])
+            
+            return chat_id
+            
+        except Exception as e:
+            logger.error(f"Failed to create chat with ID {chat_id}: {e}")
+            raise ChatError(f"Failed to create chat with ID {chat_id}: {e}")
 
-    def _initialize_history(self, history_type: Union[str, BaseHistory], history_last_n: Optional[int], history_path: Optional[str]) -> None:
+
+    def _initialize_history(self, history: Union[str, BaseHistory], history_last_n: Optional[int], history_path: Optional[str]) -> None:
         """Initialize the history system."""
         try:
-            if isinstance(history_type, str):
-                if history_type == "dict":
+            if isinstance(history, str):
+                if history == "dict":
                     # DictHistory doesn't need db_path
-                    self._history = self._HISTORY_MAP[history_type](last_n=history_last_n)
+                    self._history = self._HISTORY_MAP[history](last_n=history_last_n)
                 else:
-                    self._history = self._HISTORY_MAP[history_type](last_n=history_last_n, path=history_path)
+                    self._history = self._HISTORY_MAP[history](last_n=history_last_n, path=history_path)
             else:
-                self._history = history_type
+                self._history = history
         except Exception as e:
             raise ChatError(f"Failed to initialize history: {e}")
 
@@ -294,7 +381,7 @@ class Chat():
             messages = [{'role': d.get('role'), 'content': d.get('content')} for d in messages]
 
             messages.append({"role": "user", "content": prompt})
-            print(messages)
+
             # Apply history summarization if enabled
             if self._history_summarizer is not None:
                 return self._apply_history_summarization(messages)
@@ -323,7 +410,8 @@ class Chat():
         except Exception as e:
             logger.error(f"Failed to store messages: {e}")
 
-    def ask(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, return_history: bool = False) -> Union[str, List[Dict[str, Any]]]:
+
+    def ask(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, return_history: bool = False, metadata: Optional[Dict[str, Any]] = {}) -> Union[str, List[Dict[str, Any]]]:
         """
         Ask the model a question.
 
@@ -337,6 +425,8 @@ class Chat():
             The type of the file
         return_history : bool, optional
             Whether to return the full history of the chat or only the response
+        metadata : Dict[str, Any], optional
+            Metadata to pass to the model for observability and tracking
 
         Returns
         -------
@@ -348,6 +438,9 @@ class Chat():
         ChatError
             If the request fails or parameters are invalid
         """
+
+        metadata = self._metadata | metadata
+
         try:
             # Process file attachment
             processed_prompt = self._process_file_attachment(prompt, file, file_type)
@@ -356,22 +449,31 @@ class Chat():
             messages = self._prepare_messages(processed_prompt)
             
             # Make API call
-            response = self._model.ask(messages)
+            response = self._model.ask(messages, metadata=metadata)
             response_content = response["response"]
             
             # Store messages
             self._store_messages(messages, response_content)
             
+            response = {
+                "chat_id": self.chat_id,
+                "response": response_content,
+                "model": {
+                    "provider": self._model.provider,
+                    "name": self._model.model
+                }
+            }
+
             if return_history:
-                return messages
-            else:
-                return response_content
+                response["history"] = messages
+            
+            return response
                 
         except Exception as e:
             logger.error(f"Ask request failed: {e}")
             raise ChatError(f"Ask request failed: {e}")
 
-    async def ask_stream(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None) -> AsyncGenerator[str, None]:
+    async def ask_stream(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> AsyncGenerator[str, None]:
         """
         Ask the model a question and stream the response.
 
@@ -381,6 +483,10 @@ class Chat():
             The question to ask the model
         file : str | bytes, optional
             The file to attach to the message
+        file_type : str, optional
+            The type of the file
+        metadata : Dict[str, Any], optional
+            Metadata to pass to the model for observability and tracking
 
         Yields
         ------
@@ -392,6 +498,9 @@ class Chat():
         ChatError
             If the request fails or parameters are invalid
         """
+
+        metadata = self._metadata | metadata
+
         try:
             # Process file attachment
             processed_prompt = self._process_file_attachment(prompt, file, file_type)
@@ -400,8 +509,8 @@ class Chat():
             messages = self._prepare_messages(processed_prompt)
             
             # Make streaming API call
-            response = self._model.ask_stream(messages)
-
+            response = self._model.ask_stream(messages, metadata=metadata)
+            yield {"chat_id": self.chat_id}
             response_text = ""
             async for chunk in response: 
                 if "delta" in chunk:
@@ -415,7 +524,7 @@ class Chat():
             logger.error(f"Stream request failed: {e}")
             raise ChatError(f"Stream request failed: {e}")
 
-    async def ask_async(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None) -> AsyncGenerator[str, None]:
+    async def ask_async(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> AsyncGenerator[str, None]:
         """
         Ask the model a question and stream the response asynchronously.
 
@@ -427,6 +536,8 @@ class Chat():
             The file to attach to the message
         file_type : str, optional
             The type of the file
+        metadata : Dict[str, Any], optional
+            Metadata to pass to the model for observability and tracking
 
         Yields
         ------
@@ -438,6 +549,9 @@ class Chat():
         ChatError
             If the request fails or parameters are invalid
         """
+
+        metadata = self._metadata | metadata
+
         try:
             # Process file attachment
             processed_prompt = self._process_file_attachment(prompt, file, file_type)
@@ -450,7 +564,8 @@ class Chat():
                 model=self._model,
                 messages=messages,
                 stream=True,
-                max_tokens=self._max_tokens
+                max_tokens=self._max_tokens,
+                metadata=metadata
             )
 
             response_text = ""

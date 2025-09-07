@@ -1,8 +1,6 @@
 from litellm import speech
 from ..keys.keys_manager import load_key
 import base64
-import io
-from elevenlabs.client import ElevenLabs
 import os
 
 class VoiceModel:
@@ -14,6 +12,11 @@ class VoiceModel:
         self._voice = voice
         
         if self._provider == "elevenlabs":
+            try:
+                from elevenlabs.client import ElevenLabs
+            except ImportError:
+                raise ImportError("elevenlabs is not installed. Please install it with 'pip install elevenlabs'")
+
             self._client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
         
     def speak(self, text: str, min_chars_per_sentence=100, return_type="audio.mp3"):
@@ -101,7 +104,7 @@ class VoiceModel:
         
         audio_groups = self._generate_audio_groups(text, min_chars_per_sentence)
         
-        for chunk_index, group in enumerate(audio_groups):
+        for _, group in enumerate(audio_groups):
             # Genera audio per il gruppo di sentences
             response = self._generate(group)
 

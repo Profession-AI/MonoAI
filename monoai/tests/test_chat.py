@@ -34,7 +34,7 @@ def json_chat():
 def sqlite_chat():
     """Create a new chat with SQLite history."""
     model = Model(provider="openai", model=TEST_MODEL)
-    return Chat(model=model, system_prompt=TEST_SYSTEM_PROMPT, history_type="sqlite")
+    return Chat(model=model, system_prompt=TEST_SYSTEM_PROMPT, history="sqlite")
 
 def test_chat_initialization():
     """Test that chat is properly initialized with required attributes."""
@@ -61,7 +61,7 @@ def test_json_history_persistence(json_chat):
     
     # New chat instance with same history
     model = Model(provider="openai", model=TEST_MODEL)
-    new_chat = Chat(model=model, history_type="json", chat_id=json_chat.chat_id)
+    new_chat = Chat(model=model, history="json", chat_id=json_chat.chat_id)
     response = new_chat.ask("+2")
     assert response == "8"
 
@@ -87,7 +87,7 @@ def test_summarizer():
     model = Model(provider="openai", model=TEST_MODEL)
     summarizer_model = Model(provider="openai", model="gpt-4o-mini")
     new_chat = Chat(model=model, 
-                    history_type="json", 
+                    history="json", 
                     history_summarizer_model=summarizer_model, 
                     history_summarizer_max_tokens=100)
     

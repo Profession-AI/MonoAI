@@ -77,8 +77,9 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
 
         self.provider = provider
         self.model = model
+        self._web_search = False
 
-    async def _ask_async(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+    async def _ask_async(self, prompt: Union[str, Prompt, PromptChain], metadata: Dict = {}) -> Dict:
         """
         Ask the model asynchronously.
 
@@ -86,6 +87,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         ----------
         prompt : Union[str, Prompt]
             The prompt to process
+        metadata : Dict, optional
+            Metadata to pass to the completion call
 
         Returns
         -------
@@ -98,14 +101,14 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             - cost: Cost calculation (if enabled)
 
         """
-        response = await self._execute_async(prompt)
+        response = await self._execute_async(prompt, metadata)
         return self._process_response(
             prompt,
             response,
         )
 
     
-    async def ask_stream(self, prompt: Union[str, Prompt, PromptChain]) -> AsyncGenerator[Dict, None]:
+    async def ask_stream(self, prompt: Union[str, Prompt, PromptChain], metadata: Dict = {}) -> AsyncGenerator[Dict, None]:
         """
         Ask the model with streaming response.
 
@@ -113,6 +116,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         ----------
         prompt : Union[str, Prompt, PromptChain]
             The prompt to process
+        metadata : Dict, optional
+            Metadata to pass to the completion call
 
         Yields
         ------
@@ -120,14 +125,14 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             Streaming response chunks
         """
         yield {"provider":self.provider, "model":self.model}
-        async for chunk in self._execute_stream(prompt):
+        async for chunk in self._execute_stream(prompt, metadata):
             processed_chunk = self._process_chunk(chunk)
             if processed_chunk["delta"] is not None:
                 yield processed_chunk
 
 
 
-    def ask(self, prompt: Union[str, Prompt, PromptChain]) -> Dict:
+    def ask(self, prompt: Union[str, Prompt, PromptChain], metadata: Dict = {}) -> Dict:
         """
         Ask the model.
 
@@ -135,6 +140,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         ----------
         prompt : Union[str, Prompt]
             The prompt to process
+        metadata : Dict, optional
+            Metadata to pass to the completion call
 
         Returns
         -------
@@ -147,8 +154,7 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             - cost: Cost calculation (if enabled)
 
         """
-
-        response = self._execute(prompt)
+        response = self._execute(prompt, metadata)
         return self._process_response(
             prompt,
             response

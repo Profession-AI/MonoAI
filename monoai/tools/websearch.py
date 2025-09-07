@@ -1,46 +1,38 @@
-def search_web(query: str, engine: str = "duckduckgo", max_results: int = 5, exclude_domains: list[str] = None):
-    """Search the web using the specified search engine.
+def search_web_with_duckduckgo(query: str, max_results: int = 10, exclude_domains: list[str] = None):
+    """Search the web using DuckDuckGo search engine.
     
     Args:
         query: The query to search for
-        engine: The search engine to use (duckduckgo or tavily). Default is duckduckgo
         max_results: The maximum number of results to return. Default is 5
         exclude_domains: The domains to exclude from the search. Default is None
     
     Returns:
         A dictionary containing:
             data: The search results as a list of dictionaries
-            text: The results merged into a single string
-            
-    Raises:
-        ValueError: If an invalid engine is specified
-        
-    Examples:
-        Basic usage with DuckDuckGo:
-        ```python
-        result = search_web("What is the capital of France?")
-        print(result["text"])  # print the result merged into a single string
-        print(result["data"])  # print the result as a list of dictionaries
-        ```
-        
-        Using Tavily with custom parameters:
-        ```python
-        result = search_web("Python programming", engine="tavily", max_results=10)
-        print(result["data"])  # print the search results
-        ```
+            text: The results merged into a single string        
     """
-    
-    if engine == "duckduckgo":
-        search_engine = _DuckDuckGoSearch(max_results, exclude_domains)
-    elif engine == "tavily":
-        search_engine = _TavilySearch(max_results, exclude_domains)
-    else:
-        raise ValueError(f"Invalid engine: {engine} (must be 'duckduckgo' or 'tavily')")
-    
+    search_engine = _DuckDuckGoSearch(max_results, exclude_domains)
     response, text_response = search_engine.search(query)
     return {"data": response, "text": text_response}
 
-from duckduckgo_search import DDGS
+
+def search_web_with_tavily(query: str, max_results: int = 10, exclude_domains: list[str] = None):
+    """Search the web using Tavily search engine.
+    
+    Args:
+        query: The query to search for
+        max_results: The maximum number of results to return. Default is 5
+        exclude_domains: The domains to exclude from the search. Default is None
+    
+    Returns:
+        A dictionary containing:
+            data: The search results as a list of dictionaries
+            text: The results merged into a single string        
+    """
+    search_engine = _TavilySearch(max_results, exclude_domains)
+    response, text_response = search_engine.search(query)
+    return {"data": response, "text": text_response}
+
 
 class _BaseSearch():
 
@@ -60,6 +52,13 @@ class _DuckDuckGoSearch(_BaseSearch):
 
     def __init__(self, max_results: int = 5, exclude_domains: list[str] = None):
         super().__init__(max_results, exclude_domains)
+
+        try:
+            from duckduckgo_search import DDGS
+        except ImportError:
+            raise ImportError("duckduckgo-search is not installed. Please install it with 'pip install duckduckgo-search'")
+
+
         self._client = DDGS()
 
     def search(self, query: str):
@@ -67,13 +66,18 @@ class _DuckDuckGoSearch(_BaseSearch):
         return self._post_process(response, title_key="title", text_key="body", url_key="href")
     
 
-from tavily import TavilyClient
 from monoai.keys.keys_manager import load_key
 
 class _TavilySearch(_BaseSearch):
 
     def __init__(self, max_results: int = 5, exclude_domains: list[str] = None):
         super().__init__(max_results, exclude_domains)
+
+        try:
+            from tavily import TavilyClient
+        except ImportError:
+            raise ImportError("tavily is not installed. Please install it with 'pip install tavily-python'")
+
         load_key("tavily")
         self._client = TavilyClient()
 

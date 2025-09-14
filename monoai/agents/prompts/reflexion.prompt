@@ -64,11 +64,5 @@ Se dopo la valutazione e riflessione credi di essere arrivato alla risposta corr
     "final_answer": <risposta finale alla richiesta iniziale dell'utente>
 }}
 
----
-**Richiesta:**  
-"{query}"
-
----
-
 
 Inizia il ciclo di Tentativo!

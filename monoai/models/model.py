@@ -43,7 +43,6 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
         self, 
         provider: str | None = None, 
         model: str | None = None, 
-        system_prompt: str | Sequence[str] = (),
         count_tokens: bool = False, 
         count_cost: bool = False,
         max_tokens: int = None
@@ -57,8 +56,6 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             Name of the provider (e.g., 'openai', 'anthropic')
         model : str
             Name of the model (e.g., 'gpt-4', 'claude-3')
-        system_prompt : str | Sequence[str], optional
-            System prompt or sequence of prompts
         count_tokens : bool, optional
             Whether to count tokens for each request
         count_cost : bool, optional
@@ -154,6 +151,8 @@ class Model(BaseModel, ResponseProcessorMixin, PromptExecutorMixin):
             - cost: Cost calculation (if enabled)
 
         """
+        if isinstance(prompt, str):
+            prompt = Prompt(prompt=prompt)
         response = self._execute(prompt, metadata)
         return self._process_response(
             prompt,

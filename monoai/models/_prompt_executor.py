@@ -51,7 +51,7 @@ class PromptExecutorMixin:
             async for chunk in self._completion_stream(prompt, metadata=metadata):
                 yield chunk
     
-    def _execute(self, prompt: Union[str, Prompt, PromptChain], metadata: Dict = {}) -> Dict:
+    def _execute(self, prompt: Union[Prompt, PromptChain], metadata: Dict = {}) -> Dict:
         """
         Execute a prompt synchronously.
         
@@ -75,8 +75,6 @@ class PromptExecutorMixin:
             return self._execute_chain(prompt, metadata)
         elif isinstance(prompt, IterativePrompt):
             return self._execute_iterative(prompt, metadata)
-        elif isinstance(prompt, Prompt):
-            return self._completion(str(prompt), response_type=prompt.response_type, metadata=metadata)
         else:
             return self._completion(prompt, metadata=metadata)
 
@@ -220,7 +218,7 @@ class PromptExecutorMixin:
                 current_response = self._completion(current_prompt, metadata=metadata)
                 response += current_response
 
-    def _completion(self, prompt: str|list, response_type: str = None, metadata: Dict = {}) -> Dict:
+    def _completion(self, prompt: Prompt|list, response_type: str = None, metadata: Dict = {}) -> Dict:
 
         self._setup_observability()
         from pydantic import BaseModel
@@ -248,16 +246,18 @@ class PromptExecutorMixin:
             for tool in self._tools:
                 tools.append(tp.parse(tool))      
 
-        if isinstance(prompt, str):
-            messages = [{ "content": prompt,"role": "user"}]
+        if isinstance(prompt, Prompt):  
+            messages = [prompt.as_dict()]
         else:
             messages = prompt
-
+            
+        """
         if self._web_search:
             web_search_config = {"search_context_size": self._web_search}
         else:
             web_search_config = None
-
+        """
+        
         from litellm import completion
         return completion(model=model, 
                           messages=messages, 

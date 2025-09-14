@@ -57,10 +57,4 @@ Quando hai abbastanza informazioni includi la risposta finale:
     "final_answer": <risposta finale alla richiesta iniziale dell'utente>
 }}
 
----
-**Richiesta:**  
-"{query}"
-
----
-
 **Inizia dalla fase di pianificazione!**

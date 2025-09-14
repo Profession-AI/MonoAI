@@ -44,10 +44,4 @@ Quando hai svolto tutte le task restituisci:
     "final_answer": <risposta finale alla richiesta iniziale dell'utente>
 }}
 
----
-**Richiesta:**  
-"{query}"
-
----
-
 **Inizia ora!**

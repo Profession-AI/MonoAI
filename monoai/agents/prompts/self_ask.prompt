@@ -21,10 +21,4 @@ Quando hai una comprensione completa puoi restituire la risposta conclusiva
     "final_answer:<risposta finale alla richiesta iniziale dell'utente>
 }}
 
----
-**Richiesta:**  
-"{query}"
-
----
-
 **Inizia ora.**

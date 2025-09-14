@@ -39,7 +39,8 @@ class Agent:
     """
     
     def __init__(self, model: Model, tools=None, paradigm="function_calling", 
-                 agent_prompt=None, debug=False, max_iter=None, native_web_search=None):
+                 agent_prompt=None, name="", debug=False, max_iter=None, native_web_search=None, 
+                 human_feedback=None):
         """Initialize the agent with the specified model and configuration.
         
         This constructor sets up an AI agent with the chosen reasoning paradigm,
@@ -81,6 +82,12 @@ class Agent:
         native_web_search : str, optional
             Native web search capability level. Must be one of:
             "low", "medium", or "high". Default is None.
+        human_feedback : str, optional
+            Human feedback mode for controlling agent execution. Can be:
+            - None: No human feedback required (default)
+            - "actions": Pause and request confirmation before executing tool actions
+            - "all": Pause after every step for human review
+            Default is None.
         
         Raises
         ------
@@ -90,11 +97,16 @@ class Agent:
             If a custom object is passed that doesn't derive from _AgenticLoop
         """
         self._model = model
+        self.name = name
 
         if native_web_search is not None and native_web_search not in ["low", "medium", "high"]:
             raise ValueError("native_web_search must be 'low', 'medium' or 'high'")
         
+        if human_feedback is not None and human_feedback not in ["actions", "all"]:
+            raise ValueError("human_feedback must be None, 'actions', or 'all'")
+        
         self._model._web_search = native_web_search
+        self._human_feedback = human_feedback
 
         # Gestione paradigma personalizzato
         if isinstance(paradigm, _AgenticLoop):
@@ -104,7 +116,7 @@ class Agent:
             self._loop = paradigm
         else:
             # Paradigmi predefiniti
-            loop_kwargs = self._model, agent_prompt, debug, max_iter
+            loop_kwargs = self._model, agent_prompt, debug, max_iter, None, human_feedback
             
             if paradigm == "function_calling":
                 self._loop = FunctionCallingAgenticLoop(*loop_kwargs)

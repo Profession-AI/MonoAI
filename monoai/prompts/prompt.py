@@ -66,7 +66,9 @@ class Prompt:
     def __init__(self, 
                  prompt_id: str | None = None,
                  prompt_data: dict | None = None,
-                 prompt: str | None = None, 
+                 prompt: str | None = None,
+                 image: str | None = None,
+                 is_system: bool = False,
                  response_type: type | None = None):
         """
         Initialize a new Prompt instance.
@@ -79,6 +81,8 @@ class Prompt:
             Dictionary of values for formatting the prompt
         prompt : str, optional
             Direct prompt text if prompt_id is not provided
+        is_system : bool, optional
+            If True, the prompt is a system prompt
         response_type : type | BaseModel, optional
             Expected type of the response or a Pydantic BaseModel for json schema response
 
@@ -87,8 +91,13 @@ class Prompt:
         ValueError
             If neither prompt_id nor prompt is provided
         """
+
+        self.is_system = is_system
+        self._image = image
         prompt_response_type = None
         if prompt_id is not None:
+            if prompt_id=="system" or prompt_id=="system.prompt":
+                self.is_system = True
             self._prompt, prompt_response_type = _PromptParser().parse(prompt_id)
         elif prompt is not None:
             self._prompt = prompt
@@ -126,8 +135,60 @@ class Prompt:
         return self.__str__()
 
 
+    def _is_url(self, s: str) -> bool:
+
+        from urllib.parse import urlparse
+
+        """
+        Verifica se una stringa è un URL valido.
+        
+        Args:
+            s (str): la stringa da controllare
+        
+        Returns:
+            bool: True se è un URL valido, False altrimenti
+        """
+        try:
+            result = urlparse(s)
+            return all([result.scheme in ("http", "https"), result.netloc])
+        except ValueError:
+            return False
+
+
+    def _image_to_base64_data_uri(self, image_path: str) -> str:
+        
+        import base64
+        import mimetypes
+
+        """
+        Converte un'immagine in una stringa base64 nel formato richiesto da OpenAI API.
+        
+        Args:
+            image_path (str): percorso del file immagine
+        
+        Returns:
+            str: stringa "data:image/<ext>;base64,<data>"
+        """
+
+        mime_type, _ = mimetypes.guess_type(image_path)
+        if mime_type is None:
+            raise ValueError(f"Impossibile determinare il MIME type per {image_path}")
+        
+        with open(image_path, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode("utf-8")
+        
+        return f"data:{mime_type};base64,{encoded}"
+
+
     def as_dict(self)->dict:
-        return {"type":"user", "content":self.__str__()}
+        if self._image is None:
+            return {"type":"user" if not self.is_system else "system", "content":self.__str__()}
+        else:
+            return {"type":"user" if not self.is_system else "system", 
+                    "content":[
+                        {"type":"image_url", 
+                        "image_url":{"url":self._image if self._is_url(self._image) else self._image_to_base64_data_uri(self._image)}}, 
+                        {"type":"text", "text":self.__str__()}]}
 
 
 class _PromptParser:

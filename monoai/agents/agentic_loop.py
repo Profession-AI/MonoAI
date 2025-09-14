@@ -101,7 +101,7 @@ import inspect
 import re
 from typing import Any, Dict, List, Optional, Callable
 from ..prompts import Prompt
-
+from ..models import Model
 
 class _FunctionCallingMixin:
     """Mixin for handling OpenAI function calling tool execution.
@@ -252,8 +252,9 @@ class _AgenticLoop:
     ----------
     _model : Any
         AI model instance used for execution
-    _agentic_prompt : str, optional
-        Custom prompt for the agent (None for default)
+    _agentic_prompt : str, Prompt, optional
+        Custom prompt for the agent (None for default). Can be a string, 
+        a Prompt object, or a path to a .prompt file
     _debug : bool
         Flag to enable debug output
     _max_iter : Optional[int]
@@ -263,9 +264,12 @@ class _AgenticLoop:
     _tools : Dict[str, Any]
         Dictionary of available tools, mapped by name
     """
+
+
+    _DEFAULT_PROMPT_PATH = "monoai/agents/prompts/"
     
-    def __init__(self, model: Any, agentic_prompt: str=None, debug: bool=False, max_iter: Optional[int]=None, 
-                 stream_callback: Optional[Callable[[str], None]]=None) -> None:
+    def __init__(self, model: Model, agentic_prompt: str=None, debug: bool=False, max_iter: Optional[int]=None, 
+                 stream_callback: Optional[Callable[[str], None]]=None, human_feedback: Optional[str]=None) -> None:
         """Initialize the agent with model and configuration.
         
         Parameters
@@ -280,12 +284,18 @@ class _AgenticLoop:
             Maximum number of iterations allowed (None for unlimited)
         stream_callback : Optional[Callable[[str], None]], default None
             Callback function for handling streaming content chunks
+        human_feedback : Optional[str], default None
+            Human feedback mode for controlling agent execution. Can be:
+            - None: No human feedback required
+            - "actions": Pause and request confirmation before executing tool actions
+            - "all": Pause after every step for human review
         """
         self._model = model
         self._agentic_prompt = agentic_prompt
         self._debug = debug
         self._max_iter = max_iter
         self._stream_callback = stream_callback
+        self._human_feedback = human_feedback
         self._tools = {}
 
 
@@ -399,15 +409,60 @@ class _AgenticLoop:
             List of base messages for the agent, including the prompt and query
         """
         tools = self._get_tools()
-        prompt_id = (f"monoai/agents/prompts/{agent_type}.prompt" 
-                    if self._agentic_prompt is None else self._agentic_prompt)
+        prompt_data = {"available_tools": tools}
         
-        prompt = Prompt(
-            prompt_id=prompt_id,
-            prompt_data={"query": query, "available_tools": tools}
-        )
+        # Handle case where _agentic_prompt is already a Prompt object
+        if self._agentic_prompt is not None and hasattr(self._agentic_prompt, 'as_dict'):
+            # It's already a Prompt object, just update the data and return
+            agentic_prompt = self._agentic_prompt
+            # Update prompt data if the prompt supports it
+            if hasattr(agentic_prompt, 'prompt_data'):
+                agentic_prompt.prompt_data = prompt_data
+        else:           
+            # Otherwise, determine prompt configuration and create new Prompt
+            prompt_config = self._determine_prompt_config(agent_type)
+            
+            agentic_prompt = Prompt(
+                **prompt_config,
+                is_system=True,
+                prompt_data=prompt_data
+            )
+
+        messages = [agentic_prompt.as_dict()]
+
+        if isinstance(query, Prompt):
+            messages.append(query.as_dict())
+        else:
+            messages.append({"role": "user", "content": query})
+
+        return messages
+    
+    def _determine_prompt_config(self, agent_type: str) -> Dict[str, Any]:
+        """Determine the prompt configuration based on agentic_prompt setting.
         
-        return [prompt.as_dict()]
+        Parameters
+        ----------
+        agent_type : str
+            Type of agent for fallback prompt selection
+            
+        Returns
+        -------
+        Dict[str, Any]
+            Configuration dictionary for Prompt initialization
+        """
+        if self._agentic_prompt is None:
+            return {
+                "prompt_id": f"{self._DEFAULT_PROMPT_PATH}{agent_type}.prompt"
+            }
+        
+        if isinstance(self._agentic_prompt, str):
+            if self._agentic_prompt.endswith(".prompt"):
+                return {"prompt_id": self._agentic_prompt}
+            else:
+                return {"prompt": self._agentic_prompt}
+        else:
+            # For non-string types (including Prompt objects), treat as prompt content
+            return {"prompt": self._agentic_prompt}
 
     def _debug_print(self, content: str) -> None:
         """Print debug information if debug mode is enabled.
@@ -420,6 +475,57 @@ class _AgenticLoop:
         if self._debug:
             print(content)
             print("-------")
+    
+    def _request_human_feedback(self, step_type: str, content: str, action_data: Optional[Dict] = None) -> bool:
+        """Request human feedback for the current step.
+        
+        This method pauses execution and asks the user for confirmation
+        before proceeding with the current step.
+        
+        Parameters
+        ----------
+        step_type : str
+            Type of step being executed (e.g., "thought", "action", "observation")
+        content : str
+            Content of the current step
+        action_data : Optional[Dict], default None
+            Action data if this is an action step
+        
+        Returns
+        -------
+        bool
+            True if the user approves the step, False if they want to stop
+        """
+        print(f"\n{'='*60}")
+        print(f"HUMAN FEEDBACK REQUIRED - {step_type.upper()} STEP")
+        print(f"{'='*60}")
+        
+        if action_data:
+            print(f"Action to execute: {action_data.get('name', 'Unknown')}")
+            print(f"Arguments: {action_data.get('arguments', {})}")
+        else:
+            print(f"Content: {content}")
+        
+        print(f"\nOptions:")
+        print(f"  [y] Yes - Continue with this step")
+        print(f"  [n] No - Stop execution")
+        print(f"  [s] Skip - Skip this step and continue")
+        
+        while True:
+            try:
+                response = input("\nYour choice (y/n/s): ").lower().strip()
+                if response in ['y', 'yes']:
+                    return True
+                elif response in ['n', 'no']:
+                    return False
+                elif response in ['s', 'skip']:
+                    print("Step skipped.")
+                    return True  # Continue but skip the current step
+                else:
+                    print("Please enter 'y' for yes, 'n' for no, or 's' for skip.")
+            except KeyboardInterrupt:
+                print("\nExecution interrupted by user.")
+                return False
     
     def _parse_step_format(self, content: str) -> Optional[Dict[str, Any]]:
         """Parse the step-based format <STEP_TYPE>: <RESULT>.
@@ -501,11 +607,25 @@ class _AgenticLoop:
         Returns
         -------
         Dict[str, Any]
-            Model response in standard OpenAI format
+            Model response in standard OpenAI format with usage information
         """
-        
         resp = self._model._execute(messages)
-        return resp["choices"][0]["message"]
+        
+        # Extract usage information from the response
+        usage_info = None
+        if hasattr(resp, 'usage') and resp.usage:
+            usage_info = {
+                "total_tokens": resp.usage.total_tokens,
+                "prompt_tokens": resp.usage.prompt_tokens,
+                "completion_tokens": resp.usage.completion_tokens
+            }
+        
+        message = resp["choices"][0]["message"]
+        
+        # Add usage information to the message
+        if usage_info:
+            message["usage"] = usage_info
+        return message
     
     def _execute_model_step_stream(self, messages: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Execute a model step with streaming and return the complete response.
@@ -553,13 +673,28 @@ class _AgenticLoop:
         try:
             chunks = asyncio.run(run_streaming())
             resp = stream_chunk_builder(chunks)
-            return resp["choices"][0]["message"]
+            
+            # Extract usage information from the response
+            usage_info = None
+            if hasattr(resp, 'usage') and resp.usage:
+                usage_info = {
+                    "total_tokens": resp.usage.total_tokens,
+                    "prompt_tokens": resp.usage.prompt_tokens,
+                    "completion_tokens": resp.usage.completion_tokens
+                }
+            
+            message = resp["choices"][0]["message"]
+            
+            # Add usage information to the message
+            if usage_info:
+                message["usage"] = usage_info
+                
+            return message
         except Exception as e:
             if self._debug:
                 print(f"Streaming error: {e}, falling back to standard execution")
             # Fallback al metodo standard
-            resp = self._model._execute(messages)
-            return resp["choices"][0]["message"]
+            return self._execute_model_step(messages)
             
     def _create_base_response(self, query: str) -> Dict[str, Any]:
         """Create the base response structure.
@@ -575,8 +710,32 @@ class _AgenticLoop:
             Dictionary with base response structure:
             - prompt: Original user query
             - iterations: Empty list for iterations
+            - usage: Dictionary for tracking token usage
         """
-        return {"prompt": query, "iterations": []}
+        return {
+            "prompt": query, 
+            "iterations": [],
+            "usage": {
+                "total_tokens": 0,
+                "prompt_tokens": 0,
+                "completion_tokens": 0
+            }
+        }
+
+    def _update_usage(self, response: Dict[str, Any], iteration_usage: Dict[str, int]) -> None:
+        """Update the total usage in the response.
+        
+        Parameters
+        ----------
+        response : Dict[str, Any]
+            Response dictionary to update
+        iteration_usage : Dict[str, int]
+            Usage information from current iteration
+        """
+        if hasattr(iteration_usage, "usage"):
+            response["usage"]["total_tokens"] += iteration_usage["usage"]["total_tokens"]
+            response["usage"]["prompt_tokens"] += iteration_usage["usage"]["prompt_tokens"]
+            response["usage"]["completion_tokens"] += iteration_usage["usage"]["completion_tokens"]
 
     def _handle_final_answer(self, iteration: Dict[str, Any], response: Dict[str, Any]) -> bool:
         """Handle a final answer, returns True if this is the end.
@@ -611,6 +770,29 @@ class _AgenticLoop:
             return True
         return False
 
+
+    def _pngimagefile_to_base64_data_uri(self, img) -> str:
+        """
+        Converte un oggetto PIL.PngImageFile in una stringa base64 data URI.
+        
+        Args:
+            img (Image.Image): immagine PIL (PngImageFile o convertita in PNG)
+        
+        Returns:
+            str: stringa "data:image/png;base64,<...>"
+        """
+        import io
+        import base64
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        # codifica in base64
+        encoded = base64.b64encode(buffer.read()).decode("utf-8")
+
+        return f"data:image/png;base64,{encoded}"
+
+
     def _handle_tool_action(self, iteration: Dict[str, Any], response: Dict[str, Any], messages: List[Dict[str, Any]]) -> None:
         """Handle a tool action execution.
         
@@ -631,14 +813,29 @@ class _AgenticLoop:
         -----
         This method modifies the response and messages objects directly.
         """
+        # Check if human feedback is required for actions
+        if self._human_feedback == "actions" or self._human_feedback == "all":
+            action_data = iteration.get("action", {})
+            if not self._request_human_feedback("action", iteration.get("content", ""), action_data):
+                print("Execution stopped by user.")
+                return
+
         if "action" in iteration and iteration["action"].get("name"):
             tool_call = iteration["action"]
             tool_result = self._call_tool(tool_call)
+            print("TOOL RESULT", tool_result)
             iteration["observation"] = tool_result
             response["iterations"].append(iteration)
-            
-            msg = json.dumps({"observation": tool_result})
-            messages.append({"type": "user", "content": msg})
+
+            if isinstance(tool_result, dict):
+                if "image" in tool_result:
+                    img = self._pngimagefile_to_base64_data_uri(tool_result["image"])
+                    msg = [{"type": "image_url", "image_url": {"url": img}}, 
+                            {"type": "text", "text": "Ecco l'immagine"}]
+                    messages.append({"role": "user", "content": msg})
+                else:
+                    msg = json.dumps({"observation": tool_result})
+                    messages.append({"role": "user", "content": msg})
         elif iteration.get("step_type") == "action" and "action" in iteration:
             tool_call = iteration["action"]
             tool_result = self._call_tool(tool_call)
@@ -647,7 +844,7 @@ class _AgenticLoop:
             
             # Add observation in the new system format
             observation_msg = f"Observation {iteration.get('step_number', '')}: {tool_result}".strip()
-            messages.append({"type": "user", "content": observation_msg})
+            messages.append({"role": "user", "content": observation_msg})
 
     def _handle_default(self, iteration: Dict[str, Any], response: Dict[str, Any], messages: List[Dict[str, Any]]) -> None:
         """Handle default case for unhandled iterations.
@@ -677,10 +874,10 @@ class _AgenticLoop:
             step_number = iteration.get("step_number", "")
             content = iteration["content"]
             message_content = f"{step_type} {step_number}: {content}".strip()
-            messages.append({"type": "user", "content": message_content})
+            messages.append({"role": "user", "content": message_content})
         else:
             # Fallback to JSON format for compatibility
-            messages.append({"type": "user", "content": json.dumps(iteration)})
+            messages.append({"role": "user", "content": json.dumps(iteration)})
 
     def start(self, query: str) -> Dict[str, Any]:
         """Abstract method to start the agentic loop.
@@ -728,6 +925,43 @@ class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
         Available tools for the agent
     """
     
+    def _get_base_messages(self, query: str) -> List[Dict[str, Any]]:
+        """Generate base messages for the specific agent type.
+        
+        This method creates the initial message structure for the agent,
+        including the appropriate prompt template and user query. The
+        prompt template is selected based on the agent type and includes
+        information about available tools.
+        
+        Parameters
+        ----------
+        query : str
+            User query to include in the prompt
+        
+        Returns
+        -------
+        List[Dict[str, Any]]
+            List of base messages for the agent, including the prompt and query
+        """
+        messages = []
+        if self._agentic_prompt is not None:
+            if isinstance(self._agentic_prompt, str):
+                if self._agentic_prompt.endswith(".prompt"):
+                    agentic_prompt = Prompt(prompt_id=self._agentic_prompt, is_system=True)
+                else:
+                    agentic_prompt = Prompt(prompt=self._agentic_prompt, is_system=True)
+            else:
+                agentic_prompt = self._agentic_prompt
+            messages.append(agentic_prompt.as_dict())
+                    
+        if isinstance(query, Prompt):
+            messages.append(query.as_dict())
+        else:
+            messages.append({"role": "user", "content": query})
+
+        return messages
+
+
     def start(self, query: str) -> Dict[str, Any]:
         """Start the agentic loop using function calling.
         
@@ -749,9 +983,8 @@ class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
             - response: Final model response
         """
         self._model._add_tools(list(self._tools.values()))
-        messages = [{"type": "user", "content": query}]
+        messages = self._get_base_messages(query)
         response = self._create_base_response(query)
-        
         current_iter = 0
         max_iterations = self._max_iter if self._max_iter is not None else 10  # Limite di sicurezza
         
@@ -766,16 +999,40 @@ class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
             content = resp["content"]
             self._debug_print(content)
             
+            self._update_usage(response, resp)
+            
             if resp.get("tool_calls"):
                 for tool_call in resp["tool_calls"]:
+                    # Check if human feedback is required for actions
+                    if self._human_feedback == "actions" or self._human_feedback == "all":
+                        action_data = {
+                            "name": tool_call.function.name,
+                            "arguments": json.loads(tool_call.function.arguments) if tool_call.function.arguments else {}
+                        }
+                        if not self._request_human_feedback("action", f"Function call: {tool_call.function.name}", action_data):
+                            print("Execution stopped by user.")
+                            return response
+                    
                     tool_result = self._call_tool(tool_call)
-                    response["iterations"].append({
+                    iteration_data = {
                         "name": tool_call.function.name,
                         "arguments": tool_call.function.arguments,
                         "result": tool_result["content"]
-                    })
+                    }
+                    
+                    # Add usage information to the iteration
+                    if "usage" in resp:
+                        iteration_data["usage"] = resp["usage"]
+                    
+                    response["iterations"].append(iteration_data)
                     messages.append(tool_result)
             else:
+                # Check if human feedback is required for all steps (non-action responses)
+                if self._human_feedback == "all":
+                    if not self._request_human_feedback("response", content):
+                        print("Execution stopped by user.")
+                        return response
+                
                 response["response"] = content
                 break
             
@@ -846,6 +1103,7 @@ class _BaseReactLoop(_AgenticLoop, _ReactMixin):
         - JSON error handling
         """
         messages = self._get_base_messages(agent_type, query)
+
         current_iter = 0
         response = self._create_base_response(query)
         
@@ -860,17 +1118,30 @@ class _BaseReactLoop(_AgenticLoop, _ReactMixin):
                 resp = self._execute_model_step(messages)
             else:
                 resp = self._execute_model_step_stream(messages)
-            print(resp)
+
             messages.append(resp)
             content = resp["content"]
-
+        
             self._debug_print(content)
 
-            if content is not None:
-                # Parsa il nuovo formato <TIPO DI STEP>: <RISULTATO>
-                iteration = self._parse_step_format(content)
+            # Update usage for this iteration
+            self._update_usage(response, resp)
 
+            if content is not None:
+                iteration = self._parse_step_format(content)
                 if iteration:
+                    # Add usage information to the iteration
+                    if "usage" in resp:
+                        iteration["usage"] = resp["usage"]
+                    
+                    # Check if human feedback is required for all steps
+                    if self._human_feedback == "all":
+                        if not self._request_human_feedback(iteration.get("step_type", "unknown"), 
+                                                          iteration.get("content", ""), 
+                                                          iteration.get("action")):
+                            print("Execution stopped by user.")
+                            break
+                    
                     # Gestione risposta finale
                     if self._handle_final_answer(iteration, response):
                         break
@@ -892,7 +1163,7 @@ class _BaseReactLoop(_AgenticLoop, _ReactMixin):
                         self._handle_default(iteration, response, messages)
                 else:
                     # Se non riesce a parsare, aggiungi come messaggio utente
-                    messages.append({"type": "user", "content": content})
+                    messages.append({"role": "user", "content": content})
 
             current_iter += 1
 
@@ -1092,7 +1363,7 @@ class SelfAskWithSearchLoop(_BaseReactLoop):
         iteration["search_result"] = result
         
         msg = json.dumps({"query_results": result})
-        messages.append({"type": "user", "content": msg})
+        messages.append({"role": "user", "content": msg})
         response["iterations"].append(iteration)
     
     def start(self, query: str) -> Dict[str, Any]:

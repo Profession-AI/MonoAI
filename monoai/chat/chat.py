@@ -1,12 +1,10 @@
-from litellm import completion, acompletion
-from monoai.keys.keys_manager import load_key
+from litellm import acompletion
 from monoai.chat.history import *
 from monoai.models import Model
 from monoai.conf.conf import Conf
 from monoai.prompts.prompt import Prompt
 import os
 import base64
-import json
 import logging
 from typing import Union, Optional, AsyncGenerator, List, Dict, Any
 from pathlib import Path
@@ -97,7 +95,7 @@ class Chat():
 
     def __init__(self, 
                  model,
-                 system_prompt: Optional[Union[Prompt, str]] = "You are an helpful assistant",
+                 system_prompt: Optional[Union[Prompt, str]] = None,
                  max_tokens: Optional[int] = None,
                  history: Union[str, BaseHistory] = "dict", 
                  history_last_n: Optional[int] = None,
@@ -157,7 +155,7 @@ class Chat():
 
             # Process system prompt
             processed_system_prompt = self._process_system_prompt(system_prompt)
-
+            print(processed_system_prompt)
             # Initialize chat
             if chat_id is None:
                 self.chat_id = self._history.new(processed_system_prompt)

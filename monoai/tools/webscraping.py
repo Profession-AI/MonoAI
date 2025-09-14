@@ -100,8 +100,6 @@ def scrape_web(url: str, engine: str = "requests", deep: bool = False):
         raise ValueError(f"Invalid engine: {engine} (must be 'requests', 'tavily', or 'selenium')")
 
 
-from bs4 import BeautifulSoup
-
 class _BaseScraper():
     """Base class for web scrapers."""
 
@@ -130,6 +128,12 @@ class _BaseScraper():
         Returns:
             The extracted text content
         """
+
+        try:
+            from bs4 import BeautifulSoup
+        except ImportError:
+            raise ImportError("beautifulsoup4 is not installed. Please install it with 'pip install beautifulsoup4'")
+
         soup = BeautifulSoup(content, 'html.parser')
         
         # Remove script and style elements

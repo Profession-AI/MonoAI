@@ -1,8 +1,5 @@
 import inspect
 
-from posthog.client import require
-
-
 class ToolParser:
 
     def __init__(self):

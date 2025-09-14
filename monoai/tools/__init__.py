@@ -21,5 +21,6 @@ def get_weather(location:str):
 
 from .domain_whois import domain_whois
 from .webscraping import scrape_web_with_requests, scrape_web_with_selenium, scrape_web_with_tavily, scrape_web
+from .websearch import search_web_with_duckduckgo, search_web_with_tavily
 
 __all__ = ["domain_whois", "search_web_with_duckduckgo", "search_web_with_tavily", "scrape_web_with_requests", "scrape_web_with_selenium", "scrape_web_with_tavily", "scrape_web"]

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "monoai"
-version = "0.0.21"
+version = "0.0.24"
 description = "MonoAI - The complete framework to build AI-powered applications"
 authors = [
   { name = "ProfessionAI Tech", email = "tech@profession.ai" }
@@ -15,22 +15,14 @@ requires-python = ">=3.8"
 # 📦 Dipendenze di runtime
 dependencies = [
     "litellm",
-    "duckduckgo-search",
-    "tavily-python",
     "typing-extensions",
     "xmltodict",
     "pytest",
-    "beautifulsoup4",
-    "selenium",
-    "python-whois",
-    "chromadb",
-    "python-docx",
-    "docx2txt",
-    "PyPDF2",
-    "nbconvert",
-    "nbformat",
-    "pymongo"
-]
+    "typer"
+  ]
 
 [project.urls]
 Homepage = "https://github.com/Profession-AI/MONOAI"
+
+[project.scripts]
+monoai = "monoai.cli:cli_app"

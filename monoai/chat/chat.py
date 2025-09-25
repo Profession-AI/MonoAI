@@ -25,47 +25,60 @@ class Chat():
     --------
     Basic usage:
     ```
-    chat = Chat(provider="openai", model="gpt-4o-mini")
-    response = chat.ask("2+2") # 4
-    response = chat.ask("+2") # 6
+    from monoai.models import Model
+    from monoai.chat import Chat
+    model = Model(provider="openai", model="gpt-4o-mini")
+    chat = Chat(model=model)
+    response = chat.ask("2+2") # {"chat_id": "...", "response": "4", "model": {...}}
+    response = chat.ask("+2") # {"chat_id": "...", "response": "6", "model": {...}}
     ```    
 
     With history:
     ```
-
+    from monoai.models import Model
+    from monoai.chat import Chat
+    model = Model(provider="openai", model="gpt-4o-mini")
+    
     # Create a new chat with JSON history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history="json")
+    chat = Chat(model=model, history="json")
     print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
-    response = chat.ask("Hello! I'm Giuseppe") # Hello!
+    response = chat.ask("Hello! I'm Giuseppe") # {"chat_id": "...", "response": "Hello!", "model": {...}}
 
     # Load a chat with JSON history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history="json", chat_id="8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3")
-    response = chat.ask("What's my name?") # Your name is Giuseppe
+    chat = Chat(model=model, history="json", chat_id="8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3")
+    response = chat.ask("What's my name?") # {"chat_id": "...", "response": "Your name is Giuseppe", "model": {...}}
 
     # Create a new chat with in-memory dictionary history
-    chat = Chat(provider="openai", model="gpt-4o-mini", history="dict")
+    chat = Chat(model=model, history="dict")
     print(chat.chat_id) # 8cc2bfa3-e9a0-4b82-b46e-3376cd220dd3
-    response = chat.ask("Hello! I'm Giuseppe") # Hello!
+    response = chat.ask("Hello! I'm Giuseppe") # {"chat_id": "...", "response": "Hello!", "model": {...}}
     ```
 
     With history summarizer:
 
     ```
-    chat = Chat(provider="openai", 
-                model="gpt-4o-mini", 
-                history="json", 
-                history_summarizer_provider="openai", 
-                history_summarizer_model="gpt-4o-mini", 
-                history_summarizer_max_tokens=100)
+    from monoai.models import Model
+    
+    model = Model(provider="openai", model="gpt-4o-mini")
+    chat = Chat(
+        model=model,
+        history="json", 
+        history_summarizer_provider="openai", 
+        history_summarizer_model="gpt-4o-mini", 
+        history_summarizer_max_tokens=100
+    )
                 
-    response = chat.ask("Hello! I'm Giuseppe") # Hello!
-    response = chat.ask("What's my name?") # Your name is Giuseppe
+    response = chat.ask("Hello! I'm Giuseppe") # {"chat_id": "...", "response": "Hello!", "model": {...}}
+    response = chat.ask("What's my name?") # {"chat_id": "...", "response": "Your name is Giuseppe", "model": {...}}
     ```
 
     With metadata for observability:
 
     ```
-    chat = Chat(provider="openai", model="gpt-4o-mini")
+    from monoai.models import Model
+    
+    model = Model(provider="openai", model="gpt-4o-mini")
+    chat = Chat(model=model)
     
     # Pass metadata for tracking
     response = chat.ask(
@@ -113,23 +126,27 @@ class Chat():
         model : Model
             Model instance to use for the chat
         system_prompt : str | Prompt, optional
-            System prompt or Prompt object
+            System prompt or Prompt object. If string ends with '.prompt', 
+            it will be treated as a file path to load the prompt from.
         max_tokens : int, optional
             Maximum number of tokens for each request
         history : str | BaseHistory, optional
-            The type of history to use for the chat. Options: "json", "sqlite", "mongodb", "dict"
+            The type of history to use for the chat. Options: "json", "sqlite", "mongodb", "dict".
+            Default is "dict" for in-memory storage.
         history_last_n : int, optional
-            The last n messages to keep in the history.
+            The last n messages to keep in the history. If None, keeps all messages.
         history_path : str, optional
-            The path to the history (not used for "dict" history type)
+            The path to the history storage (not used for "dict" history type).
+            Default is "histories".
         history_summarizer_provider : str, optional
-            The provider of the history summarizer.
+            The provider of the history summarizer model.
         history_summarizer_model : str, optional
-            The model of the history summarizer.
+            The model name for the history summarizer.
         history_summarizer_max_tokens : int, optional
             The maximum number of tokens for the history summarizer.
         chat_id : str, optional
-            The id of the chat to load, if not provided a new chat will be created
+            The id of the chat to load. If not provided, a new chat will be created.
+            If provided but chat doesn't exist, a new chat will be created with this ID.
 
         Raises
         ------
@@ -232,7 +249,22 @@ class Chat():
 
 
     def _initialize_history(self, history: Union[str, BaseHistory], history_last_n: Optional[int], history_path: Optional[str]) -> None:
-        """Initialize the history system."""
+        """Initialize the history system.
+        
+        Parameters
+        ----------
+        history : Union[str, BaseHistory]
+            History type or instance
+        history_last_n : Optional[int]
+            Number of last messages to keep
+        history_path : Optional[str]
+            Path for history storage
+            
+        Raises
+        ------
+        ChatError
+            If history initialization fails
+        """
         try:
             if isinstance(history, str):
                 if history == "dict":
@@ -246,7 +278,17 @@ class Chat():
             raise ChatError(f"Failed to initialize history: {e}")
 
     def _initialize_history_summarizer(self, provider: Optional[str], model: Optional[str], max_tokens: Optional[int]) -> None:
-        """Initialize the history summarizer."""
+        """Initialize the history summarizer.
+        
+        Parameters
+        ----------
+        provider : Optional[str]
+            Provider for the summarizer model
+        model : Optional[str]
+            Model name for the summarizer
+        max_tokens : Optional[int]
+            Maximum tokens for summarization
+        """
         if provider is not None and model is not None:
             try:
                 self._history_summarizer = HistorySummarizer(
@@ -256,7 +298,18 @@ class Chat():
                 logger.warning(f"Failed to initialize history summarizer: {e}")
 
     def _process_system_prompt(self, system_prompt: Optional[Union[Prompt, str]]) -> str:
-        """Process and load the system prompt."""
+        """Process and load the system prompt.
+        
+        Parameters
+        ----------
+        system_prompt : Optional[Union[Prompt, str]]
+            System prompt to process
+            
+        Returns
+        -------
+        str
+            Processed system prompt string
+        """
         try:
             if system_prompt is None:
                 return self._load_default_system_prompt()
@@ -271,7 +324,13 @@ class Chat():
             return ""
 
     def _load_default_system_prompt(self) -> str:
-        """Load the default system prompt from file."""
+        """Load the default system prompt from file.
+        
+        Returns
+        -------
+        str
+            Default system prompt content
+        """
         try:
             prompt_path = Conf()["prompts_path"]
             system_prompt_path = Path(prompt_path) / "system.prompt"
@@ -287,7 +346,23 @@ class Chat():
             return ""
 
     def _load_prompt_file(self, prompt_file: str) -> str:
-        """Load a prompt from a file."""
+        """Load a prompt from a file.
+        
+        Parameters
+        ----------
+        prompt_file : str
+            Path to the prompt file
+            
+        Returns
+        -------
+        str
+            Content of the prompt file
+            
+        Raises
+        ------
+        ChatError
+            If file cannot be loaded
+        """
         try:
             prompt_path = Conf()["prompts_path"]
             full_path = Path(prompt_path) / prompt_file
@@ -301,7 +376,27 @@ class Chat():
             raise ChatError(f"Failed to load prompt file {prompt_file}: {e}")
 
     def _process_file_attachment(self, prompt: str, file: Optional[Union[str, bytes]], file_type: Optional[str]) -> Union[str, List[Dict[str, Any]]]:
-        """Process file attachment and return modified prompt."""
+        """Process file attachment and return modified prompt.
+        
+        Parameters
+        ----------
+        prompt : str
+            Original prompt text
+        file : Optional[Union[str, bytes]]
+            File to attach (path, URL, or bytes)
+        file_type : Optional[str]
+            Type of the file
+            
+        Returns
+        -------
+        Union[str, List[Dict[str, Any]]]
+            Modified prompt with file content or multimodal content
+            
+        Raises
+        ------
+        ChatError
+            If file processing fails
+        """
         if file is None:
             return prompt
             
@@ -328,7 +423,25 @@ class Chat():
             raise ChatError(f"Failed to process file attachment: {e}")
 
     def _process_text_file(self, prompt: str, file: Union[str, bytes]) -> str:
-        """Process text file attachment."""
+        """Process text file attachment.
+        
+        Parameters
+        ----------
+        prompt : str
+            Original prompt text
+        file : Union[str, bytes]
+            Text file to process
+            
+        Returns
+        -------
+        str
+            Prompt with file content appended
+            
+        Raises
+        ------
+        ChatError
+            If text file processing fails
+        """
         try:
             if isinstance(file, str):
                 # Handle as file path or URL
@@ -348,7 +461,25 @@ class Chat():
             raise ChatError(f"Failed to process text file: {e}")
 
     def _process_image_file(self, prompt: str, file: Union[str, bytes]) -> List[Dict[str, Any]]:
-        """Process image file attachment."""
+        """Process image file attachment.
+        
+        Parameters
+        ----------
+        prompt : str
+            Original prompt text
+        file : Union[str, bytes]
+            Image file to process
+            
+        Returns
+        -------
+        List[Dict[str, Any]]
+            Multimodal content with text and image
+            
+        Raises
+        ------
+        ChatError
+            If image file processing fails
+        """
         try:
             if isinstance(file, str):
                 # Handle as file path or URL
@@ -373,7 +504,23 @@ class Chat():
             raise ChatError(f"Failed to process image file: {e}")
 
     def _prepare_messages(self, prompt: Union[str, List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
-        """Prepare messages for the API call."""
+        """Prepare messages for the API call.
+        
+        Parameters
+        ----------
+        prompt : Union[str, List[Dict[str, Any]]]
+            User prompt or multimodal content
+            
+        Returns
+        -------
+        List[Dict[str, Any]]
+            Formatted messages for API call
+            
+        Raises
+        ------
+        ChatError
+            If message preparation fails
+        """
         try:
             messages = self._history.load(self.chat_id)
             messages = [{'role': d.get('role'), 'content': d.get('content')} for d in messages]
@@ -390,7 +537,18 @@ class Chat():
             raise ChatError(f"Failed to prepare messages: {e}")
 
     def _apply_history_summarization(self, messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Apply history summarization to messages."""
+        """Apply history summarization to messages.
+        
+        Parameters
+        ----------
+        messages : List[Dict[str, Any]]
+            Full message history
+            
+        Returns
+        -------
+        List[Dict[str, Any]]
+            Summarized messages for API call
+        """
         try:
             summarized = self._history_summarizer.summarize(messages)
             ask_messages = [messages[0], messages[-1]]
@@ -401,7 +559,15 @@ class Chat():
             return messages
 
     def _store_messages(self, messages: List[Dict[str, Any]], response_content: str) -> None:
-        """Store messages in history."""
+        """Store messages in history.
+        
+        Parameters
+        ----------
+        messages : List[Dict[str, Any]]
+            Messages to store
+        response_content : str
+            Assistant response content
+        """
         try:
             messages.append({"role": "assistant", "content": response_content})
             self._history.store(self.chat_id, messages[-2:])
@@ -428,8 +594,12 @@ class Chat():
 
         Returns
         -------
-        str | List[Dict[str, Any]]
-            The response from the model or the full history if return_history is True
+        Dict[str, Any]
+            Dictionary containing:
+            - chat_id: str - The chat identifier
+            - response: str - The model response
+            - model: Dict[str, str] - Model provider and name
+            - history: List[Dict[str, Any]], optional - Full chat history if return_history is True
 
         Raises
         ------
@@ -488,8 +658,11 @@ class Chat():
 
         Yields
         ------
-        str
-            JSON string containing streaming response chunks
+        Dict[str, Any]
+            Streaming response chunks containing:
+            - chat_id: str - The chat identifier (first chunk)
+            - delta: str - Response text chunk (subsequent chunks)
+            - Other streaming metadata
 
         Raises
         ------
@@ -540,7 +713,7 @@ class Chat():
         Yields
         ------
         str
-            Response chunks as strings
+            Response text chunks as strings
 
         Raises
         ------
@@ -590,8 +763,8 @@ class Chat():
         """
         return {
             "chat_id": self.chat_id,
-            "provider": self._provider,
-            "model": self._model_name,
+            "provider": self._model.provider,
+            "model": self._model.model,
             "max_tokens": self._max_tokens,
             "has_history_summarizer": self._history_summarizer is not None
         }

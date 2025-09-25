@@ -8,6 +8,72 @@ from monoai.agents import Agent
 from .rate_limiter import RateLimiter
 
 class Application:
+    """
+    FastAPI-based application for serving AI models and agents.
+    
+    The Application class provides a complete web service wrapper around AI models
+    and agents, offering REST API endpoints, WebSocket support, rate limiting,
+    and user validation capabilities.
+    
+    This class automatically creates FastAPI endpoints based on the configured
+    models and agents, handling request validation, rate limiting, and response
+    formatting.
+    
+    Features:
+    - REST API endpoints for models and agents
+    - WebSocket support for real-time streaming
+    - Rate limiting with configurable limits
+    - User validation and authentication
+    - CORS support for cross-origin requests
+    - Health checks and monitoring endpoints
+    
+    Examples
+    --------
+    Basic usage with a model:
+    ```
+    from monoai.models import Model
+    from monoai.application import Application
+    
+    model = Model(provider="openai", model="gpt-4o-mini")
+    app = Application(name="MyAIApp", model=model)
+    app.serve(port=8000)
+    ```
+    
+    With agents and rate limiting:
+    ```
+    from monoai.models import Model
+    from monoai.agents import Agent
+    from monoai.application import Application, RateLimiter
+    
+    model = Model(provider="openai", model="gpt-4o-mini")
+    agent = Agent(model=model, paradigm="react")
+    rate_limiter = RateLimiter(requests_per_minute=60)
+    
+    app = Application(
+        name="AgentApp",
+        agents=[agent],
+        rate_limiter=rate_limiter
+    )
+    app.serve(port=8000)
+    ```
+    
+    With user validation:
+    ```
+    def validate_user(user_id: str):
+        # Custom validation logic
+        if user_id.startswith("user_"):
+            return True
+        elif user_id.isdigit():
+            return f"user_{user_id}"  # Normalize
+        return False
+    
+    app = Application(
+        name="SecureApp",
+        model=model,
+        user_validator=validate_user
+    )
+    ```
+    """
 
     def __init__(self, name: str, model: Optional[Model] = None, agents: Optional[List[Agent]] = None, 
                  rate_limiter: Optional[RateLimiter] = None, user_validator: Optional[Callable[[str], Union[bool, str]]] = None):
@@ -17,18 +83,30 @@ class Application:
         Parameters
         ----------
         name : str
-            Application name
+            Application name. Used in API responses and logging.
         model : Optional[Model], default None
-            AI model to use
+            AI model to use. If provided, creates /model endpoints.
+            The model will be available at POST /model and POST /model/stream.
         agents : Optional[List[Agent]], default None
-            List of available agents
+            List of available agents. Each agent must have a unique name.
+            Creates /agent/{agent_name} endpoints for each agent.
         rate_limiter : Optional[RateLimiter], default None
-            Rate limiter to control API usage
+            Rate limiter to control API usage. Applies to all endpoints.
+            If not provided, no rate limiting is enforced.
         user_validator : Optional[Callable[[str], Union[bool, str]]], default None
-            Function to validate user_id. Must return:
-            - True: user_id is valid
-            - False: user_id is invalid
+            Function to validate user_id from requests. Must return:
+            - True: user_id is valid and accepted as-is
+            - False: user_id is invalid, will fallback to IP-based identification
             - str: user_id is valid but normalized (e.g. "user123" -> "user_123")
+            
+        Notes
+        -----
+        At least one of model or agents must be provided to create useful endpoints.
+        If neither is provided, only meta endpoints (/, /health) will be available.
+        
+        The user_validator function is called for every request that includes
+        a user_id in the request body. If validation fails, the application
+        falls back to using the client IP address for rate limiting.
         """
         self.name = name
         self._model = model
@@ -41,6 +119,26 @@ class Application:
 
     @staticmethod
     async def _maybe_await(fn: Callable[..., Any], *args, **kwargs) -> Any:
+        """
+        Execute a function and await it if it's a coroutine.
+        
+        This helper method allows the application to work with both
+        synchronous and asynchronous model/agent methods.
+        
+        Parameters
+        ----------
+        fn : Callable[..., Any]
+            Function to execute
+        *args
+            Positional arguments to pass to the function
+        **kwargs
+            Keyword arguments to pass to the function
+            
+        Returns
+        -------
+        Any
+            Result of the function execution
+        """
         result = fn(*args, **kwargs)
         if hasattr(result, "__await__"):
             return await result 
@@ -49,20 +147,35 @@ class Application:
     def _get_user_identifier(self, request, data: Dict[str, Any]) -> str:
         """
         Extract user identifier from the request.
-        First looks for user_id in the body, then uses IP as fallback.
-        If a user_validator is configured, validates the user_id.
+        
+        This method implements a multi-step user identification process:
+        1. Look for user_id in the request body
+        2. Validate user_id using the configured validator (if any)
+        3. Fall back to client IP address if user_id is invalid or missing
+        
+        The method handles various proxy headers (X-Forwarded-For, X-Real-IP)
+        to get the real client IP when behind load balancers or proxies.
         
         Parameters
         ----------
         request : Request
-            FastAPI request object
+            FastAPI request object (can be HTTP Request or WebSocket)
         data : Dict[str, Any]
-            Request body data
+            Request body data containing potential user_id
             
         Returns
         -------
         str
-            User identifier (user_id or IP-based)
+            User identifier in one of these formats:
+            - "user_id" if user_id is provided and valid
+            - "ip:192.168.1.1" if using IP-based identification
+            - "ip:unknown" if IP cannot be determined
+            
+        Notes
+        -----
+        The user identifier is used for rate limiting and request tracking.
+        IP-based identifiers are prefixed with "ip:" to distinguish them
+        from actual user IDs.
         """
         # Look for user_id in the request body
         user_id = data.get("user_id")
@@ -118,6 +231,9 @@ class Application:
         """
         Validate a user_id using the configured validator.
         
+        This method provides a safe way to validate user IDs, handling
+        any exceptions that might occur during validation.
+        
         Parameters
         ----------
         user_id : str
@@ -126,9 +242,14 @@ class Application:
         Returns
         -------
         Union[bool, str]
-            - True: user_id is valid
-            - False: user_id is invalid
-            - str: user_id is valid but normalized
+            - True: user_id is valid and accepted as-is
+            - False: user_id is invalid or validation failed
+            - str: user_id is valid but normalized (use this value instead)
+            
+        Notes
+        -----
+        If no validator is configured, this method always returns True.
+        Any exceptions during validation are caught and result in False.
         """
         if not self._user_validator:
             return True  # No validator, always consider valid
@@ -139,6 +260,30 @@ class Application:
             return False  # Error during validation, consider invalid
 
     def _build_app(self):
+        """
+        Build and configure the FastAPI application.
+        
+        This method creates a FastAPI app with all the necessary endpoints,
+        middleware, and error handling based on the configured models and agents.
+        
+        Returns
+        -------
+        FastAPI
+            Configured FastAPI application instance
+            
+        Raises
+        ------
+        ImportError
+            If FastAPI is not installed
+            
+        Notes
+        -----
+        The method dynamically creates endpoints based on what's configured:
+        - Model endpoints are created if a model is provided
+        - Agent endpoints are created if agents are provided
+        - Meta endpoints (/, /health) are always created
+        - Rate limiting and user validation are applied to all endpoints
+        """
 
         try:
             from fastapi import FastAPI, Request, HTTPException, status
@@ -529,43 +674,86 @@ class Application:
 
         """
         Serve the application creating endpoints for the model and agents.
-
-        API Endpoints:
-            When the server is running, the following endpoints are available:
-            
-            Model Endpoints:
-                POST /model                    Ask the model
-                POST /model/stream             Ask the model with streaming
-                WS  /model/ws                  Ask the model with WebSocket
-            
-            Agent Endpoints:
-                POST /agent/{agent_name}       Execute an agent
-                POST /agent/{agent_name}/stream Execute an agent with streaming
-                WS  /agent/{agent_name}/ws     Execute an agent with WebSocket
-            
-            Authentication:
-                POST /validate-user            Validate a user_id
-            
-            Rate Limiting:
-                GET  /rate-limit/stats         Rate limiter statistics
-                GET  /rate-limit/stats/{user_id} Statistics for a specific user
-            
-            Meta:
-                GET  /                         Ping the application
-                GET  /health                   Health check
-
+        
+        This method starts a uvicorn server with the configured FastAPI application.
+        The server provides REST API and WebSocket endpoints for interacting with
+        AI models and agents.
+        
+        API Endpoints
+        -------------
+        When the server is running, the following endpoints are available:
+        
+        **Model Endpoints** (if model is configured):
+            - POST /model                    Ask the model
+            - POST /model/stream             Ask the model with streaming
+            - WS  /model/ws                  Ask the model with WebSocket streaming
+        
+        **Agent Endpoints** (if agents are configured):
+            - POST /agent/{agent_name}       Execute an agent
+            - POST /agent/{agent_name}/stream Execute an agent with streaming
+            - WS  /agent/{agent_name}/ws     Execute an agent with WebSocket streaming
+        
+        **Authentication & Validation:**
+            - POST /validate-user            Validate a user_id
+        
+        **Rate Limiting & Monitoring:**
+            - GET  /rate-limit/stats         Rate limiter statistics
+            - GET  /rate-limit/stats/{user_id} Statistics for a specific user
+        
+        **Meta & Health:**
+            - GET  /                         Ping the application
+            - GET  /health                   Health check
+        
+        **Request Format:**
+        All POST endpoints expect JSON with a "prompt" field:
+        ```json
+        {
+            "prompt": "Your question here",
+            "user_id": "optional_user_id"
+        }
+        ```
+        
+        **Response Format:**
+        - Model responses: Standard model response format
+        - Agent responses: Agent execution result with iterations
+        - WebSocket: JSON messages with "type" and "content" fields
+        
         Parameters
         ----------
         host : str, default "0.0.0.0"
-            Host to serve the application
+            Host to serve the application. Use "0.0.0.0" for external access.
         port : int, default 8000
-            Port to serve the application
+            Port to serve the application on.
         reload : bool, default False
-            Whether to reload the application when code changes are detected
+            Whether to reload the application when code changes are detected.
+            Useful for development, not recommended for production.
         workers : Optional[int], default None
-            Number of workers to use
+            Number of worker processes to use. If None, uses uvicorn default.
         log_level : str, default "info"
-            Log level
+            Log level for uvicorn. Options: "critical", "error", "warning", "info", "debug".
+            
+        Raises
+        ------
+        ImportError
+            If uvicorn is not installed
+            
+        Examples
+        --------
+        Basic serving:
+        ```
+        app = Application(name="MyApp", model=model)
+        app.serve()  # Serves on http://localhost:8000
+        ```
+        
+        Production serving:
+        ```
+        app.serve(host="0.0.0.0", port=8080, workers=4, log_level="warning")
+        ```
+        
+        Development serving:
+        ```
+        app.serve(reload=True, log_level="debug")
+        ```
         """
 
         try:

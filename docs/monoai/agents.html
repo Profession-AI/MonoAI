@@ -37,6 +37,9 @@
                                 <a class="function" href="#Agent.__init__">Agent</a>
                         </li>
                         <li>
+                                <a class="variable" href="#Agent.name">name</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Agent.run">run</a>
                         </li>
                         <li>
@@ -112,173 +115,205 @@
 </span><span id="Agent-40"><a href="#Agent-40"><span class="linenos"> 40</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Agent-41"><a href="#Agent-41"><span class="linenos"> 41</span></a>    
 </span><span id="Agent-42"><a href="#Agent-42"><span class="linenos"> 42</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paradigm</span><span class="o">=</span><span class="s2">&quot;function_calling&quot;</span><span class="p">,</span> 
-</span><span id="Agent-43"><a href="#Agent-43"><span class="linenos"> 43</span></a>                 <span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Agent-44"><a href="#Agent-44"><span class="linenos"> 44</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the agent with the specified model and configuration.</span>
-</span><span id="Agent-45"><a href="#Agent-45"><span class="linenos"> 45</span></a><span class="sd">        </span>
-</span><span id="Agent-46"><a href="#Agent-46"><span class="linenos"> 46</span></a><span class="sd">        This constructor sets up an AI agent with the chosen reasoning paradigm,</span>
-</span><span id="Agent-47"><a href="#Agent-47"><span class="linenos"> 47</span></a><span class="sd">        registers any provided tools, and configures execution parameters.</span>
-</span><span id="Agent-48"><a href="#Agent-48"><span class="linenos"> 48</span></a><span class="sd">        </span>
-</span><span id="Agent-49"><a href="#Agent-49"><span class="linenos"> 49</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent-50"><a href="#Agent-50"><span class="linenos"> 50</span></a><span class="sd">        ----------</span>
-</span><span id="Agent-51"><a href="#Agent-51"><span class="linenos"> 51</span></a><span class="sd">        model : Model</span>
-</span><span id="Agent-52"><a href="#Agent-52"><span class="linenos"> 52</span></a><span class="sd">            AI model instance to use for agent execution</span>
-</span><span id="Agent-53"><a href="#Agent-53"><span class="linenos"> 53</span></a><span class="sd">        tools : list, optional</span>
-</span><span id="Agent-54"><a href="#Agent-54"><span class="linenos"> 54</span></a><span class="sd">            List of available tools for the agent. Each tool should be a</span>
-</span><span id="Agent-55"><a href="#Agent-55"><span class="linenos"> 55</span></a><span class="sd">            callable function. Default is None.</span>
-</span><span id="Agent-56"><a href="#Agent-56"><span class="linenos"> 56</span></a><span class="sd">        paradigm : str or _AgenticLoop, optional</span>
-</span><span id="Agent-57"><a href="#Agent-57"><span class="linenos"> 57</span></a><span class="sd">            Reasoning paradigm to use. Can be:</span>
-</span><span id="Agent-58"><a href="#Agent-58"><span class="linenos"> 58</span></a><span class="sd">            </span>
-</span><span id="Agent-59"><a href="#Agent-59"><span class="linenos"> 59</span></a><span class="sd">            **Predefined strings:**</span>
-</span><span id="Agent-60"><a href="#Agent-60"><span class="linenos"> 60</span></a><span class="sd">            - &quot;function_calling&quot;: Uses OpenAI native function calling</span>
-</span><span id="Agent-61"><a href="#Agent-61"><span class="linenos"> 61</span></a><span class="sd">            - &quot;react&quot;: Standard ReAct approach</span>
-</span><span id="Agent-62"><a href="#Agent-62"><span class="linenos"> 62</span></a><span class="sd">            - &quot;react_with_function_calling&quot;: Combines ReAct and function calling</span>
-</span><span id="Agent-63"><a href="#Agent-63"><span class="linenos"> 63</span></a><span class="sd">            - &quot;plan-and-execute&quot;: Plan-and-execute paradigm</span>
-</span><span id="Agent-64"><a href="#Agent-64"><span class="linenos"> 64</span></a><span class="sd">            - &quot;programmatic&quot;: Programmatic approach</span>
-</span><span id="Agent-65"><a href="#Agent-65"><span class="linenos"> 65</span></a><span class="sd">            - &quot;reflexion&quot;: Reflexion paradigm with self-reflection</span>
-</span><span id="Agent-66"><a href="#Agent-66"><span class="linenos"> 66</span></a><span class="sd">            - &quot;self_ask&quot;: Self-ask paradigm</span>
-</span><span id="Agent-67"><a href="#Agent-67"><span class="linenos"> 67</span></a><span class="sd">            - &quot;self_ask_with_search&quot;: Self-ask with web search capabilities</span>
-</span><span id="Agent-68"><a href="#Agent-68"><span class="linenos"> 68</span></a><span class="sd">            </span>
-</span><span id="Agent-69"><a href="#Agent-69"><span class="linenos"> 69</span></a><span class="sd">            **Custom object:**</span>
-</span><span id="Agent-70"><a href="#Agent-70"><span class="linenos"> 70</span></a><span class="sd">            - An instance of a class derived from _AgenticLoop</span>
-</span><span id="Agent-71"><a href="#Agent-71"><span class="linenos"> 71</span></a><span class="sd">            </span>
-</span><span id="Agent-72"><a href="#Agent-72"><span class="linenos"> 72</span></a><span class="sd">            Default is &quot;function_calling&quot;.</span>
-</span><span id="Agent-73"><a href="#Agent-73"><span class="linenos"> 73</span></a><span class="sd">        agent_prompt : str, optional</span>
-</span><span id="Agent-74"><a href="#Agent-74"><span class="linenos"> 74</span></a><span class="sd">            Custom prompt for the agent. If None, uses the default prompt</span>
-</span><span id="Agent-75"><a href="#Agent-75"><span class="linenos"> 75</span></a><span class="sd">            for the chosen paradigm. Default is None.</span>
-</span><span id="Agent-76"><a href="#Agent-76"><span class="linenos"> 76</span></a><span class="sd">        debug : bool, optional</span>
-</span><span id="Agent-77"><a href="#Agent-77"><span class="linenos"> 77</span></a><span class="sd">            Flag to enable debug output during execution.</span>
-</span><span id="Agent-78"><a href="#Agent-78"><span class="linenos"> 78</span></a><span class="sd">            Default is False.</span>
-</span><span id="Agent-79"><a href="#Agent-79"><span class="linenos"> 79</span></a><span class="sd">        max_iter : int, optional</span>
-</span><span id="Agent-80"><a href="#Agent-80"><span class="linenos"> 80</span></a><span class="sd">            Maximum number of iterations allowed for the agent.</span>
-</span><span id="Agent-81"><a href="#Agent-81"><span class="linenos"> 81</span></a><span class="sd">            If None, there are no limits. Default is None.</span>
-</span><span id="Agent-82"><a href="#Agent-82"><span class="linenos"> 82</span></a><span class="sd">        native_web_search : str, optional</span>
-</span><span id="Agent-83"><a href="#Agent-83"><span class="linenos"> 83</span></a><span class="sd">            Native web search capability level. Must be one of:</span>
-</span><span id="Agent-84"><a href="#Agent-84"><span class="linenos"> 84</span></a><span class="sd">            &quot;low&quot;, &quot;medium&quot;, or &quot;high&quot;. Default is None.</span>
-</span><span id="Agent-85"><a href="#Agent-85"><span class="linenos"> 85</span></a><span class="sd">        </span>
-</span><span id="Agent-86"><a href="#Agent-86"><span class="linenos"> 86</span></a><span class="sd">        Raises</span>
-</span><span id="Agent-87"><a href="#Agent-87"><span class="linenos"> 87</span></a><span class="sd">        ------</span>
-</span><span id="Agent-88"><a href="#Agent-88"><span class="linenos"> 88</span></a><span class="sd">        ValueError</span>
-</span><span id="Agent-89"><a href="#Agent-89"><span class="linenos"> 89</span></a><span class="sd">            If the specified paradigm is not supported or invalid</span>
-</span><span id="Agent-90"><a href="#Agent-90"><span class="linenos"> 90</span></a><span class="sd">        TypeError</span>
-</span><span id="Agent-91"><a href="#Agent-91"><span class="linenos"> 91</span></a><span class="sd">            If a custom object is passed that doesn&#39;t derive from _AgenticLoop</span>
-</span><span id="Agent-92"><a href="#Agent-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent-93"><a href="#Agent-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
-</span><span id="Agent-94"><a href="#Agent-94"><span class="linenos"> 94</span></a>
-</span><span id="Agent-95"><a href="#Agent-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="n">native_web_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">native_web_search</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]:</span>
-</span><span id="Agent-96"><a href="#Agent-96"><span class="linenos"> 96</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;native_web_search must be &#39;low&#39;, &#39;medium&#39; or &#39;high&#39;&quot;</span><span class="p">)</span>
-</span><span id="Agent-97"><a href="#Agent-97"><span class="linenos"> 97</span></a>        
-</span><span id="Agent-98"><a href="#Agent-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_web_search</span> <span class="o">=</span> <span class="n">native_web_search</span>
-</span><span id="Agent-99"><a href="#Agent-99"><span class="linenos"> 99</span></a>
-</span><span id="Agent-100"><a href="#Agent-100"><span class="linenos">100</span></a>        <span class="c1"># Gestione paradigma personalizzato</span>
-</span><span id="Agent-101"><a href="#Agent-101"><span class="linenos">101</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="n">_AgenticLoop</span><span class="p">):</span>
-</span><span id="Agent-102"><a href="#Agent-102"><span class="linenos">102</span></a>            <span class="c1"># Verifica che l&#39;oggetto personalizzato sia valido</span>
-</span><span id="Agent-103"><a href="#Agent-103"><span class="linenos">103</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">paradigm</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
-</span><span id="Agent-104"><a href="#Agent-104"><span class="linenos">104</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Il paradigma personalizzato deve avere un metodo &#39;start&#39; callable&quot;</span><span class="p">)</span>
-</span><span id="Agent-105"><a href="#Agent-105"><span class="linenos">105</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">paradigm</span>
-</span><span id="Agent-106"><a href="#Agent-106"><span class="linenos">106</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent-107"><a href="#Agent-107"><span class="linenos">107</span></a>            <span class="c1"># Paradigmi predefiniti</span>
-</span><span id="Agent-108"><a href="#Agent-108"><span class="linenos">108</span></a>            <span class="n">loop_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">agent_prompt</span><span class="p">,</span> <span class="n">debug</span><span class="p">,</span> <span class="n">max_iter</span>
-</span><span id="Agent-109"><a href="#Agent-109"><span class="linenos">109</span></a>            
-</span><span id="Agent-110"><a href="#Agent-110"><span class="linenos">110</span></a>            <span class="k">if</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;function_calling&quot;</span><span class="p">:</span>
-</span><span id="Agent-111"><a href="#Agent-111"><span class="linenos">111</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">FunctionCallingAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-112"><a href="#Agent-112"><span class="linenos">112</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react&quot;</span><span class="p">:</span>
-</span><span id="Agent-113"><a href="#Agent-113"><span class="linenos">113</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-114"><a href="#Agent-114"><span class="linenos">114</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react_with_function_calling&quot;</span><span class="p">:</span>
-</span><span id="Agent-115"><a href="#Agent-115"><span class="linenos">115</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactWithFCAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-116"><a href="#Agent-116"><span class="linenos">116</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;plan-and-execute&quot;</span><span class="p">:</span>
-</span><span id="Agent-117"><a href="#Agent-117"><span class="linenos">117</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">PlanAndExecuteAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-118"><a href="#Agent-118"><span class="linenos">118</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;programmatic&quot;</span><span class="p">:</span>
-</span><span id="Agent-119"><a href="#Agent-119"><span class="linenos">119</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ProgrammaticAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-120"><a href="#Agent-120"><span class="linenos">120</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;reflexion&quot;</span><span class="p">:</span>
-</span><span id="Agent-121"><a href="#Agent-121"><span class="linenos">121</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReflexionAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-122"><a href="#Agent-122"><span class="linenos">122</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask&quot;</span><span class="p">:</span>
-</span><span id="Agent-123"><a href="#Agent-123"><span class="linenos">123</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-124"><a href="#Agent-124"><span class="linenos">124</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask_with_search&quot;</span><span class="p">:</span>
-</span><span id="Agent-125"><a href="#Agent-125"><span class="linenos">125</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskWithSearchLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent-126"><a href="#Agent-126"><span class="linenos">126</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent-127"><a href="#Agent-127"><span class="linenos">127</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigma &#39;</span><span class="si">{</span><span class="n">paradigm</span><span class="si">}</span><span class="s2">&#39; non supportato. &quot;</span>
-</span><span id="Agent-128"><a href="#Agent-128"><span class="linenos">128</span></a>                               <span class="sa">f</span><span class="s2">&quot;Paradigmi disponibili: function_calling, react, &quot;</span>
-</span><span id="Agent-129"><a href="#Agent-129"><span class="linenos">129</span></a>                               <span class="sa">f</span><span class="s2">&quot;react_with_function_calling, plan-and-execute, &quot;</span>
-</span><span id="Agent-130"><a href="#Agent-130"><span class="linenos">130</span></a>                               <span class="sa">f</span><span class="s2">&quot;programmatic, reflexion, self_ask, self_ask_with_search, &quot;</span>
-</span><span id="Agent-131"><a href="#Agent-131"><span class="linenos">131</span></a>                               <span class="sa">f</span><span class="s2">&quot;oppure un oggetto personalizzato derivato da _AgenticLoop&quot;</span><span class="p">)</span>
-</span><span id="Agent-132"><a href="#Agent-132"><span class="linenos">132</span></a>        
-</span><span id="Agent-133"><a href="#Agent-133"><span class="linenos">133</span></a>        <span class="k">if</span> <span class="n">tools</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Agent-134"><a href="#Agent-134"><span class="linenos">134</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">register_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
-</span><span id="Agent-135"><a href="#Agent-135"><span class="linenos">135</span></a>        
-</span><span id="Agent-136"><a href="#Agent-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Prompt</span><span class="p">):</span>
-</span><span id="Agent-137"><a href="#Agent-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the agent with the specified prompt.</span>
-</span><span id="Agent-138"><a href="#Agent-138"><span class="linenos">138</span></a><span class="sd">        </span>
-</span><span id="Agent-139"><a href="#Agent-139"><span class="linenos">139</span></a><span class="sd">        This method processes a user prompt through the agent&#39;s reasoning</span>
-</span><span id="Agent-140"><a href="#Agent-140"><span class="linenos">140</span></a><span class="sd">        paradigm, returning a structured response that includes the reasoning</span>
-</span><span id="Agent-141"><a href="#Agent-141"><span class="linenos">141</span></a><span class="sd">        process and final answer.</span>
-</span><span id="Agent-142"><a href="#Agent-142"><span class="linenos">142</span></a><span class="sd">        </span>
-</span><span id="Agent-143"><a href="#Agent-143"><span class="linenos">143</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent-144"><a href="#Agent-144"><span class="linenos">144</span></a><span class="sd">        ----------</span>
-</span><span id="Agent-145"><a href="#Agent-145"><span class="linenos">145</span></a><span class="sd">        prompt : str or Prompt</span>
-</span><span id="Agent-146"><a href="#Agent-146"><span class="linenos">146</span></a><span class="sd">            User prompt or query to process. Can be a string or a Prompt object.</span>
-</span><span id="Agent-147"><a href="#Agent-147"><span class="linenos">147</span></a><span class="sd">        </span>
-</span><span id="Agent-148"><a href="#Agent-148"><span class="linenos">148</span></a><span class="sd">        Returns</span>
-</span><span id="Agent-149"><a href="#Agent-149"><span class="linenos">149</span></a><span class="sd">        -------</span>
-</span><span id="Agent-150"><a href="#Agent-150"><span class="linenos">150</span></a><span class="sd">        Dict[str, Any]</span>
-</span><span id="Agent-151"><a href="#Agent-151"><span class="linenos">151</span></a><span class="sd">            Agent response containing:</span>
-</span><span id="Agent-152"><a href="#Agent-152"><span class="linenos">152</span></a><span class="sd">            - prompt: Original user query</span>
-</span><span id="Agent-153"><a href="#Agent-153"><span class="linenos">153</span></a><span class="sd">            - iterations: List of processed reasoning iterations</span>
-</span><span id="Agent-154"><a href="#Agent-154"><span class="linenos">154</span></a><span class="sd">            - response: Final response (if available)</span>
-</span><span id="Agent-155"><a href="#Agent-155"><span class="linenos">155</span></a><span class="sd">        </span>
-</span><span id="Agent-156"><a href="#Agent-156"><span class="linenos">156</span></a><span class="sd">        Notes</span>
-</span><span id="Agent-157"><a href="#Agent-157"><span class="linenos">157</span></a><span class="sd">        -----</span>
-</span><span id="Agent-158"><a href="#Agent-158"><span class="linenos">158</span></a><span class="sd">        This method delegates execution to the specific agentic loop</span>
-</span><span id="Agent-159"><a href="#Agent-159"><span class="linenos">159</span></a><span class="sd">        configured during initialization. The exact behavior depends on</span>
-</span><span id="Agent-160"><a href="#Agent-160"><span class="linenos">160</span></a><span class="sd">        the chosen paradigm (predefined or custom).</span>
+</span><span id="Agent-43"><a href="#Agent-43"><span class="linenos"> 43</span></a>                 <span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span id="Agent-44"><a href="#Agent-44"><span class="linenos"> 44</span></a>                 <span class="n">human_feedback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Agent-45"><a href="#Agent-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the agent with the specified model and configuration.</span>
+</span><span id="Agent-46"><a href="#Agent-46"><span class="linenos"> 46</span></a><span class="sd">        </span>
+</span><span id="Agent-47"><a href="#Agent-47"><span class="linenos"> 47</span></a><span class="sd">        This constructor sets up an AI agent with the chosen reasoning paradigm,</span>
+</span><span id="Agent-48"><a href="#Agent-48"><span class="linenos"> 48</span></a><span class="sd">        registers any provided tools, and configures execution parameters.</span>
+</span><span id="Agent-49"><a href="#Agent-49"><span class="linenos"> 49</span></a><span class="sd">        </span>
+</span><span id="Agent-50"><a href="#Agent-50"><span class="linenos"> 50</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent-51"><a href="#Agent-51"><span class="linenos"> 51</span></a><span class="sd">        ----------</span>
+</span><span id="Agent-52"><a href="#Agent-52"><span class="linenos"> 52</span></a><span class="sd">        model : Model</span>
+</span><span id="Agent-53"><a href="#Agent-53"><span class="linenos"> 53</span></a><span class="sd">            AI model instance to use for agent execution</span>
+</span><span id="Agent-54"><a href="#Agent-54"><span class="linenos"> 54</span></a><span class="sd">        tools : list, optional</span>
+</span><span id="Agent-55"><a href="#Agent-55"><span class="linenos"> 55</span></a><span class="sd">            List of available tools for the agent. Each tool should be a</span>
+</span><span id="Agent-56"><a href="#Agent-56"><span class="linenos"> 56</span></a><span class="sd">            callable function. Default is None.</span>
+</span><span id="Agent-57"><a href="#Agent-57"><span class="linenos"> 57</span></a><span class="sd">        paradigm : str or _AgenticLoop, optional</span>
+</span><span id="Agent-58"><a href="#Agent-58"><span class="linenos"> 58</span></a><span class="sd">            Reasoning paradigm to use. Can be:</span>
+</span><span id="Agent-59"><a href="#Agent-59"><span class="linenos"> 59</span></a><span class="sd">            </span>
+</span><span id="Agent-60"><a href="#Agent-60"><span class="linenos"> 60</span></a><span class="sd">            **Predefined strings:**</span>
+</span><span id="Agent-61"><a href="#Agent-61"><span class="linenos"> 61</span></a><span class="sd">            - &quot;function_calling&quot;: Uses OpenAI native function calling</span>
+</span><span id="Agent-62"><a href="#Agent-62"><span class="linenos"> 62</span></a><span class="sd">            - &quot;react&quot;: Standard ReAct approach</span>
+</span><span id="Agent-63"><a href="#Agent-63"><span class="linenos"> 63</span></a><span class="sd">            - &quot;react_with_function_calling&quot;: Combines ReAct and function calling</span>
+</span><span id="Agent-64"><a href="#Agent-64"><span class="linenos"> 64</span></a><span class="sd">            - &quot;plan-and-execute&quot;: Plan-and-execute paradigm</span>
+</span><span id="Agent-65"><a href="#Agent-65"><span class="linenos"> 65</span></a><span class="sd">            - &quot;programmatic&quot;: Programmatic approach</span>
+</span><span id="Agent-66"><a href="#Agent-66"><span class="linenos"> 66</span></a><span class="sd">            - &quot;reflexion&quot;: Reflexion paradigm with self-reflection</span>
+</span><span id="Agent-67"><a href="#Agent-67"><span class="linenos"> 67</span></a><span class="sd">            - &quot;self_ask&quot;: Self-ask paradigm</span>
+</span><span id="Agent-68"><a href="#Agent-68"><span class="linenos"> 68</span></a><span class="sd">            - &quot;self_ask_with_search&quot;: Self-ask with web search capabilities</span>
+</span><span id="Agent-69"><a href="#Agent-69"><span class="linenos"> 69</span></a><span class="sd">            </span>
+</span><span id="Agent-70"><a href="#Agent-70"><span class="linenos"> 70</span></a><span class="sd">            **Custom object:**</span>
+</span><span id="Agent-71"><a href="#Agent-71"><span class="linenos"> 71</span></a><span class="sd">            - An instance of a class derived from _AgenticLoop</span>
+</span><span id="Agent-72"><a href="#Agent-72"><span class="linenos"> 72</span></a><span class="sd">            </span>
+</span><span id="Agent-73"><a href="#Agent-73"><span class="linenos"> 73</span></a><span class="sd">            Default is &quot;function_calling&quot;.</span>
+</span><span id="Agent-74"><a href="#Agent-74"><span class="linenos"> 74</span></a><span class="sd">        agent_prompt : str, optional</span>
+</span><span id="Agent-75"><a href="#Agent-75"><span class="linenos"> 75</span></a><span class="sd">            Custom prompt for the agent. If None, uses the default prompt</span>
+</span><span id="Agent-76"><a href="#Agent-76"><span class="linenos"> 76</span></a><span class="sd">            for the chosen paradigm. Default is None.</span>
+</span><span id="Agent-77"><a href="#Agent-77"><span class="linenos"> 77</span></a><span class="sd">        name : str, optional</span>
+</span><span id="Agent-78"><a href="#Agent-78"><span class="linenos"> 78</span></a><span class="sd">            Name identifier for the agent. Default is empty string.</span>
+</span><span id="Agent-79"><a href="#Agent-79"><span class="linenos"> 79</span></a><span class="sd">        debug : bool, optional</span>
+</span><span id="Agent-80"><a href="#Agent-80"><span class="linenos"> 80</span></a><span class="sd">            Flag to enable debug output during execution.</span>
+</span><span id="Agent-81"><a href="#Agent-81"><span class="linenos"> 81</span></a><span class="sd">            Default is False.</span>
+</span><span id="Agent-82"><a href="#Agent-82"><span class="linenos"> 82</span></a><span class="sd">        max_iter : int, optional</span>
+</span><span id="Agent-83"><a href="#Agent-83"><span class="linenos"> 83</span></a><span class="sd">            Maximum number of iterations allowed for the agent.</span>
+</span><span id="Agent-84"><a href="#Agent-84"><span class="linenos"> 84</span></a><span class="sd">            If None, there are no limits. Default is None.</span>
+</span><span id="Agent-85"><a href="#Agent-85"><span class="linenos"> 85</span></a><span class="sd">        native_web_search : str, optional</span>
+</span><span id="Agent-86"><a href="#Agent-86"><span class="linenos"> 86</span></a><span class="sd">            Native web search capability level. Must be one of:</span>
+</span><span id="Agent-87"><a href="#Agent-87"><span class="linenos"> 87</span></a><span class="sd">            &quot;low&quot;, &quot;medium&quot;, or &quot;high&quot;. Default is None.</span>
+</span><span id="Agent-88"><a href="#Agent-88"><span class="linenos"> 88</span></a><span class="sd">        human_feedback : str, optional</span>
+</span><span id="Agent-89"><a href="#Agent-89"><span class="linenos"> 89</span></a><span class="sd">            Human feedback mode for controlling agent execution. Can be:</span>
+</span><span id="Agent-90"><a href="#Agent-90"><span class="linenos"> 90</span></a><span class="sd">            - None: No human feedback required (default)</span>
+</span><span id="Agent-91"><a href="#Agent-91"><span class="linenos"> 91</span></a><span class="sd">            - &quot;actions&quot;: Pause and request confirmation before executing tool actions</span>
+</span><span id="Agent-92"><a href="#Agent-92"><span class="linenos"> 92</span></a><span class="sd">            - &quot;all&quot;: Pause after every step for human review</span>
+</span><span id="Agent-93"><a href="#Agent-93"><span class="linenos"> 93</span></a><span class="sd">            Default is None.</span>
+</span><span id="Agent-94"><a href="#Agent-94"><span class="linenos"> 94</span></a><span class="sd">        </span>
+</span><span id="Agent-95"><a href="#Agent-95"><span class="linenos"> 95</span></a><span class="sd">        Raises</span>
+</span><span id="Agent-96"><a href="#Agent-96"><span class="linenos"> 96</span></a><span class="sd">        ------</span>
+</span><span id="Agent-97"><a href="#Agent-97"><span class="linenos"> 97</span></a><span class="sd">        ValueError</span>
+</span><span id="Agent-98"><a href="#Agent-98"><span class="linenos"> 98</span></a><span class="sd">            If the specified paradigm is not supported or invalid</span>
+</span><span id="Agent-99"><a href="#Agent-99"><span class="linenos"> 99</span></a><span class="sd">        TypeError</span>
+</span><span id="Agent-100"><a href="#Agent-100"><span class="linenos">100</span></a><span class="sd">            If a custom object is passed that doesn&#39;t derive from _AgenticLoop</span>
+</span><span id="Agent-101"><a href="#Agent-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent-102"><a href="#Agent-102"><span class="linenos">102</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+</span><span id="Agent-103"><a href="#Agent-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="Agent-104"><a href="#Agent-104"><span class="linenos">104</span></a>
+</span><span id="Agent-105"><a href="#Agent-105"><span class="linenos">105</span></a>        <span class="k">if</span> <span class="n">native_web_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">native_web_search</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]:</span>
+</span><span id="Agent-106"><a href="#Agent-106"><span class="linenos">106</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;native_web_search must be &#39;low&#39;, &#39;medium&#39; or &#39;high&#39;&quot;</span><span class="p">)</span>
+</span><span id="Agent-107"><a href="#Agent-107"><span class="linenos">107</span></a>        
+</span><span id="Agent-108"><a href="#Agent-108"><span class="linenos">108</span></a>        <span class="k">if</span> <span class="n">human_feedback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">human_feedback</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+</span><span id="Agent-109"><a href="#Agent-109"><span class="linenos">109</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;human_feedback must be None, &#39;actions&#39;, or &#39;all&#39;&quot;</span><span class="p">)</span>
+</span><span id="Agent-110"><a href="#Agent-110"><span class="linenos">110</span></a>        
+</span><span id="Agent-111"><a href="#Agent-111"><span class="linenos">111</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_web_search</span> <span class="o">=</span> <span class="n">native_web_search</span>
+</span><span id="Agent-112"><a href="#Agent-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_human_feedback</span> <span class="o">=</span> <span class="n">human_feedback</span>
+</span><span id="Agent-113"><a href="#Agent-113"><span class="linenos">113</span></a>
+</span><span id="Agent-114"><a href="#Agent-114"><span class="linenos">114</span></a>        <span class="c1"># Handle custom paradigm</span>
+</span><span id="Agent-115"><a href="#Agent-115"><span class="linenos">115</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="n">_AgenticLoop</span><span class="p">):</span>
+</span><span id="Agent-116"><a href="#Agent-116"><span class="linenos">116</span></a>            <span class="c1"># Verify that the custom object is valid</span>
+</span><span id="Agent-117"><a href="#Agent-117"><span class="linenos">117</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">paradigm</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
+</span><span id="Agent-118"><a href="#Agent-118"><span class="linenos">118</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Custom paradigm must have a callable &#39;start&#39; method&quot;</span><span class="p">)</span>
+</span><span id="Agent-119"><a href="#Agent-119"><span class="linenos">119</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">paradigm</span>
+</span><span id="Agent-120"><a href="#Agent-120"><span class="linenos">120</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent-121"><a href="#Agent-121"><span class="linenos">121</span></a>            <span class="c1"># Predefined paradigms</span>
+</span><span id="Agent-122"><a href="#Agent-122"><span class="linenos">122</span></a>            <span class="n">loop_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">agent_prompt</span><span class="p">,</span> <span class="n">debug</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">human_feedback</span>
+</span><span id="Agent-123"><a href="#Agent-123"><span class="linenos">123</span></a>            
+</span><span id="Agent-124"><a href="#Agent-124"><span class="linenos">124</span></a>            <span class="k">if</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;function_calling&quot;</span><span class="p">:</span>
+</span><span id="Agent-125"><a href="#Agent-125"><span class="linenos">125</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">FunctionCallingAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-126"><a href="#Agent-126"><span class="linenos">126</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react&quot;</span><span class="p">:</span>
+</span><span id="Agent-127"><a href="#Agent-127"><span class="linenos">127</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-128"><a href="#Agent-128"><span class="linenos">128</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react_with_function_calling&quot;</span><span class="p">:</span>
+</span><span id="Agent-129"><a href="#Agent-129"><span class="linenos">129</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactWithFCAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-130"><a href="#Agent-130"><span class="linenos">130</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;plan-and-execute&quot;</span><span class="p">:</span>
+</span><span id="Agent-131"><a href="#Agent-131"><span class="linenos">131</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">PlanAndExecuteAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-132"><a href="#Agent-132"><span class="linenos">132</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;programmatic&quot;</span><span class="p">:</span>
+</span><span id="Agent-133"><a href="#Agent-133"><span class="linenos">133</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ProgrammaticAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-134"><a href="#Agent-134"><span class="linenos">134</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;reflexion&quot;</span><span class="p">:</span>
+</span><span id="Agent-135"><a href="#Agent-135"><span class="linenos">135</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReflexionAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-136"><a href="#Agent-136"><span class="linenos">136</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask&quot;</span><span class="p">:</span>
+</span><span id="Agent-137"><a href="#Agent-137"><span class="linenos">137</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-138"><a href="#Agent-138"><span class="linenos">138</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask_with_search&quot;</span><span class="p">:</span>
+</span><span id="Agent-139"><a href="#Agent-139"><span class="linenos">139</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskWithSearchLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent-140"><a href="#Agent-140"><span class="linenos">140</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent-141"><a href="#Agent-141"><span class="linenos">141</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="n">paradigm</span><span class="si">}</span><span class="s2">&#39; not supported. &quot;</span>
+</span><span id="Agent-142"><a href="#Agent-142"><span class="linenos">142</span></a>                               <span class="sa">f</span><span class="s2">&quot;Available paradigms: function_calling, react, &quot;</span>
+</span><span id="Agent-143"><a href="#Agent-143"><span class="linenos">143</span></a>                               <span class="sa">f</span><span class="s2">&quot;react_with_function_calling, plan-and-execute, &quot;</span>
+</span><span id="Agent-144"><a href="#Agent-144"><span class="linenos">144</span></a>                               <span class="sa">f</span><span class="s2">&quot;programmatic, reflexion, self_ask, self_ask_with_search, &quot;</span>
+</span><span id="Agent-145"><a href="#Agent-145"><span class="linenos">145</span></a>                               <span class="sa">f</span><span class="s2">&quot;or a custom object derived from _AgenticLoop&quot;</span><span class="p">)</span>
+</span><span id="Agent-146"><a href="#Agent-146"><span class="linenos">146</span></a>        
+</span><span id="Agent-147"><a href="#Agent-147"><span class="linenos">147</span></a>        <span class="k">if</span> <span class="n">tools</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Agent-148"><a href="#Agent-148"><span class="linenos">148</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">register_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+</span><span id="Agent-149"><a href="#Agent-149"><span class="linenos">149</span></a>        
+</span><span id="Agent-150"><a href="#Agent-150"><span class="linenos">150</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Prompt</span><span class="p">):</span>
+</span><span id="Agent-151"><a href="#Agent-151"><span class="linenos">151</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the agent with the specified prompt.</span>
+</span><span id="Agent-152"><a href="#Agent-152"><span class="linenos">152</span></a><span class="sd">        </span>
+</span><span id="Agent-153"><a href="#Agent-153"><span class="linenos">153</span></a><span class="sd">        This method processes a user prompt through the agent&#39;s reasoning</span>
+</span><span id="Agent-154"><a href="#Agent-154"><span class="linenos">154</span></a><span class="sd">        paradigm, returning a structured response that includes the reasoning</span>
+</span><span id="Agent-155"><a href="#Agent-155"><span class="linenos">155</span></a><span class="sd">        process and final answer.</span>
+</span><span id="Agent-156"><a href="#Agent-156"><span class="linenos">156</span></a><span class="sd">        </span>
+</span><span id="Agent-157"><a href="#Agent-157"><span class="linenos">157</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent-158"><a href="#Agent-158"><span class="linenos">158</span></a><span class="sd">        ----------</span>
+</span><span id="Agent-159"><a href="#Agent-159"><span class="linenos">159</span></a><span class="sd">        prompt : str or Prompt</span>
+</span><span id="Agent-160"><a href="#Agent-160"><span class="linenos">160</span></a><span class="sd">            User prompt or query to process. Can be a string or a Prompt object.</span>
 </span><span id="Agent-161"><a href="#Agent-161"><span class="linenos">161</span></a><span class="sd">        </span>
-</span><span id="Agent-162"><a href="#Agent-162"><span class="linenos">162</span></a><span class="sd">        The response structure may vary slightly depending on the paradigm:</span>
-</span><span id="Agent-163"><a href="#Agent-163"><span class="linenos">163</span></a><span class="sd">        - Function calling: Includes tool call details</span>
-</span><span id="Agent-164"><a href="#Agent-164"><span class="linenos">164</span></a><span class="sd">        - ReAct: Includes thought-action-observation cycles</span>
-</span><span id="Agent-165"><a href="#Agent-165"><span class="linenos">165</span></a><span class="sd">        - Plan-and-execute: Includes planning and execution phases</span>
-</span><span id="Agent-166"><a href="#Agent-166"><span class="linenos">166</span></a><span class="sd">        - Other paradigms: May include paradigm-specific information</span>
-</span><span id="Agent-167"><a href="#Agent-167"><span class="linenos">167</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent-168"><a href="#Agent-168"><span class="linenos">168</span></a>        
-</span><span id="Agent-169"><a href="#Agent-169"><span class="linenos">169</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
-</span><span id="Agent-170"><a href="#Agent-170"><span class="linenos">170</span></a>    
-</span><span id="Agent-171"><a href="#Agent-171"><span class="linenos">171</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">enable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Agent-172"><a href="#Agent-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable streaming responses for this agent.</span>
-</span><span id="Agent-173"><a href="#Agent-173"><span class="linenos">173</span></a><span class="sd">        </span>
-</span><span id="Agent-174"><a href="#Agent-174"><span class="linenos">174</span></a><span class="sd">        When streaming is enabled, the agent will call the provided callback</span>
-</span><span id="Agent-175"><a href="#Agent-175"><span class="linenos">175</span></a><span class="sd">        function with each content chunk as it&#39;s generated, allowing for</span>
-</span><span id="Agent-176"><a href="#Agent-176"><span class="linenos">176</span></a><span class="sd">        real-time processing and display of the AI&#39;s response.</span>
-</span><span id="Agent-177"><a href="#Agent-177"><span class="linenos">177</span></a><span class="sd">        </span>
-</span><span id="Agent-178"><a href="#Agent-178"><span class="linenos">178</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent-179"><a href="#Agent-179"><span class="linenos">179</span></a><span class="sd">        ----------</span>
-</span><span id="Agent-180"><a href="#Agent-180"><span class="linenos">180</span></a><span class="sd">        stream_callback : callable, optional</span>
-</span><span id="Agent-181"><a href="#Agent-181"><span class="linenos">181</span></a><span class="sd">            Callback function to handle streaming content chunks.</span>
-</span><span id="Agent-182"><a href="#Agent-182"><span class="linenos">182</span></a><span class="sd">            If None, uses a default callback that prints content to console.</span>
-</span><span id="Agent-183"><a href="#Agent-183"><span class="linenos">183</span></a><span class="sd">            The callback receives plain text content strings.</span>
-</span><span id="Agent-184"><a href="#Agent-184"><span class="linenos">184</span></a><span class="sd">        </span>
-</span><span id="Agent-185"><a href="#Agent-185"><span class="linenos">185</span></a><span class="sd">        Raises</span>
-</span><span id="Agent-186"><a href="#Agent-186"><span class="linenos">186</span></a><span class="sd">        ------</span>
-</span><span id="Agent-187"><a href="#Agent-187"><span class="linenos">187</span></a><span class="sd">        AttributeError</span>
-</span><span id="Agent-188"><a href="#Agent-188"><span class="linenos">188</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
-</span><span id="Agent-189"><a href="#Agent-189"><span class="linenos">189</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent-190"><a href="#Agent-190"><span class="linenos">190</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;enable_streaming&#39;</span><span class="p">):</span>
-</span><span id="Agent-191"><a href="#Agent-191"><span class="linenos">191</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">enable_streaming</span><span class="p">(</span><span class="n">stream_callback</span><span class="p">)</span>
-</span><span id="Agent-192"><a href="#Agent-192"><span class="linenos">192</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent-193"><a href="#Agent-193"><span class="linenos">193</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
-</span><span id="Agent-194"><a href="#Agent-194"><span class="linenos">194</span></a>    
-</span><span id="Agent-195"><a href="#Agent-195"><span class="linenos">195</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">disable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Agent-196"><a href="#Agent-196"><span class="linenos">196</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable streaming responses for this agent.</span>
-</span><span id="Agent-197"><a href="#Agent-197"><span class="linenos">197</span></a><span class="sd">        </span>
-</span><span id="Agent-198"><a href="#Agent-198"><span class="linenos">198</span></a><span class="sd">        After calling this method, the agent will use standard (non-streaming)</span>
-</span><span id="Agent-199"><a href="#Agent-199"><span class="linenos">199</span></a><span class="sd">        model execution for all subsequent requests.</span>
-</span><span id="Agent-200"><a href="#Agent-200"><span class="linenos">200</span></a><span class="sd">        </span>
-</span><span id="Agent-201"><a href="#Agent-201"><span class="linenos">201</span></a><span class="sd">        Raises</span>
-</span><span id="Agent-202"><a href="#Agent-202"><span class="linenos">202</span></a><span class="sd">        ------</span>
-</span><span id="Agent-203"><a href="#Agent-203"><span class="linenos">203</span></a><span class="sd">        AttributeError</span>
-</span><span id="Agent-204"><a href="#Agent-204"><span class="linenos">204</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
-</span><span id="Agent-205"><a href="#Agent-205"><span class="linenos">205</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent-206"><a href="#Agent-206"><span class="linenos">206</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;disable_streaming&#39;</span><span class="p">):</span>
-</span><span id="Agent-207"><a href="#Agent-207"><span class="linenos">207</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">disable_streaming</span><span class="p">()</span>
-</span><span id="Agent-208"><a href="#Agent-208"><span class="linenos">208</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent-209"><a href="#Agent-209"><span class="linenos">209</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
+</span><span id="Agent-162"><a href="#Agent-162"><span class="linenos">162</span></a><span class="sd">        Returns</span>
+</span><span id="Agent-163"><a href="#Agent-163"><span class="linenos">163</span></a><span class="sd">        -------</span>
+</span><span id="Agent-164"><a href="#Agent-164"><span class="linenos">164</span></a><span class="sd">        Dict[str, Any]</span>
+</span><span id="Agent-165"><a href="#Agent-165"><span class="linenos">165</span></a><span class="sd">            Agent response containing:</span>
+</span><span id="Agent-166"><a href="#Agent-166"><span class="linenos">166</span></a><span class="sd">            - prompt: Original user query</span>
+</span><span id="Agent-167"><a href="#Agent-167"><span class="linenos">167</span></a><span class="sd">            - iterations: List of processed reasoning iterations</span>
+</span><span id="Agent-168"><a href="#Agent-168"><span class="linenos">168</span></a><span class="sd">            - response: Final response (if available)</span>
+</span><span id="Agent-169"><a href="#Agent-169"><span class="linenos">169</span></a><span class="sd">            - metadata: Additional execution metadata (paradigm-specific)</span>
+</span><span id="Agent-170"><a href="#Agent-170"><span class="linenos">170</span></a><span class="sd">        </span>
+</span><span id="Agent-171"><a href="#Agent-171"><span class="linenos">171</span></a><span class="sd">        Notes</span>
+</span><span id="Agent-172"><a href="#Agent-172"><span class="linenos">172</span></a><span class="sd">        -----</span>
+</span><span id="Agent-173"><a href="#Agent-173"><span class="linenos">173</span></a><span class="sd">        This method delegates execution to the specific agentic loop</span>
+</span><span id="Agent-174"><a href="#Agent-174"><span class="linenos">174</span></a><span class="sd">        configured during initialization. The exact behavior depends on</span>
+</span><span id="Agent-175"><a href="#Agent-175"><span class="linenos">175</span></a><span class="sd">        the chosen paradigm (predefined or custom).</span>
+</span><span id="Agent-176"><a href="#Agent-176"><span class="linenos">176</span></a><span class="sd">        </span>
+</span><span id="Agent-177"><a href="#Agent-177"><span class="linenos">177</span></a><span class="sd">        The response structure may vary slightly depending on the paradigm:</span>
+</span><span id="Agent-178"><a href="#Agent-178"><span class="linenos">178</span></a><span class="sd">        - Function calling: Includes tool call details and function results</span>
+</span><span id="Agent-179"><a href="#Agent-179"><span class="linenos">179</span></a><span class="sd">        - ReAct: Includes thought-action-observation cycles</span>
+</span><span id="Agent-180"><a href="#Agent-180"><span class="linenos">180</span></a><span class="sd">        - Plan-and-execute: Includes planning and execution phases</span>
+</span><span id="Agent-181"><a href="#Agent-181"><span class="linenos">181</span></a><span class="sd">        - Programmatic: Includes code generation and execution results</span>
+</span><span id="Agent-182"><a href="#Agent-182"><span class="linenos">182</span></a><span class="sd">        - Reflexion: Includes self-reflection and error correction steps</span>
+</span><span id="Agent-183"><a href="#Agent-183"><span class="linenos">183</span></a><span class="sd">        - Self-ask: Includes question-answer reasoning chains</span>
+</span><span id="Agent-184"><a href="#Agent-184"><span class="linenos">184</span></a><span class="sd">        - Self-ask with search: Includes web search results and reasoning</span>
+</span><span id="Agent-185"><a href="#Agent-185"><span class="linenos">185</span></a><span class="sd">        - Custom paradigms: May include paradigm-specific information</span>
+</span><span id="Agent-186"><a href="#Agent-186"><span class="linenos">186</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent-187"><a href="#Agent-187"><span class="linenos">187</span></a>        
+</span><span id="Agent-188"><a href="#Agent-188"><span class="linenos">188</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="Agent-189"><a href="#Agent-189"><span class="linenos">189</span></a>    
+</span><span id="Agent-190"><a href="#Agent-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">enable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Agent-191"><a href="#Agent-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable streaming responses for this agent.</span>
+</span><span id="Agent-192"><a href="#Agent-192"><span class="linenos">192</span></a><span class="sd">        </span>
+</span><span id="Agent-193"><a href="#Agent-193"><span class="linenos">193</span></a><span class="sd">        When streaming is enabled, the agent will call the provided callback</span>
+</span><span id="Agent-194"><a href="#Agent-194"><span class="linenos">194</span></a><span class="sd">        function with each content chunk as it&#39;s generated, allowing for</span>
+</span><span id="Agent-195"><a href="#Agent-195"><span class="linenos">195</span></a><span class="sd">        real-time processing and display of the AI&#39;s response.</span>
+</span><span id="Agent-196"><a href="#Agent-196"><span class="linenos">196</span></a><span class="sd">        </span>
+</span><span id="Agent-197"><a href="#Agent-197"><span class="linenos">197</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent-198"><a href="#Agent-198"><span class="linenos">198</span></a><span class="sd">        ----------</span>
+</span><span id="Agent-199"><a href="#Agent-199"><span class="linenos">199</span></a><span class="sd">        stream_callback : callable, optional</span>
+</span><span id="Agent-200"><a href="#Agent-200"><span class="linenos">200</span></a><span class="sd">            Callback function to handle streaming content chunks.</span>
+</span><span id="Agent-201"><a href="#Agent-201"><span class="linenos">201</span></a><span class="sd">            If None, uses a default callback that prints content to console.</span>
+</span><span id="Agent-202"><a href="#Agent-202"><span class="linenos">202</span></a><span class="sd">            The callback receives plain text content strings.</span>
+</span><span id="Agent-203"><a href="#Agent-203"><span class="linenos">203</span></a><span class="sd">            </span>
+</span><span id="Agent-204"><a href="#Agent-204"><span class="linenos">204</span></a><span class="sd">            Callback signature: callback(content: str) -&gt; None</span>
+</span><span id="Agent-205"><a href="#Agent-205"><span class="linenos">205</span></a><span class="sd">            where content is the streaming text chunk.</span>
+</span><span id="Agent-206"><a href="#Agent-206"><span class="linenos">206</span></a><span class="sd">        </span>
+</span><span id="Agent-207"><a href="#Agent-207"><span class="linenos">207</span></a><span class="sd">        Raises</span>
+</span><span id="Agent-208"><a href="#Agent-208"><span class="linenos">208</span></a><span class="sd">        ------</span>
+</span><span id="Agent-209"><a href="#Agent-209"><span class="linenos">209</span></a><span class="sd">        AttributeError</span>
+</span><span id="Agent-210"><a href="#Agent-210"><span class="linenos">210</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
+</span><span id="Agent-211"><a href="#Agent-211"><span class="linenos">211</span></a><span class="sd">            </span>
+</span><span id="Agent-212"><a href="#Agent-212"><span class="linenos">212</span></a><span class="sd">        Notes</span>
+</span><span id="Agent-213"><a href="#Agent-213"><span class="linenos">213</span></a><span class="sd">        -----</span>
+</span><span id="Agent-214"><a href="#Agent-214"><span class="linenos">214</span></a><span class="sd">        Not all paradigms support streaming. Check the specific paradigm</span>
+</span><span id="Agent-215"><a href="#Agent-215"><span class="linenos">215</span></a><span class="sd">        implementation to ensure streaming is available.</span>
+</span><span id="Agent-216"><a href="#Agent-216"><span class="linenos">216</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent-217"><a href="#Agent-217"><span class="linenos">217</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;enable_streaming&#39;</span><span class="p">):</span>
+</span><span id="Agent-218"><a href="#Agent-218"><span class="linenos">218</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">enable_streaming</span><span class="p">(</span><span class="n">stream_callback</span><span class="p">)</span>
+</span><span id="Agent-219"><a href="#Agent-219"><span class="linenos">219</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent-220"><a href="#Agent-220"><span class="linenos">220</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
+</span><span id="Agent-221"><a href="#Agent-221"><span class="linenos">221</span></a>    
+</span><span id="Agent-222"><a href="#Agent-222"><span class="linenos">222</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">disable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Agent-223"><a href="#Agent-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable streaming responses for this agent.</span>
+</span><span id="Agent-224"><a href="#Agent-224"><span class="linenos">224</span></a><span class="sd">        </span>
+</span><span id="Agent-225"><a href="#Agent-225"><span class="linenos">225</span></a><span class="sd">        After calling this method, the agent will use standard (non-streaming)</span>
+</span><span id="Agent-226"><a href="#Agent-226"><span class="linenos">226</span></a><span class="sd">        model execution for all subsequent requests.</span>
+</span><span id="Agent-227"><a href="#Agent-227"><span class="linenos">227</span></a><span class="sd">        </span>
+</span><span id="Agent-228"><a href="#Agent-228"><span class="linenos">228</span></a><span class="sd">        Raises</span>
+</span><span id="Agent-229"><a href="#Agent-229"><span class="linenos">229</span></a><span class="sd">        ------</span>
+</span><span id="Agent-230"><a href="#Agent-230"><span class="linenos">230</span></a><span class="sd">        AttributeError</span>
+</span><span id="Agent-231"><a href="#Agent-231"><span class="linenos">231</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
+</span><span id="Agent-232"><a href="#Agent-232"><span class="linenos">232</span></a><span class="sd">            </span>
+</span><span id="Agent-233"><a href="#Agent-233"><span class="linenos">233</span></a><span class="sd">        Notes</span>
+</span><span id="Agent-234"><a href="#Agent-234"><span class="linenos">234</span></a><span class="sd">        -----</span>
+</span><span id="Agent-235"><a href="#Agent-235"><span class="linenos">235</span></a><span class="sd">        Not all paradigms support streaming. Check the specific paradigm</span>
+</span><span id="Agent-236"><a href="#Agent-236"><span class="linenos">236</span></a><span class="sd">        implementation to ensure streaming is available.</span>
+</span><span id="Agent-237"><a href="#Agent-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent-238"><a href="#Agent-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;disable_streaming&#39;</span><span class="p">):</span>
+</span><span id="Agent-239"><a href="#Agent-239"><span class="linenos">239</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">disable_streaming</span><span class="p">()</span>
+</span><span id="Agent-240"><a href="#Agent-240"><span class="linenos">240</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent-241"><a href="#Agent-241"><span class="linenos">241</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -312,105 +347,119 @@ and streaming configuration.</p>
                                         <input id="Agent.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">Agent</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="models.html#Model">monoai.models.Model</a></span>,</span><span class="param">	<span class="n">tools</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">paradigm</span><span class="o">=</span><span class="s1">&#39;function_calling&#39;</span>,</span><span class="param">	<span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">debug</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span></span>)</span>
+        <span class="name">Agent</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="models.html#Model">monoai.models.Model</a></span>,</span><span class="param">	<span class="n">tools</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">paradigm</span><span class="o">=</span><span class="s1">&#39;function_calling&#39;</span>,</span><span class="param">	<span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">debug</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">human_feedback</span><span class="o">=</span><span class="kc">None</span></span>)</span>
 
                 <label class="view-source-button" for="Agent.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Agent.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.__init__-42"><a href="#Agent.__init__-42"><span class="linenos"> 42</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">paradigm</span><span class="o">=</span><span class="s2">&quot;function_calling&quot;</span><span class="p">,</span> 
-</span><span id="Agent.__init__-43"><a href="#Agent.__init__-43"><span class="linenos"> 43</span></a>                 <span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Agent.__init__-44"><a href="#Agent.__init__-44"><span class="linenos"> 44</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the agent with the specified model and configuration.</span>
-</span><span id="Agent.__init__-45"><a href="#Agent.__init__-45"><span class="linenos"> 45</span></a><span class="sd">        </span>
-</span><span id="Agent.__init__-46"><a href="#Agent.__init__-46"><span class="linenos"> 46</span></a><span class="sd">        This constructor sets up an AI agent with the chosen reasoning paradigm,</span>
-</span><span id="Agent.__init__-47"><a href="#Agent.__init__-47"><span class="linenos"> 47</span></a><span class="sd">        registers any provided tools, and configures execution parameters.</span>
-</span><span id="Agent.__init__-48"><a href="#Agent.__init__-48"><span class="linenos"> 48</span></a><span class="sd">        </span>
-</span><span id="Agent.__init__-49"><a href="#Agent.__init__-49"><span class="linenos"> 49</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent.__init__-50"><a href="#Agent.__init__-50"><span class="linenos"> 50</span></a><span class="sd">        ----------</span>
-</span><span id="Agent.__init__-51"><a href="#Agent.__init__-51"><span class="linenos"> 51</span></a><span class="sd">        model : Model</span>
-</span><span id="Agent.__init__-52"><a href="#Agent.__init__-52"><span class="linenos"> 52</span></a><span class="sd">            AI model instance to use for agent execution</span>
-</span><span id="Agent.__init__-53"><a href="#Agent.__init__-53"><span class="linenos"> 53</span></a><span class="sd">        tools : list, optional</span>
-</span><span id="Agent.__init__-54"><a href="#Agent.__init__-54"><span class="linenos"> 54</span></a><span class="sd">            List of available tools for the agent. Each tool should be a</span>
-</span><span id="Agent.__init__-55"><a href="#Agent.__init__-55"><span class="linenos"> 55</span></a><span class="sd">            callable function. Default is None.</span>
-</span><span id="Agent.__init__-56"><a href="#Agent.__init__-56"><span class="linenos"> 56</span></a><span class="sd">        paradigm : str or _AgenticLoop, optional</span>
-</span><span id="Agent.__init__-57"><a href="#Agent.__init__-57"><span class="linenos"> 57</span></a><span class="sd">            Reasoning paradigm to use. Can be:</span>
-</span><span id="Agent.__init__-58"><a href="#Agent.__init__-58"><span class="linenos"> 58</span></a><span class="sd">            </span>
-</span><span id="Agent.__init__-59"><a href="#Agent.__init__-59"><span class="linenos"> 59</span></a><span class="sd">            **Predefined strings:**</span>
-</span><span id="Agent.__init__-60"><a href="#Agent.__init__-60"><span class="linenos"> 60</span></a><span class="sd">            - &quot;function_calling&quot;: Uses OpenAI native function calling</span>
-</span><span id="Agent.__init__-61"><a href="#Agent.__init__-61"><span class="linenos"> 61</span></a><span class="sd">            - &quot;react&quot;: Standard ReAct approach</span>
-</span><span id="Agent.__init__-62"><a href="#Agent.__init__-62"><span class="linenos"> 62</span></a><span class="sd">            - &quot;react_with_function_calling&quot;: Combines ReAct and function calling</span>
-</span><span id="Agent.__init__-63"><a href="#Agent.__init__-63"><span class="linenos"> 63</span></a><span class="sd">            - &quot;plan-and-execute&quot;: Plan-and-execute paradigm</span>
-</span><span id="Agent.__init__-64"><a href="#Agent.__init__-64"><span class="linenos"> 64</span></a><span class="sd">            - &quot;programmatic&quot;: Programmatic approach</span>
-</span><span id="Agent.__init__-65"><a href="#Agent.__init__-65"><span class="linenos"> 65</span></a><span class="sd">            - &quot;reflexion&quot;: Reflexion paradigm with self-reflection</span>
-</span><span id="Agent.__init__-66"><a href="#Agent.__init__-66"><span class="linenos"> 66</span></a><span class="sd">            - &quot;self_ask&quot;: Self-ask paradigm</span>
-</span><span id="Agent.__init__-67"><a href="#Agent.__init__-67"><span class="linenos"> 67</span></a><span class="sd">            - &quot;self_ask_with_search&quot;: Self-ask with web search capabilities</span>
-</span><span id="Agent.__init__-68"><a href="#Agent.__init__-68"><span class="linenos"> 68</span></a><span class="sd">            </span>
-</span><span id="Agent.__init__-69"><a href="#Agent.__init__-69"><span class="linenos"> 69</span></a><span class="sd">            **Custom object:**</span>
-</span><span id="Agent.__init__-70"><a href="#Agent.__init__-70"><span class="linenos"> 70</span></a><span class="sd">            - An instance of a class derived from _AgenticLoop</span>
-</span><span id="Agent.__init__-71"><a href="#Agent.__init__-71"><span class="linenos"> 71</span></a><span class="sd">            </span>
-</span><span id="Agent.__init__-72"><a href="#Agent.__init__-72"><span class="linenos"> 72</span></a><span class="sd">            Default is &quot;function_calling&quot;.</span>
-</span><span id="Agent.__init__-73"><a href="#Agent.__init__-73"><span class="linenos"> 73</span></a><span class="sd">        agent_prompt : str, optional</span>
-</span><span id="Agent.__init__-74"><a href="#Agent.__init__-74"><span class="linenos"> 74</span></a><span class="sd">            Custom prompt for the agent. If None, uses the default prompt</span>
-</span><span id="Agent.__init__-75"><a href="#Agent.__init__-75"><span class="linenos"> 75</span></a><span class="sd">            for the chosen paradigm. Default is None.</span>
-</span><span id="Agent.__init__-76"><a href="#Agent.__init__-76"><span class="linenos"> 76</span></a><span class="sd">        debug : bool, optional</span>
-</span><span id="Agent.__init__-77"><a href="#Agent.__init__-77"><span class="linenos"> 77</span></a><span class="sd">            Flag to enable debug output during execution.</span>
-</span><span id="Agent.__init__-78"><a href="#Agent.__init__-78"><span class="linenos"> 78</span></a><span class="sd">            Default is False.</span>
-</span><span id="Agent.__init__-79"><a href="#Agent.__init__-79"><span class="linenos"> 79</span></a><span class="sd">        max_iter : int, optional</span>
-</span><span id="Agent.__init__-80"><a href="#Agent.__init__-80"><span class="linenos"> 80</span></a><span class="sd">            Maximum number of iterations allowed for the agent.</span>
-</span><span id="Agent.__init__-81"><a href="#Agent.__init__-81"><span class="linenos"> 81</span></a><span class="sd">            If None, there are no limits. Default is None.</span>
-</span><span id="Agent.__init__-82"><a href="#Agent.__init__-82"><span class="linenos"> 82</span></a><span class="sd">        native_web_search : str, optional</span>
-</span><span id="Agent.__init__-83"><a href="#Agent.__init__-83"><span class="linenos"> 83</span></a><span class="sd">            Native web search capability level. Must be one of:</span>
-</span><span id="Agent.__init__-84"><a href="#Agent.__init__-84"><span class="linenos"> 84</span></a><span class="sd">            &quot;low&quot;, &quot;medium&quot;, or &quot;high&quot;. Default is None.</span>
-</span><span id="Agent.__init__-85"><a href="#Agent.__init__-85"><span class="linenos"> 85</span></a><span class="sd">        </span>
-</span><span id="Agent.__init__-86"><a href="#Agent.__init__-86"><span class="linenos"> 86</span></a><span class="sd">        Raises</span>
-</span><span id="Agent.__init__-87"><a href="#Agent.__init__-87"><span class="linenos"> 87</span></a><span class="sd">        ------</span>
-</span><span id="Agent.__init__-88"><a href="#Agent.__init__-88"><span class="linenos"> 88</span></a><span class="sd">        ValueError</span>
-</span><span id="Agent.__init__-89"><a href="#Agent.__init__-89"><span class="linenos"> 89</span></a><span class="sd">            If the specified paradigm is not supported or invalid</span>
-</span><span id="Agent.__init__-90"><a href="#Agent.__init__-90"><span class="linenos"> 90</span></a><span class="sd">        TypeError</span>
-</span><span id="Agent.__init__-91"><a href="#Agent.__init__-91"><span class="linenos"> 91</span></a><span class="sd">            If a custom object is passed that doesn&#39;t derive from _AgenticLoop</span>
-</span><span id="Agent.__init__-92"><a href="#Agent.__init__-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent.__init__-93"><a href="#Agent.__init__-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
-</span><span id="Agent.__init__-94"><a href="#Agent.__init__-94"><span class="linenos"> 94</span></a>
-</span><span id="Agent.__init__-95"><a href="#Agent.__init__-95"><span class="linenos"> 95</span></a>        <span class="k">if</span> <span class="n">native_web_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">native_web_search</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]:</span>
-</span><span id="Agent.__init__-96"><a href="#Agent.__init__-96"><span class="linenos"> 96</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;native_web_search must be &#39;low&#39;, &#39;medium&#39; or &#39;high&#39;&quot;</span><span class="p">)</span>
-</span><span id="Agent.__init__-97"><a href="#Agent.__init__-97"><span class="linenos"> 97</span></a>        
-</span><span id="Agent.__init__-98"><a href="#Agent.__init__-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_web_search</span> <span class="o">=</span> <span class="n">native_web_search</span>
-</span><span id="Agent.__init__-99"><a href="#Agent.__init__-99"><span class="linenos"> 99</span></a>
-</span><span id="Agent.__init__-100"><a href="#Agent.__init__-100"><span class="linenos">100</span></a>        <span class="c1"># Gestione paradigma personalizzato</span>
-</span><span id="Agent.__init__-101"><a href="#Agent.__init__-101"><span class="linenos">101</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="n">_AgenticLoop</span><span class="p">):</span>
-</span><span id="Agent.__init__-102"><a href="#Agent.__init__-102"><span class="linenos">102</span></a>            <span class="c1"># Verifica che l&#39;oggetto personalizzato sia valido</span>
-</span><span id="Agent.__init__-103"><a href="#Agent.__init__-103"><span class="linenos">103</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">paradigm</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
-</span><span id="Agent.__init__-104"><a href="#Agent.__init__-104"><span class="linenos">104</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Il paradigma personalizzato deve avere un metodo &#39;start&#39; callable&quot;</span><span class="p">)</span>
-</span><span id="Agent.__init__-105"><a href="#Agent.__init__-105"><span class="linenos">105</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">paradigm</span>
-</span><span id="Agent.__init__-106"><a href="#Agent.__init__-106"><span class="linenos">106</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent.__init__-107"><a href="#Agent.__init__-107"><span class="linenos">107</span></a>            <span class="c1"># Paradigmi predefiniti</span>
-</span><span id="Agent.__init__-108"><a href="#Agent.__init__-108"><span class="linenos">108</span></a>            <span class="n">loop_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">agent_prompt</span><span class="p">,</span> <span class="n">debug</span><span class="p">,</span> <span class="n">max_iter</span>
-</span><span id="Agent.__init__-109"><a href="#Agent.__init__-109"><span class="linenos">109</span></a>            
-</span><span id="Agent.__init__-110"><a href="#Agent.__init__-110"><span class="linenos">110</span></a>            <span class="k">if</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;function_calling&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-111"><a href="#Agent.__init__-111"><span class="linenos">111</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">FunctionCallingAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-112"><a href="#Agent.__init__-112"><span class="linenos">112</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-113"><a href="#Agent.__init__-113"><span class="linenos">113</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-114"><a href="#Agent.__init__-114"><span class="linenos">114</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react_with_function_calling&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-115"><a href="#Agent.__init__-115"><span class="linenos">115</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactWithFCAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-116"><a href="#Agent.__init__-116"><span class="linenos">116</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;plan-and-execute&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-117"><a href="#Agent.__init__-117"><span class="linenos">117</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">PlanAndExecuteAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-118"><a href="#Agent.__init__-118"><span class="linenos">118</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;programmatic&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-119"><a href="#Agent.__init__-119"><span class="linenos">119</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ProgrammaticAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-120"><a href="#Agent.__init__-120"><span class="linenos">120</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;reflexion&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-121"><a href="#Agent.__init__-121"><span class="linenos">121</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReflexionAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-122"><a href="#Agent.__init__-122"><span class="linenos">122</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-123"><a href="#Agent.__init__-123"><span class="linenos">123</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-124"><a href="#Agent.__init__-124"><span class="linenos">124</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask_with_search&quot;</span><span class="p">:</span>
-</span><span id="Agent.__init__-125"><a href="#Agent.__init__-125"><span class="linenos">125</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskWithSearchLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
-</span><span id="Agent.__init__-126"><a href="#Agent.__init__-126"><span class="linenos">126</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent.__init__-127"><a href="#Agent.__init__-127"><span class="linenos">127</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigma &#39;</span><span class="si">{</span><span class="n">paradigm</span><span class="si">}</span><span class="s2">&#39; non supportato. &quot;</span>
-</span><span id="Agent.__init__-128"><a href="#Agent.__init__-128"><span class="linenos">128</span></a>                               <span class="sa">f</span><span class="s2">&quot;Paradigmi disponibili: function_calling, react, &quot;</span>
-</span><span id="Agent.__init__-129"><a href="#Agent.__init__-129"><span class="linenos">129</span></a>                               <span class="sa">f</span><span class="s2">&quot;react_with_function_calling, plan-and-execute, &quot;</span>
-</span><span id="Agent.__init__-130"><a href="#Agent.__init__-130"><span class="linenos">130</span></a>                               <span class="sa">f</span><span class="s2">&quot;programmatic, reflexion, self_ask, self_ask_with_search, &quot;</span>
-</span><span id="Agent.__init__-131"><a href="#Agent.__init__-131"><span class="linenos">131</span></a>                               <span class="sa">f</span><span class="s2">&quot;oppure un oggetto personalizzato derivato da _AgenticLoop&quot;</span><span class="p">)</span>
-</span><span id="Agent.__init__-132"><a href="#Agent.__init__-132"><span class="linenos">132</span></a>        
-</span><span id="Agent.__init__-133"><a href="#Agent.__init__-133"><span class="linenos">133</span></a>        <span class="k">if</span> <span class="n">tools</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Agent.__init__-134"><a href="#Agent.__init__-134"><span class="linenos">134</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">register_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
+</span><span id="Agent.__init__-43"><a href="#Agent.__init__-43"><span class="linenos"> 43</span></a>                 <span class="n">agent_prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">native_web_search</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+</span><span id="Agent.__init__-44"><a href="#Agent.__init__-44"><span class="linenos"> 44</span></a>                 <span class="n">human_feedback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Agent.__init__-45"><a href="#Agent.__init__-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the agent with the specified model and configuration.</span>
+</span><span id="Agent.__init__-46"><a href="#Agent.__init__-46"><span class="linenos"> 46</span></a><span class="sd">        </span>
+</span><span id="Agent.__init__-47"><a href="#Agent.__init__-47"><span class="linenos"> 47</span></a><span class="sd">        This constructor sets up an AI agent with the chosen reasoning paradigm,</span>
+</span><span id="Agent.__init__-48"><a href="#Agent.__init__-48"><span class="linenos"> 48</span></a><span class="sd">        registers any provided tools, and configures execution parameters.</span>
+</span><span id="Agent.__init__-49"><a href="#Agent.__init__-49"><span class="linenos"> 49</span></a><span class="sd">        </span>
+</span><span id="Agent.__init__-50"><a href="#Agent.__init__-50"><span class="linenos"> 50</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent.__init__-51"><a href="#Agent.__init__-51"><span class="linenos"> 51</span></a><span class="sd">        ----------</span>
+</span><span id="Agent.__init__-52"><a href="#Agent.__init__-52"><span class="linenos"> 52</span></a><span class="sd">        model : Model</span>
+</span><span id="Agent.__init__-53"><a href="#Agent.__init__-53"><span class="linenos"> 53</span></a><span class="sd">            AI model instance to use for agent execution</span>
+</span><span id="Agent.__init__-54"><a href="#Agent.__init__-54"><span class="linenos"> 54</span></a><span class="sd">        tools : list, optional</span>
+</span><span id="Agent.__init__-55"><a href="#Agent.__init__-55"><span class="linenos"> 55</span></a><span class="sd">            List of available tools for the agent. Each tool should be a</span>
+</span><span id="Agent.__init__-56"><a href="#Agent.__init__-56"><span class="linenos"> 56</span></a><span class="sd">            callable function. Default is None.</span>
+</span><span id="Agent.__init__-57"><a href="#Agent.__init__-57"><span class="linenos"> 57</span></a><span class="sd">        paradigm : str or _AgenticLoop, optional</span>
+</span><span id="Agent.__init__-58"><a href="#Agent.__init__-58"><span class="linenos"> 58</span></a><span class="sd">            Reasoning paradigm to use. Can be:</span>
+</span><span id="Agent.__init__-59"><a href="#Agent.__init__-59"><span class="linenos"> 59</span></a><span class="sd">            </span>
+</span><span id="Agent.__init__-60"><a href="#Agent.__init__-60"><span class="linenos"> 60</span></a><span class="sd">            **Predefined strings:**</span>
+</span><span id="Agent.__init__-61"><a href="#Agent.__init__-61"><span class="linenos"> 61</span></a><span class="sd">            - &quot;function_calling&quot;: Uses OpenAI native function calling</span>
+</span><span id="Agent.__init__-62"><a href="#Agent.__init__-62"><span class="linenos"> 62</span></a><span class="sd">            - &quot;react&quot;: Standard ReAct approach</span>
+</span><span id="Agent.__init__-63"><a href="#Agent.__init__-63"><span class="linenos"> 63</span></a><span class="sd">            - &quot;react_with_function_calling&quot;: Combines ReAct and function calling</span>
+</span><span id="Agent.__init__-64"><a href="#Agent.__init__-64"><span class="linenos"> 64</span></a><span class="sd">            - &quot;plan-and-execute&quot;: Plan-and-execute paradigm</span>
+</span><span id="Agent.__init__-65"><a href="#Agent.__init__-65"><span class="linenos"> 65</span></a><span class="sd">            - &quot;programmatic&quot;: Programmatic approach</span>
+</span><span id="Agent.__init__-66"><a href="#Agent.__init__-66"><span class="linenos"> 66</span></a><span class="sd">            - &quot;reflexion&quot;: Reflexion paradigm with self-reflection</span>
+</span><span id="Agent.__init__-67"><a href="#Agent.__init__-67"><span class="linenos"> 67</span></a><span class="sd">            - &quot;self_ask&quot;: Self-ask paradigm</span>
+</span><span id="Agent.__init__-68"><a href="#Agent.__init__-68"><span class="linenos"> 68</span></a><span class="sd">            - &quot;self_ask_with_search&quot;: Self-ask with web search capabilities</span>
+</span><span id="Agent.__init__-69"><a href="#Agent.__init__-69"><span class="linenos"> 69</span></a><span class="sd">            </span>
+</span><span id="Agent.__init__-70"><a href="#Agent.__init__-70"><span class="linenos"> 70</span></a><span class="sd">            **Custom object:**</span>
+</span><span id="Agent.__init__-71"><a href="#Agent.__init__-71"><span class="linenos"> 71</span></a><span class="sd">            - An instance of a class derived from _AgenticLoop</span>
+</span><span id="Agent.__init__-72"><a href="#Agent.__init__-72"><span class="linenos"> 72</span></a><span class="sd">            </span>
+</span><span id="Agent.__init__-73"><a href="#Agent.__init__-73"><span class="linenos"> 73</span></a><span class="sd">            Default is &quot;function_calling&quot;.</span>
+</span><span id="Agent.__init__-74"><a href="#Agent.__init__-74"><span class="linenos"> 74</span></a><span class="sd">        agent_prompt : str, optional</span>
+</span><span id="Agent.__init__-75"><a href="#Agent.__init__-75"><span class="linenos"> 75</span></a><span class="sd">            Custom prompt for the agent. If None, uses the default prompt</span>
+</span><span id="Agent.__init__-76"><a href="#Agent.__init__-76"><span class="linenos"> 76</span></a><span class="sd">            for the chosen paradigm. Default is None.</span>
+</span><span id="Agent.__init__-77"><a href="#Agent.__init__-77"><span class="linenos"> 77</span></a><span class="sd">        name : str, optional</span>
+</span><span id="Agent.__init__-78"><a href="#Agent.__init__-78"><span class="linenos"> 78</span></a><span class="sd">            Name identifier for the agent. Default is empty string.</span>
+</span><span id="Agent.__init__-79"><a href="#Agent.__init__-79"><span class="linenos"> 79</span></a><span class="sd">        debug : bool, optional</span>
+</span><span id="Agent.__init__-80"><a href="#Agent.__init__-80"><span class="linenos"> 80</span></a><span class="sd">            Flag to enable debug output during execution.</span>
+</span><span id="Agent.__init__-81"><a href="#Agent.__init__-81"><span class="linenos"> 81</span></a><span class="sd">            Default is False.</span>
+</span><span id="Agent.__init__-82"><a href="#Agent.__init__-82"><span class="linenos"> 82</span></a><span class="sd">        max_iter : int, optional</span>
+</span><span id="Agent.__init__-83"><a href="#Agent.__init__-83"><span class="linenos"> 83</span></a><span class="sd">            Maximum number of iterations allowed for the agent.</span>
+</span><span id="Agent.__init__-84"><a href="#Agent.__init__-84"><span class="linenos"> 84</span></a><span class="sd">            If None, there are no limits. Default is None.</span>
+</span><span id="Agent.__init__-85"><a href="#Agent.__init__-85"><span class="linenos"> 85</span></a><span class="sd">        native_web_search : str, optional</span>
+</span><span id="Agent.__init__-86"><a href="#Agent.__init__-86"><span class="linenos"> 86</span></a><span class="sd">            Native web search capability level. Must be one of:</span>
+</span><span id="Agent.__init__-87"><a href="#Agent.__init__-87"><span class="linenos"> 87</span></a><span class="sd">            &quot;low&quot;, &quot;medium&quot;, or &quot;high&quot;. Default is None.</span>
+</span><span id="Agent.__init__-88"><a href="#Agent.__init__-88"><span class="linenos"> 88</span></a><span class="sd">        human_feedback : str, optional</span>
+</span><span id="Agent.__init__-89"><a href="#Agent.__init__-89"><span class="linenos"> 89</span></a><span class="sd">            Human feedback mode for controlling agent execution. Can be:</span>
+</span><span id="Agent.__init__-90"><a href="#Agent.__init__-90"><span class="linenos"> 90</span></a><span class="sd">            - None: No human feedback required (default)</span>
+</span><span id="Agent.__init__-91"><a href="#Agent.__init__-91"><span class="linenos"> 91</span></a><span class="sd">            - &quot;actions&quot;: Pause and request confirmation before executing tool actions</span>
+</span><span id="Agent.__init__-92"><a href="#Agent.__init__-92"><span class="linenos"> 92</span></a><span class="sd">            - &quot;all&quot;: Pause after every step for human review</span>
+</span><span id="Agent.__init__-93"><a href="#Agent.__init__-93"><span class="linenos"> 93</span></a><span class="sd">            Default is None.</span>
+</span><span id="Agent.__init__-94"><a href="#Agent.__init__-94"><span class="linenos"> 94</span></a><span class="sd">        </span>
+</span><span id="Agent.__init__-95"><a href="#Agent.__init__-95"><span class="linenos"> 95</span></a><span class="sd">        Raises</span>
+</span><span id="Agent.__init__-96"><a href="#Agent.__init__-96"><span class="linenos"> 96</span></a><span class="sd">        ------</span>
+</span><span id="Agent.__init__-97"><a href="#Agent.__init__-97"><span class="linenos"> 97</span></a><span class="sd">        ValueError</span>
+</span><span id="Agent.__init__-98"><a href="#Agent.__init__-98"><span class="linenos"> 98</span></a><span class="sd">            If the specified paradigm is not supported or invalid</span>
+</span><span id="Agent.__init__-99"><a href="#Agent.__init__-99"><span class="linenos"> 99</span></a><span class="sd">        TypeError</span>
+</span><span id="Agent.__init__-100"><a href="#Agent.__init__-100"><span class="linenos">100</span></a><span class="sd">            If a custom object is passed that doesn&#39;t derive from _AgenticLoop</span>
+</span><span id="Agent.__init__-101"><a href="#Agent.__init__-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent.__init__-102"><a href="#Agent.__init__-102"><span class="linenos">102</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+</span><span id="Agent.__init__-103"><a href="#Agent.__init__-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="Agent.__init__-104"><a href="#Agent.__init__-104"><span class="linenos">104</span></a>
+</span><span id="Agent.__init__-105"><a href="#Agent.__init__-105"><span class="linenos">105</span></a>        <span class="k">if</span> <span class="n">native_web_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">native_web_search</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]:</span>
+</span><span id="Agent.__init__-106"><a href="#Agent.__init__-106"><span class="linenos">106</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;native_web_search must be &#39;low&#39;, &#39;medium&#39; or &#39;high&#39;&quot;</span><span class="p">)</span>
+</span><span id="Agent.__init__-107"><a href="#Agent.__init__-107"><span class="linenos">107</span></a>        
+</span><span id="Agent.__init__-108"><a href="#Agent.__init__-108"><span class="linenos">108</span></a>        <span class="k">if</span> <span class="n">human_feedback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">human_feedback</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+</span><span id="Agent.__init__-109"><a href="#Agent.__init__-109"><span class="linenos">109</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;human_feedback must be None, &#39;actions&#39;, or &#39;all&#39;&quot;</span><span class="p">)</span>
+</span><span id="Agent.__init__-110"><a href="#Agent.__init__-110"><span class="linenos">110</span></a>        
+</span><span id="Agent.__init__-111"><a href="#Agent.__init__-111"><span class="linenos">111</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_web_search</span> <span class="o">=</span> <span class="n">native_web_search</span>
+</span><span id="Agent.__init__-112"><a href="#Agent.__init__-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_human_feedback</span> <span class="o">=</span> <span class="n">human_feedback</span>
+</span><span id="Agent.__init__-113"><a href="#Agent.__init__-113"><span class="linenos">113</span></a>
+</span><span id="Agent.__init__-114"><a href="#Agent.__init__-114"><span class="linenos">114</span></a>        <span class="c1"># Handle custom paradigm</span>
+</span><span id="Agent.__init__-115"><a href="#Agent.__init__-115"><span class="linenos">115</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="n">_AgenticLoop</span><span class="p">):</span>
+</span><span id="Agent.__init__-116"><a href="#Agent.__init__-116"><span class="linenos">116</span></a>            <span class="c1"># Verify that the custom object is valid</span>
+</span><span id="Agent.__init__-117"><a href="#Agent.__init__-117"><span class="linenos">117</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">paradigm</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">paradigm</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
+</span><span id="Agent.__init__-118"><a href="#Agent.__init__-118"><span class="linenos">118</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Custom paradigm must have a callable &#39;start&#39; method&quot;</span><span class="p">)</span>
+</span><span id="Agent.__init__-119"><a href="#Agent.__init__-119"><span class="linenos">119</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">paradigm</span>
+</span><span id="Agent.__init__-120"><a href="#Agent.__init__-120"><span class="linenos">120</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent.__init__-121"><a href="#Agent.__init__-121"><span class="linenos">121</span></a>            <span class="c1"># Predefined paradigms</span>
+</span><span id="Agent.__init__-122"><a href="#Agent.__init__-122"><span class="linenos">122</span></a>            <span class="n">loop_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">agent_prompt</span><span class="p">,</span> <span class="n">debug</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">human_feedback</span>
+</span><span id="Agent.__init__-123"><a href="#Agent.__init__-123"><span class="linenos">123</span></a>            
+</span><span id="Agent.__init__-124"><a href="#Agent.__init__-124"><span class="linenos">124</span></a>            <span class="k">if</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;function_calling&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-125"><a href="#Agent.__init__-125"><span class="linenos">125</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">FunctionCallingAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-126"><a href="#Agent.__init__-126"><span class="linenos">126</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-127"><a href="#Agent.__init__-127"><span class="linenos">127</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-128"><a href="#Agent.__init__-128"><span class="linenos">128</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;react_with_function_calling&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-129"><a href="#Agent.__init__-129"><span class="linenos">129</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReactWithFCAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-130"><a href="#Agent.__init__-130"><span class="linenos">130</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;plan-and-execute&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-131"><a href="#Agent.__init__-131"><span class="linenos">131</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">PlanAndExecuteAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-132"><a href="#Agent.__init__-132"><span class="linenos">132</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;programmatic&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-133"><a href="#Agent.__init__-133"><span class="linenos">133</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ProgrammaticAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-134"><a href="#Agent.__init__-134"><span class="linenos">134</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;reflexion&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-135"><a href="#Agent.__init__-135"><span class="linenos">135</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">ReflexionAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-136"><a href="#Agent.__init__-136"><span class="linenos">136</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-137"><a href="#Agent.__init__-137"><span class="linenos">137</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskAgenticLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-138"><a href="#Agent.__init__-138"><span class="linenos">138</span></a>            <span class="k">elif</span> <span class="n">paradigm</span> <span class="o">==</span> <span class="s2">&quot;self_ask_with_search&quot;</span><span class="p">:</span>
+</span><span id="Agent.__init__-139"><a href="#Agent.__init__-139"><span class="linenos">139</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">SelfAskWithSearchLoop</span><span class="p">(</span><span class="o">*</span><span class="n">loop_kwargs</span><span class="p">)</span>
+</span><span id="Agent.__init__-140"><a href="#Agent.__init__-140"><span class="linenos">140</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent.__init__-141"><a href="#Agent.__init__-141"><span class="linenos">141</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="n">paradigm</span><span class="si">}</span><span class="s2">&#39; not supported. &quot;</span>
+</span><span id="Agent.__init__-142"><a href="#Agent.__init__-142"><span class="linenos">142</span></a>                               <span class="sa">f</span><span class="s2">&quot;Available paradigms: function_calling, react, &quot;</span>
+</span><span id="Agent.__init__-143"><a href="#Agent.__init__-143"><span class="linenos">143</span></a>                               <span class="sa">f</span><span class="s2">&quot;react_with_function_calling, plan-and-execute, &quot;</span>
+</span><span id="Agent.__init__-144"><a href="#Agent.__init__-144"><span class="linenos">144</span></a>                               <span class="sa">f</span><span class="s2">&quot;programmatic, reflexion, self_ask, self_ask_with_search, &quot;</span>
+</span><span id="Agent.__init__-145"><a href="#Agent.__init__-145"><span class="linenos">145</span></a>                               <span class="sa">f</span><span class="s2">&quot;or a custom object derived from _AgenticLoop&quot;</span><span class="p">)</span>
+</span><span id="Agent.__init__-146"><a href="#Agent.__init__-146"><span class="linenos">146</span></a>        
+</span><span id="Agent.__init__-147"><a href="#Agent.__init__-147"><span class="linenos">147</span></a>        <span class="k">if</span> <span class="n">tools</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Agent.__init__-148"><a href="#Agent.__init__-148"><span class="linenos">148</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">register_tools</span><span class="p">(</span><span class="n">tools</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -453,6 +502,8 @@ Reasoning paradigm to use. Can be:</p>
 <li><strong>agent_prompt</strong> (str, optional):
 Custom prompt for the agent. If None, uses the default prompt
 for the chosen paradigm. Default is None.</li>
+<li><strong>name</strong> (str, optional):
+Name identifier for the agent. Default is empty string.</li>
 <li><strong>debug</strong> (bool, optional):
 Flag to enable debug output during execution.
 Default is False.</li>
@@ -462,6 +513,14 @@ If None, there are no limits. Default is None.</li>
 <li><strong>native_web_search</strong> (str, optional):
 Native web search capability level. Must be one of:
 "low", "medium", or "high". Default is None.</li>
+<li><strong>human_feedback</strong> (str, optional):
+Human feedback mode for controlling agent execution. Can be:
+<ul>
+<li>None: No human feedback required (default)</li>
+<li>"actions": Pause and request confirmation before executing tool actions</li>
+<li>"all": Pause after every step for human review
+Default is None.</li>
+</ul></li>
 </ul>
 
 <h6 id="raises">Raises</h6>
@@ -472,6 +531,17 @@ Native web search capability level. Must be one of:
 </ul>
 </div>
 
+
+                            </div>
+                            <div id="Agent.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Agent.name"></a>
+    
+    
 
                             </div>
                             <div id="Agent.run" class="classattr">
@@ -485,40 +555,45 @@ Native web search capability level. Must be one of:
 
     </div>
     <a class="headerlink" href="#Agent.run"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.run-136"><a href="#Agent.run-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Prompt</span><span class="p">):</span>
-</span><span id="Agent.run-137"><a href="#Agent.run-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the agent with the specified prompt.</span>
-</span><span id="Agent.run-138"><a href="#Agent.run-138"><span class="linenos">138</span></a><span class="sd">        </span>
-</span><span id="Agent.run-139"><a href="#Agent.run-139"><span class="linenos">139</span></a><span class="sd">        This method processes a user prompt through the agent&#39;s reasoning</span>
-</span><span id="Agent.run-140"><a href="#Agent.run-140"><span class="linenos">140</span></a><span class="sd">        paradigm, returning a structured response that includes the reasoning</span>
-</span><span id="Agent.run-141"><a href="#Agent.run-141"><span class="linenos">141</span></a><span class="sd">        process and final answer.</span>
-</span><span id="Agent.run-142"><a href="#Agent.run-142"><span class="linenos">142</span></a><span class="sd">        </span>
-</span><span id="Agent.run-143"><a href="#Agent.run-143"><span class="linenos">143</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent.run-144"><a href="#Agent.run-144"><span class="linenos">144</span></a><span class="sd">        ----------</span>
-</span><span id="Agent.run-145"><a href="#Agent.run-145"><span class="linenos">145</span></a><span class="sd">        prompt : str or Prompt</span>
-</span><span id="Agent.run-146"><a href="#Agent.run-146"><span class="linenos">146</span></a><span class="sd">            User prompt or query to process. Can be a string or a Prompt object.</span>
-</span><span id="Agent.run-147"><a href="#Agent.run-147"><span class="linenos">147</span></a><span class="sd">        </span>
-</span><span id="Agent.run-148"><a href="#Agent.run-148"><span class="linenos">148</span></a><span class="sd">        Returns</span>
-</span><span id="Agent.run-149"><a href="#Agent.run-149"><span class="linenos">149</span></a><span class="sd">        -------</span>
-</span><span id="Agent.run-150"><a href="#Agent.run-150"><span class="linenos">150</span></a><span class="sd">        Dict[str, Any]</span>
-</span><span id="Agent.run-151"><a href="#Agent.run-151"><span class="linenos">151</span></a><span class="sd">            Agent response containing:</span>
-</span><span id="Agent.run-152"><a href="#Agent.run-152"><span class="linenos">152</span></a><span class="sd">            - prompt: Original user query</span>
-</span><span id="Agent.run-153"><a href="#Agent.run-153"><span class="linenos">153</span></a><span class="sd">            - iterations: List of processed reasoning iterations</span>
-</span><span id="Agent.run-154"><a href="#Agent.run-154"><span class="linenos">154</span></a><span class="sd">            - response: Final response (if available)</span>
-</span><span id="Agent.run-155"><a href="#Agent.run-155"><span class="linenos">155</span></a><span class="sd">        </span>
-</span><span id="Agent.run-156"><a href="#Agent.run-156"><span class="linenos">156</span></a><span class="sd">        Notes</span>
-</span><span id="Agent.run-157"><a href="#Agent.run-157"><span class="linenos">157</span></a><span class="sd">        -----</span>
-</span><span id="Agent.run-158"><a href="#Agent.run-158"><span class="linenos">158</span></a><span class="sd">        This method delegates execution to the specific agentic loop</span>
-</span><span id="Agent.run-159"><a href="#Agent.run-159"><span class="linenos">159</span></a><span class="sd">        configured during initialization. The exact behavior depends on</span>
-</span><span id="Agent.run-160"><a href="#Agent.run-160"><span class="linenos">160</span></a><span class="sd">        the chosen paradigm (predefined or custom).</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.run-150"><a href="#Agent.run-150"><span class="linenos">150</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Prompt</span><span class="p">):</span>
+</span><span id="Agent.run-151"><a href="#Agent.run-151"><span class="linenos">151</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the agent with the specified prompt.</span>
+</span><span id="Agent.run-152"><a href="#Agent.run-152"><span class="linenos">152</span></a><span class="sd">        </span>
+</span><span id="Agent.run-153"><a href="#Agent.run-153"><span class="linenos">153</span></a><span class="sd">        This method processes a user prompt through the agent&#39;s reasoning</span>
+</span><span id="Agent.run-154"><a href="#Agent.run-154"><span class="linenos">154</span></a><span class="sd">        paradigm, returning a structured response that includes the reasoning</span>
+</span><span id="Agent.run-155"><a href="#Agent.run-155"><span class="linenos">155</span></a><span class="sd">        process and final answer.</span>
+</span><span id="Agent.run-156"><a href="#Agent.run-156"><span class="linenos">156</span></a><span class="sd">        </span>
+</span><span id="Agent.run-157"><a href="#Agent.run-157"><span class="linenos">157</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent.run-158"><a href="#Agent.run-158"><span class="linenos">158</span></a><span class="sd">        ----------</span>
+</span><span id="Agent.run-159"><a href="#Agent.run-159"><span class="linenos">159</span></a><span class="sd">        prompt : str or Prompt</span>
+</span><span id="Agent.run-160"><a href="#Agent.run-160"><span class="linenos">160</span></a><span class="sd">            User prompt or query to process. Can be a string or a Prompt object.</span>
 </span><span id="Agent.run-161"><a href="#Agent.run-161"><span class="linenos">161</span></a><span class="sd">        </span>
-</span><span id="Agent.run-162"><a href="#Agent.run-162"><span class="linenos">162</span></a><span class="sd">        The response structure may vary slightly depending on the paradigm:</span>
-</span><span id="Agent.run-163"><a href="#Agent.run-163"><span class="linenos">163</span></a><span class="sd">        - Function calling: Includes tool call details</span>
-</span><span id="Agent.run-164"><a href="#Agent.run-164"><span class="linenos">164</span></a><span class="sd">        - ReAct: Includes thought-action-observation cycles</span>
-</span><span id="Agent.run-165"><a href="#Agent.run-165"><span class="linenos">165</span></a><span class="sd">        - Plan-and-execute: Includes planning and execution phases</span>
-</span><span id="Agent.run-166"><a href="#Agent.run-166"><span class="linenos">166</span></a><span class="sd">        - Other paradigms: May include paradigm-specific information</span>
-</span><span id="Agent.run-167"><a href="#Agent.run-167"><span class="linenos">167</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent.run-168"><a href="#Agent.run-168"><span class="linenos">168</span></a>        
-</span><span id="Agent.run-169"><a href="#Agent.run-169"><span class="linenos">169</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+</span><span id="Agent.run-162"><a href="#Agent.run-162"><span class="linenos">162</span></a><span class="sd">        Returns</span>
+</span><span id="Agent.run-163"><a href="#Agent.run-163"><span class="linenos">163</span></a><span class="sd">        -------</span>
+</span><span id="Agent.run-164"><a href="#Agent.run-164"><span class="linenos">164</span></a><span class="sd">        Dict[str, Any]</span>
+</span><span id="Agent.run-165"><a href="#Agent.run-165"><span class="linenos">165</span></a><span class="sd">            Agent response containing:</span>
+</span><span id="Agent.run-166"><a href="#Agent.run-166"><span class="linenos">166</span></a><span class="sd">            - prompt: Original user query</span>
+</span><span id="Agent.run-167"><a href="#Agent.run-167"><span class="linenos">167</span></a><span class="sd">            - iterations: List of processed reasoning iterations</span>
+</span><span id="Agent.run-168"><a href="#Agent.run-168"><span class="linenos">168</span></a><span class="sd">            - response: Final response (if available)</span>
+</span><span id="Agent.run-169"><a href="#Agent.run-169"><span class="linenos">169</span></a><span class="sd">            - metadata: Additional execution metadata (paradigm-specific)</span>
+</span><span id="Agent.run-170"><a href="#Agent.run-170"><span class="linenos">170</span></a><span class="sd">        </span>
+</span><span id="Agent.run-171"><a href="#Agent.run-171"><span class="linenos">171</span></a><span class="sd">        Notes</span>
+</span><span id="Agent.run-172"><a href="#Agent.run-172"><span class="linenos">172</span></a><span class="sd">        -----</span>
+</span><span id="Agent.run-173"><a href="#Agent.run-173"><span class="linenos">173</span></a><span class="sd">        This method delegates execution to the specific agentic loop</span>
+</span><span id="Agent.run-174"><a href="#Agent.run-174"><span class="linenos">174</span></a><span class="sd">        configured during initialization. The exact behavior depends on</span>
+</span><span id="Agent.run-175"><a href="#Agent.run-175"><span class="linenos">175</span></a><span class="sd">        the chosen paradigm (predefined or custom).</span>
+</span><span id="Agent.run-176"><a href="#Agent.run-176"><span class="linenos">176</span></a><span class="sd">        </span>
+</span><span id="Agent.run-177"><a href="#Agent.run-177"><span class="linenos">177</span></a><span class="sd">        The response structure may vary slightly depending on the paradigm:</span>
+</span><span id="Agent.run-178"><a href="#Agent.run-178"><span class="linenos">178</span></a><span class="sd">        - Function calling: Includes tool call details and function results</span>
+</span><span id="Agent.run-179"><a href="#Agent.run-179"><span class="linenos">179</span></a><span class="sd">        - ReAct: Includes thought-action-observation cycles</span>
+</span><span id="Agent.run-180"><a href="#Agent.run-180"><span class="linenos">180</span></a><span class="sd">        - Plan-and-execute: Includes planning and execution phases</span>
+</span><span id="Agent.run-181"><a href="#Agent.run-181"><span class="linenos">181</span></a><span class="sd">        - Programmatic: Includes code generation and execution results</span>
+</span><span id="Agent.run-182"><a href="#Agent.run-182"><span class="linenos">182</span></a><span class="sd">        - Reflexion: Includes self-reflection and error correction steps</span>
+</span><span id="Agent.run-183"><a href="#Agent.run-183"><span class="linenos">183</span></a><span class="sd">        - Self-ask: Includes question-answer reasoning chains</span>
+</span><span id="Agent.run-184"><a href="#Agent.run-184"><span class="linenos">184</span></a><span class="sd">        - Self-ask with search: Includes web search results and reasoning</span>
+</span><span id="Agent.run-185"><a href="#Agent.run-185"><span class="linenos">185</span></a><span class="sd">        - Custom paradigms: May include paradigm-specific information</span>
+</span><span id="Agent.run-186"><a href="#Agent.run-186"><span class="linenos">186</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent.run-187"><a href="#Agent.run-187"><span class="linenos">187</span></a>        
+</span><span id="Agent.run-188"><a href="#Agent.run-188"><span class="linenos">188</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -543,6 +618,7 @@ User prompt or query to process. Can be a string or a Prompt object.</li>
 <li>prompt: Original user query</li>
 <li>iterations: List of processed reasoning iterations</li>
 <li>response: Final response (if available)</li>
+<li>metadata: Additional execution metadata (paradigm-specific)</li>
 </ul></li>
 </ul>
 
@@ -555,10 +631,14 @@ the chosen paradigm (predefined or custom).</p>
 <p>The response structure may vary slightly depending on the paradigm:</p>
 
 <ul>
-<li>Function calling: Includes tool call details</li>
+<li>Function calling: Includes tool call details and function results</li>
 <li>ReAct: Includes thought-action-observation cycles</li>
 <li>Plan-and-execute: Includes planning and execution phases</li>
-<li>Other paradigms: May include paradigm-specific information</li>
+<li>Programmatic: Includes code generation and execution results</li>
+<li>Reflexion: Includes self-reflection and error correction steps</li>
+<li>Self-ask: Includes question-answer reasoning chains</li>
+<li>Self-ask with search: Includes web search results and reasoning</li>
+<li>Custom paradigms: May include paradigm-specific information</li>
 </ul>
 </div>
 
@@ -575,29 +655,37 @@ the chosen paradigm (predefined or custom).</p>
 
     </div>
     <a class="headerlink" href="#Agent.enable_streaming"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.enable_streaming-171"><a href="#Agent.enable_streaming-171"><span class="linenos">171</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">enable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="Agent.enable_streaming-172"><a href="#Agent.enable_streaming-172"><span class="linenos">172</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable streaming responses for this agent.</span>
-</span><span id="Agent.enable_streaming-173"><a href="#Agent.enable_streaming-173"><span class="linenos">173</span></a><span class="sd">        </span>
-</span><span id="Agent.enable_streaming-174"><a href="#Agent.enable_streaming-174"><span class="linenos">174</span></a><span class="sd">        When streaming is enabled, the agent will call the provided callback</span>
-</span><span id="Agent.enable_streaming-175"><a href="#Agent.enable_streaming-175"><span class="linenos">175</span></a><span class="sd">        function with each content chunk as it&#39;s generated, allowing for</span>
-</span><span id="Agent.enable_streaming-176"><a href="#Agent.enable_streaming-176"><span class="linenos">176</span></a><span class="sd">        real-time processing and display of the AI&#39;s response.</span>
-</span><span id="Agent.enable_streaming-177"><a href="#Agent.enable_streaming-177"><span class="linenos">177</span></a><span class="sd">        </span>
-</span><span id="Agent.enable_streaming-178"><a href="#Agent.enable_streaming-178"><span class="linenos">178</span></a><span class="sd">        Parameters</span>
-</span><span id="Agent.enable_streaming-179"><a href="#Agent.enable_streaming-179"><span class="linenos">179</span></a><span class="sd">        ----------</span>
-</span><span id="Agent.enable_streaming-180"><a href="#Agent.enable_streaming-180"><span class="linenos">180</span></a><span class="sd">        stream_callback : callable, optional</span>
-</span><span id="Agent.enable_streaming-181"><a href="#Agent.enable_streaming-181"><span class="linenos">181</span></a><span class="sd">            Callback function to handle streaming content chunks.</span>
-</span><span id="Agent.enable_streaming-182"><a href="#Agent.enable_streaming-182"><span class="linenos">182</span></a><span class="sd">            If None, uses a default callback that prints content to console.</span>
-</span><span id="Agent.enable_streaming-183"><a href="#Agent.enable_streaming-183"><span class="linenos">183</span></a><span class="sd">            The callback receives plain text content strings.</span>
-</span><span id="Agent.enable_streaming-184"><a href="#Agent.enable_streaming-184"><span class="linenos">184</span></a><span class="sd">        </span>
-</span><span id="Agent.enable_streaming-185"><a href="#Agent.enable_streaming-185"><span class="linenos">185</span></a><span class="sd">        Raises</span>
-</span><span id="Agent.enable_streaming-186"><a href="#Agent.enable_streaming-186"><span class="linenos">186</span></a><span class="sd">        ------</span>
-</span><span id="Agent.enable_streaming-187"><a href="#Agent.enable_streaming-187"><span class="linenos">187</span></a><span class="sd">        AttributeError</span>
-</span><span id="Agent.enable_streaming-188"><a href="#Agent.enable_streaming-188"><span class="linenos">188</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
-</span><span id="Agent.enable_streaming-189"><a href="#Agent.enable_streaming-189"><span class="linenos">189</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent.enable_streaming-190"><a href="#Agent.enable_streaming-190"><span class="linenos">190</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;enable_streaming&#39;</span><span class="p">):</span>
-</span><span id="Agent.enable_streaming-191"><a href="#Agent.enable_streaming-191"><span class="linenos">191</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">enable_streaming</span><span class="p">(</span><span class="n">stream_callback</span><span class="p">)</span>
-</span><span id="Agent.enable_streaming-192"><a href="#Agent.enable_streaming-192"><span class="linenos">192</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent.enable_streaming-193"><a href="#Agent.enable_streaming-193"><span class="linenos">193</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.enable_streaming-190"><a href="#Agent.enable_streaming-190"><span class="linenos">190</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">enable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="Agent.enable_streaming-191"><a href="#Agent.enable_streaming-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable streaming responses for this agent.</span>
+</span><span id="Agent.enable_streaming-192"><a href="#Agent.enable_streaming-192"><span class="linenos">192</span></a><span class="sd">        </span>
+</span><span id="Agent.enable_streaming-193"><a href="#Agent.enable_streaming-193"><span class="linenos">193</span></a><span class="sd">        When streaming is enabled, the agent will call the provided callback</span>
+</span><span id="Agent.enable_streaming-194"><a href="#Agent.enable_streaming-194"><span class="linenos">194</span></a><span class="sd">        function with each content chunk as it&#39;s generated, allowing for</span>
+</span><span id="Agent.enable_streaming-195"><a href="#Agent.enable_streaming-195"><span class="linenos">195</span></a><span class="sd">        real-time processing and display of the AI&#39;s response.</span>
+</span><span id="Agent.enable_streaming-196"><a href="#Agent.enable_streaming-196"><span class="linenos">196</span></a><span class="sd">        </span>
+</span><span id="Agent.enable_streaming-197"><a href="#Agent.enable_streaming-197"><span class="linenos">197</span></a><span class="sd">        Parameters</span>
+</span><span id="Agent.enable_streaming-198"><a href="#Agent.enable_streaming-198"><span class="linenos">198</span></a><span class="sd">        ----------</span>
+</span><span id="Agent.enable_streaming-199"><a href="#Agent.enable_streaming-199"><span class="linenos">199</span></a><span class="sd">        stream_callback : callable, optional</span>
+</span><span id="Agent.enable_streaming-200"><a href="#Agent.enable_streaming-200"><span class="linenos">200</span></a><span class="sd">            Callback function to handle streaming content chunks.</span>
+</span><span id="Agent.enable_streaming-201"><a href="#Agent.enable_streaming-201"><span class="linenos">201</span></a><span class="sd">            If None, uses a default callback that prints content to console.</span>
+</span><span id="Agent.enable_streaming-202"><a href="#Agent.enable_streaming-202"><span class="linenos">202</span></a><span class="sd">            The callback receives plain text content strings.</span>
+</span><span id="Agent.enable_streaming-203"><a href="#Agent.enable_streaming-203"><span class="linenos">203</span></a><span class="sd">            </span>
+</span><span id="Agent.enable_streaming-204"><a href="#Agent.enable_streaming-204"><span class="linenos">204</span></a><span class="sd">            Callback signature: callback(content: str) -&gt; None</span>
+</span><span id="Agent.enable_streaming-205"><a href="#Agent.enable_streaming-205"><span class="linenos">205</span></a><span class="sd">            where content is the streaming text chunk.</span>
+</span><span id="Agent.enable_streaming-206"><a href="#Agent.enable_streaming-206"><span class="linenos">206</span></a><span class="sd">        </span>
+</span><span id="Agent.enable_streaming-207"><a href="#Agent.enable_streaming-207"><span class="linenos">207</span></a><span class="sd">        Raises</span>
+</span><span id="Agent.enable_streaming-208"><a href="#Agent.enable_streaming-208"><span class="linenos">208</span></a><span class="sd">        ------</span>
+</span><span id="Agent.enable_streaming-209"><a href="#Agent.enable_streaming-209"><span class="linenos">209</span></a><span class="sd">        AttributeError</span>
+</span><span id="Agent.enable_streaming-210"><a href="#Agent.enable_streaming-210"><span class="linenos">210</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
+</span><span id="Agent.enable_streaming-211"><a href="#Agent.enable_streaming-211"><span class="linenos">211</span></a><span class="sd">            </span>
+</span><span id="Agent.enable_streaming-212"><a href="#Agent.enable_streaming-212"><span class="linenos">212</span></a><span class="sd">        Notes</span>
+</span><span id="Agent.enable_streaming-213"><a href="#Agent.enable_streaming-213"><span class="linenos">213</span></a><span class="sd">        -----</span>
+</span><span id="Agent.enable_streaming-214"><a href="#Agent.enable_streaming-214"><span class="linenos">214</span></a><span class="sd">        Not all paradigms support streaming. Check the specific paradigm</span>
+</span><span id="Agent.enable_streaming-215"><a href="#Agent.enable_streaming-215"><span class="linenos">215</span></a><span class="sd">        implementation to ensure streaming is available.</span>
+</span><span id="Agent.enable_streaming-216"><a href="#Agent.enable_streaming-216"><span class="linenos">216</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent.enable_streaming-217"><a href="#Agent.enable_streaming-217"><span class="linenos">217</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;enable_streaming&#39;</span><span class="p">):</span>
+</span><span id="Agent.enable_streaming-218"><a href="#Agent.enable_streaming-218"><span class="linenos">218</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">enable_streaming</span><span class="p">(</span><span class="n">stream_callback</span><span class="p">)</span>
+</span><span id="Agent.enable_streaming-219"><a href="#Agent.enable_streaming-219"><span class="linenos">219</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent.enable_streaming-220"><a href="#Agent.enable_streaming-220"><span class="linenos">220</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -610,10 +698,13 @@ real-time processing and display of the AI's response.</p>
 <h6 id="parameters">Parameters</h6>
 
 <ul>
-<li><strong>stream_callback</strong> (callable, optional):
+<li><p><strong>stream_callback</strong> (callable, optional):
 Callback function to handle streaming content chunks.
 If None, uses a default callback that prints content to console.
-The callback receives plain text content strings.</li>
+The callback receives plain text content strings.</p>
+
+<p>Callback signature: callback(content: str) -> None
+where content is the streaming text chunk.</p></li>
 </ul>
 
 <h6 id="raises">Raises</h6>
@@ -621,6 +712,11 @@ The callback receives plain text content strings.</li>
 <ul>
 <li><strong>AttributeError</strong>: If the current paradigm doesn't support streaming</li>
 </ul>
+
+<h6 id="notes">Notes</h6>
+
+<p>Not all paradigms support streaming. Check the specific paradigm
+implementation to ensure streaming is available.</p>
 </div>
 
 
@@ -636,21 +732,26 @@ The callback receives plain text content strings.</li>
 
     </div>
     <a class="headerlink" href="#Agent.disable_streaming"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.disable_streaming-195"><a href="#Agent.disable_streaming-195"><span class="linenos">195</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">disable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="Agent.disable_streaming-196"><a href="#Agent.disable_streaming-196"><span class="linenos">196</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable streaming responses for this agent.</span>
-</span><span id="Agent.disable_streaming-197"><a href="#Agent.disable_streaming-197"><span class="linenos">197</span></a><span class="sd">        </span>
-</span><span id="Agent.disable_streaming-198"><a href="#Agent.disable_streaming-198"><span class="linenos">198</span></a><span class="sd">        After calling this method, the agent will use standard (non-streaming)</span>
-</span><span id="Agent.disable_streaming-199"><a href="#Agent.disable_streaming-199"><span class="linenos">199</span></a><span class="sd">        model execution for all subsequent requests.</span>
-</span><span id="Agent.disable_streaming-200"><a href="#Agent.disable_streaming-200"><span class="linenos">200</span></a><span class="sd">        </span>
-</span><span id="Agent.disable_streaming-201"><a href="#Agent.disable_streaming-201"><span class="linenos">201</span></a><span class="sd">        Raises</span>
-</span><span id="Agent.disable_streaming-202"><a href="#Agent.disable_streaming-202"><span class="linenos">202</span></a><span class="sd">        ------</span>
-</span><span id="Agent.disable_streaming-203"><a href="#Agent.disable_streaming-203"><span class="linenos">203</span></a><span class="sd">        AttributeError</span>
-</span><span id="Agent.disable_streaming-204"><a href="#Agent.disable_streaming-204"><span class="linenos">204</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
-</span><span id="Agent.disable_streaming-205"><a href="#Agent.disable_streaming-205"><span class="linenos">205</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Agent.disable_streaming-206"><a href="#Agent.disable_streaming-206"><span class="linenos">206</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;disable_streaming&#39;</span><span class="p">):</span>
-</span><span id="Agent.disable_streaming-207"><a href="#Agent.disable_streaming-207"><span class="linenos">207</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">disable_streaming</span><span class="p">()</span>
-</span><span id="Agent.disable_streaming-208"><a href="#Agent.disable_streaming-208"><span class="linenos">208</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Agent.disable_streaming-209"><a href="#Agent.disable_streaming-209"><span class="linenos">209</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Agent.disable_streaming-222"><a href="#Agent.disable_streaming-222"><span class="linenos">222</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">disable_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Agent.disable_streaming-223"><a href="#Agent.disable_streaming-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable streaming responses for this agent.</span>
+</span><span id="Agent.disable_streaming-224"><a href="#Agent.disable_streaming-224"><span class="linenos">224</span></a><span class="sd">        </span>
+</span><span id="Agent.disable_streaming-225"><a href="#Agent.disable_streaming-225"><span class="linenos">225</span></a><span class="sd">        After calling this method, the agent will use standard (non-streaming)</span>
+</span><span id="Agent.disable_streaming-226"><a href="#Agent.disable_streaming-226"><span class="linenos">226</span></a><span class="sd">        model execution for all subsequent requests.</span>
+</span><span id="Agent.disable_streaming-227"><a href="#Agent.disable_streaming-227"><span class="linenos">227</span></a><span class="sd">        </span>
+</span><span id="Agent.disable_streaming-228"><a href="#Agent.disable_streaming-228"><span class="linenos">228</span></a><span class="sd">        Raises</span>
+</span><span id="Agent.disable_streaming-229"><a href="#Agent.disable_streaming-229"><span class="linenos">229</span></a><span class="sd">        ------</span>
+</span><span id="Agent.disable_streaming-230"><a href="#Agent.disable_streaming-230"><span class="linenos">230</span></a><span class="sd">        AttributeError</span>
+</span><span id="Agent.disable_streaming-231"><a href="#Agent.disable_streaming-231"><span class="linenos">231</span></a><span class="sd">            If the current paradigm doesn&#39;t support streaming</span>
+</span><span id="Agent.disable_streaming-232"><a href="#Agent.disable_streaming-232"><span class="linenos">232</span></a><span class="sd">            </span>
+</span><span id="Agent.disable_streaming-233"><a href="#Agent.disable_streaming-233"><span class="linenos">233</span></a><span class="sd">        Notes</span>
+</span><span id="Agent.disable_streaming-234"><a href="#Agent.disable_streaming-234"><span class="linenos">234</span></a><span class="sd">        -----</span>
+</span><span id="Agent.disable_streaming-235"><a href="#Agent.disable_streaming-235"><span class="linenos">235</span></a><span class="sd">        Not all paradigms support streaming. Check the specific paradigm</span>
+</span><span id="Agent.disable_streaming-236"><a href="#Agent.disable_streaming-236"><span class="linenos">236</span></a><span class="sd">        implementation to ensure streaming is available.</span>
+</span><span id="Agent.disable_streaming-237"><a href="#Agent.disable_streaming-237"><span class="linenos">237</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Agent.disable_streaming-238"><a href="#Agent.disable_streaming-238"><span class="linenos">238</span></a>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">,</span> <span class="s1">&#39;disable_streaming&#39;</span><span class="p">):</span>
+</span><span id="Agent.disable_streaming-239"><a href="#Agent.disable_streaming-239"><span class="linenos">239</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">disable_streaming</span><span class="p">()</span>
+</span><span id="Agent.disable_streaming-240"><a href="#Agent.disable_streaming-240"><span class="linenos">240</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="Agent.disable_streaming-241"><a href="#Agent.disable_streaming-241"><span class="linenos">241</span></a>            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Paradigm &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t support streaming&quot;</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -664,6 +765,11 @@ model execution for all subsequent requests.</p>
 <ul>
 <li><strong>AttributeError</strong>: If the current paradigm doesn't support streaming</li>
 </ul>
+
+<h6 id="notes">Notes</h6>
+
+<p>Not all paradigms support streaming. Check the specific paradigm
+implementation to ensure streaming is available.</p>
 </div>
 
 

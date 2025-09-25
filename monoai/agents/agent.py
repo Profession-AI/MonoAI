@@ -73,6 +73,8 @@ class Agent:
         agent_prompt : str, optional
             Custom prompt for the agent. If None, uses the default prompt
             for the chosen paradigm. Default is None.
+        name : str, optional
+            Name identifier for the agent. Default is empty string.
         debug : bool, optional
             Flag to enable debug output during execution.
             Default is False.
@@ -108,14 +110,14 @@ class Agent:
         self._model._web_search = native_web_search
         self._human_feedback = human_feedback
 
-        # Gestione paradigma personalizzato
+        # Handle custom paradigm
         if isinstance(paradigm, _AgenticLoop):
-            # Verifica che l'oggetto personalizzato sia valido
+            # Verify that the custom object is valid
             if not hasattr(paradigm, 'start') or not callable(paradigm.start):
-                raise TypeError("Il paradigma personalizzato deve avere un metodo 'start' callable")
+                raise TypeError("Custom paradigm must have a callable 'start' method")
             self._loop = paradigm
         else:
-            # Paradigmi predefiniti
+            # Predefined paradigms
             loop_kwargs = self._model, agent_prompt, debug, max_iter, None, human_feedback
             
             if paradigm == "function_calling":
@@ -135,11 +137,11 @@ class Agent:
             elif paradigm == "self_ask_with_search":
                 self._loop = SelfAskWithSearchLoop(*loop_kwargs)
             else:
-                raise ValueError(f"Paradigma '{paradigm}' non supportato. "
-                               f"Paradigmi disponibili: function_calling, react, "
+                raise ValueError(f"Paradigm '{paradigm}' not supported. "
+                               f"Available paradigms: function_calling, react, "
                                f"react_with_function_calling, plan-and-execute, "
                                f"programmatic, reflexion, self_ask, self_ask_with_search, "
-                               f"oppure un oggetto personalizzato derivato da _AgenticLoop")
+                               f"or a custom object derived from _AgenticLoop")
         
         if tools is not None:
             self._loop.register_tools(tools)
@@ -163,6 +165,7 @@ class Agent:
             - prompt: Original user query
             - iterations: List of processed reasoning iterations
             - response: Final response (if available)
+            - metadata: Additional execution metadata (paradigm-specific)
         
         Notes
         -----
@@ -171,10 +174,14 @@ class Agent:
         the chosen paradigm (predefined or custom).
         
         The response structure may vary slightly depending on the paradigm:
-        - Function calling: Includes tool call details
+        - Function calling: Includes tool call details and function results
         - ReAct: Includes thought-action-observation cycles
         - Plan-and-execute: Includes planning and execution phases
-        - Other paradigms: May include paradigm-specific information
+        - Programmatic: Includes code generation and execution results
+        - Reflexion: Includes self-reflection and error correction steps
+        - Self-ask: Includes question-answer reasoning chains
+        - Self-ask with search: Includes web search results and reasoning
+        - Custom paradigms: May include paradigm-specific information
         """
         
         return self._loop.start(prompt)
@@ -192,11 +199,19 @@ class Agent:
             Callback function to handle streaming content chunks.
             If None, uses a default callback that prints content to console.
             The callback receives plain text content strings.
+            
+            Callback signature: callback(content: str) -> None
+            where content is the streaming text chunk.
         
         Raises
         ------
         AttributeError
             If the current paradigm doesn't support streaming
+            
+        Notes
+        -----
+        Not all paradigms support streaming. Check the specific paradigm
+        implementation to ensure streaming is available.
         """
         if hasattr(self._loop, 'enable_streaming'):
             self._loop.enable_streaming(stream_callback)
@@ -213,6 +228,11 @@ class Agent:
         ------
         AttributeError
             If the current paradigm doesn't support streaming
+            
+        Notes
+        -----
+        Not all paradigms support streaming. Check the specific paradigm
+        implementation to ensure streaming is available.
         """
         if hasattr(self._loop, 'disable_streaming'):
             self._loop.disable_streaming()

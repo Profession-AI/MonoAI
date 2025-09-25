@@ -38,10 +38,10 @@
                     <a class="function" href="#domain_whois">domain_whois</a>
             </li>
             <li>
-                    <a class="variable" href="#search_web_with_duckduckgo">search_web_with_duckduckgo</a>
+                    <a class="function" href="#search_web_with_duckduckgo">search_web_with_duckduckgo</a>
             </li>
             <li>
-                    <a class="variable" href="#search_web_with_tavily">search_web_with_tavily</a>
+                    <a class="function" href="#search_web_with_tavily">search_web_with_tavily</a>
             </li>
             <li>
                     <a class="function" href="#scrape_web_with_requests">scrape_web_with_requests</a>
@@ -120,8 +120,9 @@ To let the agent know how to use the tool, you need to add a docstring to the fu
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.domain_whois</span><span class="w"> </span><span class="kn">import</span> <span class="n">domain_whois</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.webscraping</span><span class="w"> </span><span class="kn">import</span> <span class="n">scrape_web_with_requests</span><span class="p">,</span> <span class="n">scrape_web_with_selenium</span><span class="p">,</span> <span class="n">scrape_web_with_tavily</span><span class="p">,</span> <span class="n">scrape_web</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;domain_whois&quot;</span><span class="p">,</span> <span class="s2">&quot;search_web_with_duckduckgo&quot;</span><span class="p">,</span> <span class="s2">&quot;search_web_with_tavily&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_requests&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_selenium&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_tavily&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web&quot;</span><span class="p">]</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.websearch</span><span class="w"> </span><span class="kn">import</span> <span class="n">search_web_with_duckduckgo</span><span class="p">,</span> <span class="n">search_web_with_tavily</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;domain_whois&quot;</span><span class="p">,</span> <span class="s2">&quot;search_web_with_duckduckgo&quot;</span><span class="p">,</span> <span class="s2">&quot;search_web_with_tavily&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_requests&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_selenium&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web_with_tavily&quot;</span><span class="p">,</span> <span class="s2">&quot;scrape_web&quot;</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -165,25 +166,93 @@ To let the agent know how to use the tool, you need to add a docstring to the fu
 
                 </section>
                 <section id="search_web_with_duckduckgo">
-                    <div class="attr variable">
-            <span class="name">search_web_with_duckduckgo</span>
+                            <input id="search_web_with_duckduckgo-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">search_web_with_duckduckgo</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">query</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>, </span><span class="param"><span class="n">exclude_domains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
-        
+                <label class="view-source-button" for="search_web_with_duckduckgo-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#search_web_with_duckduckgo"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="search_web_with_duckduckgo-2"><a href="#search_web_with_duckduckgo-2"><span class="linenos"> 2</span></a><span class="k">def</span><span class="w"> </span><span class="nf">search_web_with_duckduckgo</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">exclude_domains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="search_web_with_duckduckgo-3"><a href="#search_web_with_duckduckgo-3"><span class="linenos"> 3</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Search the web using DuckDuckGo search engine.</span>
+</span><span id="search_web_with_duckduckgo-4"><a href="#search_web_with_duckduckgo-4"><span class="linenos"> 4</span></a><span class="sd">    </span>
+</span><span id="search_web_with_duckduckgo-5"><a href="#search_web_with_duckduckgo-5"><span class="linenos"> 5</span></a><span class="sd">    Args:</span>
+</span><span id="search_web_with_duckduckgo-6"><a href="#search_web_with_duckduckgo-6"><span class="linenos"> 6</span></a><span class="sd">        query: The query to search for</span>
+</span><span id="search_web_with_duckduckgo-7"><a href="#search_web_with_duckduckgo-7"><span class="linenos"> 7</span></a><span class="sd">        max_results: The maximum number of results to return. Default is 5</span>
+</span><span id="search_web_with_duckduckgo-8"><a href="#search_web_with_duckduckgo-8"><span class="linenos"> 8</span></a><span class="sd">        exclude_domains: The domains to exclude from the search. Default is None</span>
+</span><span id="search_web_with_duckduckgo-9"><a href="#search_web_with_duckduckgo-9"><span class="linenos"> 9</span></a><span class="sd">    </span>
+</span><span id="search_web_with_duckduckgo-10"><a href="#search_web_with_duckduckgo-10"><span class="linenos">10</span></a><span class="sd">    Returns:</span>
+</span><span id="search_web_with_duckduckgo-11"><a href="#search_web_with_duckduckgo-11"><span class="linenos">11</span></a><span class="sd">        A dictionary containing:</span>
+</span><span id="search_web_with_duckduckgo-12"><a href="#search_web_with_duckduckgo-12"><span class="linenos">12</span></a><span class="sd">            data: The search results as a list of dictionaries</span>
+</span><span id="search_web_with_duckduckgo-13"><a href="#search_web_with_duckduckgo-13"><span class="linenos">13</span></a><span class="sd">            text: The results merged into a single string        </span>
+</span><span id="search_web_with_duckduckgo-14"><a href="#search_web_with_duckduckgo-14"><span class="linenos">14</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="search_web_with_duckduckgo-15"><a href="#search_web_with_duckduckgo-15"><span class="linenos">15</span></a>    <span class="n">search_engine</span> <span class="o">=</span> <span class="n">_DuckDuckGoSearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">,</span> <span class="n">exclude_domains</span><span class="p">)</span>
+</span><span id="search_web_with_duckduckgo-16"><a href="#search_web_with_duckduckgo-16"><span class="linenos">16</span></a>    <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span id="search_web_with_duckduckgo-17"><a href="#search_web_with_duckduckgo-17"><span class="linenos">17</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Search the web using DuckDuckGo search engine.</p>
+
+<p>Args:
+    query: The query to search for
+    max_results: The maximum number of results to return. Default is 5
+    exclude_domains: The domains to exclude from the search. Default is None</p>
+
+<p>Returns:
+    A dictionary containing:
+        data: The search results as a list of dictionaries
+        text: The results merged into a single string</p>
+</div>
+
 
                 </section>
                 <section id="search_web_with_tavily">
-                    <div class="attr variable">
-            <span class="name">search_web_with_tavily</span>
+                            <input id="search_web_with_tavily-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">search_web_with_tavily</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">query</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>, </span><span class="param"><span class="n">exclude_domains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
-        
+                <label class="view-source-button" for="search_web_with_tavily-view-source"><span>View Source</span></label>
+
     </div>
     <a class="headerlink" href="#search_web_with_tavily"></a>
-    
-    
+            <div class="pdoc-code codehilite"><pre><span></span><span id="search_web_with_tavily-20"><a href="#search_web_with_tavily-20"><span class="linenos">20</span></a><span class="k">def</span><span class="w"> </span><span class="nf">search_web_with_tavily</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">exclude_domains</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="search_web_with_tavily-21"><a href="#search_web_with_tavily-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Search the web using Tavily search engine.</span>
+</span><span id="search_web_with_tavily-22"><a href="#search_web_with_tavily-22"><span class="linenos">22</span></a><span class="sd">    </span>
+</span><span id="search_web_with_tavily-23"><a href="#search_web_with_tavily-23"><span class="linenos">23</span></a><span class="sd">    Args:</span>
+</span><span id="search_web_with_tavily-24"><a href="#search_web_with_tavily-24"><span class="linenos">24</span></a><span class="sd">        query: The query to search for</span>
+</span><span id="search_web_with_tavily-25"><a href="#search_web_with_tavily-25"><span class="linenos">25</span></a><span class="sd">        max_results: The maximum number of results to return. Default is 5</span>
+</span><span id="search_web_with_tavily-26"><a href="#search_web_with_tavily-26"><span class="linenos">26</span></a><span class="sd">        exclude_domains: The domains to exclude from the search. Default is None</span>
+</span><span id="search_web_with_tavily-27"><a href="#search_web_with_tavily-27"><span class="linenos">27</span></a><span class="sd">    </span>
+</span><span id="search_web_with_tavily-28"><a href="#search_web_with_tavily-28"><span class="linenos">28</span></a><span class="sd">    Returns:</span>
+</span><span id="search_web_with_tavily-29"><a href="#search_web_with_tavily-29"><span class="linenos">29</span></a><span class="sd">        A dictionary containing:</span>
+</span><span id="search_web_with_tavily-30"><a href="#search_web_with_tavily-30"><span class="linenos">30</span></a><span class="sd">            data: The search results as a list of dictionaries</span>
+</span><span id="search_web_with_tavily-31"><a href="#search_web_with_tavily-31"><span class="linenos">31</span></a><span class="sd">            text: The results merged into a single string        </span>
+</span><span id="search_web_with_tavily-32"><a href="#search_web_with_tavily-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="search_web_with_tavily-33"><a href="#search_web_with_tavily-33"><span class="linenos">33</span></a>    <span class="n">search_engine</span> <span class="o">=</span> <span class="n">_TavilySearch</span><span class="p">(</span><span class="n">max_results</span><span class="p">,</span> <span class="n">exclude_domains</span><span class="p">)</span>
+</span><span id="search_web_with_tavily-34"><a href="#search_web_with_tavily-34"><span class="linenos">34</span></a>    <span class="n">response</span><span class="p">,</span> <span class="n">text_response</span> <span class="o">=</span> <span class="n">search_engine</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span id="search_web_with_tavily-35"><a href="#search_web_with_tavily-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text_response</span><span class="p">}</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Search the web using Tavily search engine.</p>
+
+<p>Args:
+    query: The query to search for
+    max_results: The maximum number of results to return. Default is 5
+    exclude_domains: The domains to exclude from the search. Default is None</p>
+
+<p>Returns:
+    A dictionary containing:
+        data: The search results as a list of dictionaries
+        text: The results merged into a single string</p>
+</div>
+
 
                 </section>
                 <section id="scrape_web_with_requests">

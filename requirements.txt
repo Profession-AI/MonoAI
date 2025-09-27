@@ -1,4 +1,6 @@
 litellm
+mcp
 typing-extensions
 xmltodict
 pytest
+typer

@@ -103,7 +103,6 @@ class _FunctionCallingMixin:
                         # Ensure the server is connected before calling the tool
                         if not hasattr(mcp_server, '_session') or mcp_server._session is None:
                             await mcp_server.connect()
-                        
                         return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
                     
                     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -189,6 +188,35 @@ class _ReactMixin:
         encoded = encoded.replace("\n", " ")
         return encoded
     
+    def _encode_mcp_tool(self, tool: dict) -> str:
+        """Converte uno schema tipo JSON Schema in sezione Args Google style."""
+        schema = tool.inputSchema
+        if schema.get("type") != "object":
+            raise ValueError("Lo schema radice deve avere type=object")
+
+        args = []
+        args_doc = ["Args:"]
+        properties = schema.get("properties", {})
+        required = set(schema.get("required", []))
+
+        for name, spec in properties.items():
+            args.append(name)
+            typ = spec.get("type", "Any")
+            desc = spec.get("description", "").strip().replace("\n", " ")
+            title = spec.get("title", "")
+            default_info = "" if name in required else " Defaults to None."
+
+            arg_line = f"    {name} ({typ}): {desc}{default_info}"
+            if title:
+                arg_line = f"    {name} ({typ}): {title}. {desc}{default_info}"
+            args_doc.append(arg_line)
+
+        encoded = tool.name + "(" + ", ".join(args) + "): "
+        encoded += tool.description
+        encoded += ". ".join(args_doc)
+        return encoded
+
+    
     def _call_tool(self, tool_call: Dict[str, Any]) -> Any:
         """Execute a tool call in ReAct format.
         
@@ -228,6 +256,7 @@ class _ReactMixin:
         This method executes a MCP tool call based on a structured dictionary
         containing the tool name and arguments.
         """
+        print("DEBUG: _call_react_mcp_tool called with tool_call:", tool_call)
         try:
             # Extract server name from tool name (format: mcp_servername_toolname)
             tool_name_parts = tool_call["name"].split("_", 2)
@@ -247,47 +276,47 @@ class _ReactMixin:
                 if loop.is_running():
                     # If we're already in an async context, create a new task
                     import concurrent.futures
-                    async def ensure_connected_and_call():
+                    async def ensure_connected_and_call(tool_call_param):
                         # Ensure the server is connected before calling the tool
                         if not hasattr(mcp_server, '_session') or mcp_server._session is None:
                             await mcp_server.connect()
                         
-                        print("TOOL CALL", tool_call["name"], tool_call["arguments"])
-                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
-                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
+                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
+                        return await mcp_server.call_tool(tool_call_param["name"], args)
                     
                     with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(asyncio.run, ensure_connected_and_call())
+                        future = executor.submit(asyncio.run, ensure_connected_and_call(tool_call))
                         mcp_result = future.result()
                 else:
                     # We can run directly
-                    async def ensure_connected_and_call():
+                    async def ensure_connected_and_call(tool_call_param):
                         # Ensure the server is connected before calling the tool
                         if not hasattr(mcp_server, '_session') or mcp_server._session is None:
                             await mcp_server.connect()
                         
-                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
-                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
-                    
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
+                        response = await mcp_server.call_tool(tool_call_param["name"], args)
+                        print("RESPONSE TYPE", type(response))
+                        return response
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call(tool_call))
             except RuntimeError:
                 # No event loop exists, create a new one
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 try:
-                    async def ensure_connected_and_call():
+                    async def ensure_connected_and_call(tool_call_param):
                         # Ensure the server is connected before calling the tool
                         if not hasattr(mcp_server, '_session') or mcp_server._session is None:
                             await mcp_server.connect()
                         
-                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
-                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
-                    
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
+                        response = await mcp_server.call_tool(tool_call_param["name"], args)
+                        return response
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call(tool_call))
                 finally:
                     loop.close()
             
-            return mcp_result.content if hasattr(mcp_result, 'content') else str(mcp_result)
+            return mcp_result
         except Exception as e:
             return f"Error executing MCP tool: {str(e)}"
 
@@ -393,8 +422,7 @@ class _AgenticLoop:
                             original_name = tool.name
                             tool.name = f"mcp_{mcp_server.name}_{original_name}"
                             tools[tool.name] = tool
-                            print(f"Registered tool: {tool.name}")
-                            print(f"Tool schema: {getattr(tool, 'input_schema', 'No schema')}")
+                            print(f" - {tool.name}")
                 except Exception as e:
                     print(f"Warning: Failed to connect to MCP server '{mcp_server.name}': {e}")
                     # Still add the server to the list for potential later connection
@@ -494,13 +522,20 @@ class _AgenticLoop:
         str
             Formatted string with descriptions of all available tools,
             one per line with " - " prefix. Returns empty string if no tools.
+            
+            Example:
+             - colab_downloader(colab_url): Downloads a Jupyter notebook from Google Drive and returns its Python code as a string.  
+                Args:     colab_url (str): The Google Drive URL of the notebook (should contain 'drive/').
         """
         if not self._tools:
             return ""
         
         tools = []
         for tool_name, tool_func in self._tools.items():
-            tools.append(f" - {self._encode_tool(tool_func)}")
+            if tool_name.startswith("mcp_"):
+                tools.append(f" - {self._encode_mcp_tool(tool_func)}")
+            else:
+                tools.append(f" - {self._encode_tool(tool_func)}")
         return "\n".join(tools)
 
     def _get_base_messages(self, agent_type: str, query: str) -> List[Dict[str, Any]]:
@@ -655,6 +690,9 @@ class _AgenticLoop:
         - Observation: Results from tool executions
         - Final answer: Conclusive responses to user queries
         
+        Special handling: If content contains both "Thought" and "Action", 
+        the Action will be returned with priority.
+        
         Parameters
         ----------
         content : str
@@ -676,13 +714,67 @@ class _AgenticLoop:
         
         content = content.strip()
         
+        # Check if content contains both Thought and Action
+        # If so, prioritize Action
+        lines = content.split('\n')
+        action_start = None
+        thought_start = None
+        
+        # Find the start lines for Action and Thought
+        for i, line in enumerate(lines):
+            if re.match(r'^Action(?:\s+\d+)?\s*:', line, re.IGNORECASE):
+                action_start = i
+            elif re.match(r'^Thought(?:\s+\d+)?\s*:', line, re.IGNORECASE):
+                thought_start = i
+        
+        if action_start is not None and thought_start is not None:
+            # Both Thought and Action present, prioritize Action
+            step_type = "action"
+            
+            # Extract step number from Action line
+            action_line = lines[action_start]
+            step_number_match = re.search(r'Action\s+(\d+)\s*:', action_line, re.IGNORECASE)
+            step_number = step_number_match.group(1) if step_number_match else None
+            
+            # Extract content from Action (everything after the colon on the first line)
+            action_content = action_line.split(':', 1)[1].strip()
+            
+            # Add all subsequent lines until we hit another step type or end
+            i = action_start + 1
+            while i < len(lines):
+                line = lines[i].strip()
+                if re.match(r'^(Thought|Action|Observation|Final answer)(?:\s+\d+)?\s*:', line, re.IGNORECASE):
+                    break
+                if line:  # Only add non-empty lines
+                    action_content += '\n' + line
+                i += 1
+            
+            step_content = action_content.strip().replace("```json", "").replace("```", "")
+            
+            result = {
+                "step_type": step_type,
+                "step_number": step_number,
+                "content": step_content
+            }
+            
+            # Parse action data (must be JSON)
+            try:
+                action_data = json.loads(step_content)
+                result["action"] = action_data
+            except json.JSONDecodeError:
+                # If not valid JSON, keep content as raw string
+                result["action"] = {"raw": step_content}
+            
+            return result
+        
+        # Standard single step parsing
         step_pattern = r'^(Thought|Action|Observation|Final answer)(?:\s+(\d+))?\s*:\s*(.*)$'
         match = re.match(step_pattern, content, re.IGNORECASE | re.DOTALL)
         
         if match:
             step_type = match.group(1).lower()
             step_number = match.group(2) if match.group(2) else None
-            step_content = match.group(3).strip()
+            step_content = match.group(3).strip().replace("```json", "").replace("```", "")
             
             result = {
                 "step_type": step_type,
@@ -935,8 +1027,14 @@ class _AgenticLoop:
 
         if "action" in iteration and iteration["action"].get("name"):
             tool_call = iteration["action"]
-            tool_result = self._call_tool(tool_call)
-            print("TOOL RESULT", tool_result)
+            print("DEBUG: tool_call from iteration:", tool_call)
+            
+            if tool_call.get("name").startswith("mcp_"):
+                tool_result = self._call_mcp_tool(tool_call)
+            else:
+                tool_result = self._call_tool(tool_call)
+
+            print("TOOL RESULT", tool_result, type(tool_result))
             iteration["observation"] = tool_result
             response["iterations"].append(iteration)
 
@@ -948,6 +1046,7 @@ class _AgenticLoop:
                     messages.append({"role": "user", "content": msg})
                 else:
                     msg = json.dumps({"observation": tool_result})
+                    print("DEBUG: msg", msg)
                     messages.append({"role": "user", "content": msg})
         elif iteration.get("step_type") == "action" and "action" in iteration:
             tool_call = iteration["action"]

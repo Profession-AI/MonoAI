@@ -4,7 +4,7 @@ from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
 from ..tools._tool_parser import ToolParser
-from ..mcp.mcp_tool_parser import McpToolParser
+from ..mcp._mcp_tool_parser import McpToolParser
 from ..conf import Conf
 import litellm
 

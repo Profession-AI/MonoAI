@@ -18,7 +18,8 @@ dependencies = [
     "typing-extensions",
     "xmltodict",
     "pytest",
-    "typer"
+    "typer",
+    "mcp"
   ]
 
 [project.urls]

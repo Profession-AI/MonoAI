@@ -1,22 +1,14 @@
-from monoai.application import Application, RateLimiter, Limit
 from monoai.models import Model
-from monoai.agents import Agent
-
-model = Model(provider="openai", model="gpt-4o-mini")
-
-def weather(city: str):
-    """
-    Get the weather for a given city
-
-    Args:
-        city (string): The city to get the weather for
-
-    Returns:
-        The weather in the given city
-    """
-
-    return f"The weather in {city} is 24°C"
-
-agent = Agent(model, paradigm="function_calling", name="weather", tools=[weather])
-rate_limiter = RateLimiter(limits=[Limit(unit="token", value=1000, reset_unit="minute", reset_value=1)])
-app = Application(name="weather_app", model=model, agents=[agent], rate_limiter=rate_limiter)
+    from monoai.prompts import Prompt
+    # Initialize model
+    
+        # Remember to set your provider key in the providers.keys file
+        provider = "" # set your provider (es. openai, anthropic, google, etc.)
+        model = "" # set your model (es. gpt-4o-mini, claude-3, gemini-1.5-flash, etc.)
+        model = Model(provider=provider, model=model)
+        
+    # Load and use the hello prompt
+    prompt = Prompt(prompt_id="hello")
+    response = model.ask(prompt)
+    print(f"Response: {response['response']}")
+    

@@ -1,8 +1,10 @@
 from typing import Dict, Union, AsyncGenerator
+import types
 from ..prompts.prompt import Prompt
 from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
 from ..tools._tool_parser import ToolParser
+from ..mcp.mcp_tool_parser import McpToolParser
 from ..conf import Conf
 import litellm
 
@@ -239,12 +241,17 @@ class PromptExecutorMixin:
             model = "hosted_vllm/"+model
         
         tools = None
+        from mcp.types import Tool as MCPTool
 
         if hasattr(self, "_tools") and len(self._tools) > 0:
             tools = []
             tp = ToolParser()
+            mcp_tp = McpToolParser()
             for tool in self._tools:
-                tools.append(tp.parse(tool))      
+                if isinstance(tool, types.FunctionType):
+                    tools.append(tp.parse(tool))      
+                elif isinstance(tool, MCPTool):
+                    tools.append(mcp_tp.parse(tool))
 
         if isinstance(prompt, Prompt):  
             messages = [prompt.as_dict()]

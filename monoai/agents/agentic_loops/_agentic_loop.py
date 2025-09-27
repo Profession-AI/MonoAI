@@ -1,107 +1,21 @@
 """
-Agentic Loop Implementation with Streaming Support
+Base classes and mixins for agentic loop implementations.
 
-This module provides a comprehensive set of agentic loop implementations that support
-real-time streaming responses during the entire generation phase. The agents are designed
-to work with various AI paradigms and can process user queries through iterative reasoning,
-tool usage, and structured output generation.
-
-Key Features:
-- Real-time streaming of AI responses
-- Multiple agent paradigms (React, Function Calling, Plan-and-Execute, etc.)
-- Step-based reasoning format for transparent decision making
-- Tool integration and execution
-- Configurable iteration limits and debugging
-- Asynchronous streaming with proper resource management
-
-Agent Paradigms:
-The agents use a structured step-based format for reasoning:
-- Thought N: <reasoning process and analysis>
-- Action N: {"name": "tool_name", "arguments": {...}}
-- Observation N: <tool execution result>
-- Final answer: <conclusive response to user query>
-
-Streaming Architecture:
-Streaming allows real-time processing of AI responses as they are generated, enabling:
-- Immediate feedback to users
-- Progress monitoring during long operations
-- Better user experience with responsive interfaces
-- Debugging and monitoring of agent reasoning
-
-Usage Examples:
-
-1. Basic React Agent with Streaming:
-    ```python
-    from monoai.agents import Agent
-    
-    agent = Agent(model, paradigm="react")
-    agent.enable_streaming()  # Uses default console output
-    result = agent.run("What is the capital of France?")
-    ```
-
-2. Custom Streaming Handler:
-    ```python
-    from monoai.agents import Agent
-    import json
-    
-    def custom_stream_handler(content):
-        # Process streaming content in real-time
-        print(f"Streaming: {content}", end='', flush=True)
-    
-    agent = Agent(model, paradigm="react")
-    agent.enable_streaming(custom_stream_handler)
-    result = agent.run("Your query here")
-    ```
-
-3. Function Calling Agent:
-    ```python
-    from monoai.agents import Agent
-    from monoai.tools import search_web
-    
-    agent = Agent(model, paradigm="function_calling")
-    agent.register_tools([search_web])
-    agent.enable_streaming()
-    result = agent.run("Search for recent AI news")
-    ```
-
-4. Plan and Execute Agent:
-    ```python
-    agent = Agent(model, paradigm="plan-and-execute")
-    agent.enable_streaming()
-    result = agent.run("Create a detailed project plan")
-    ```
-
-Available Agent Types:
-- FunctionCallingAgenticLoop: Native OpenAI function calling
-- ReactAgenticLoop: ReAct reasoning pattern
-- ReactWithFCAgenticLoop: Hybrid ReAct + Function Calling
-- ProgrammaticAgenticLoop: Code generation and execution
-- PlanAndExecuteAgenticLoop: Planning then execution pattern
-- ReflexionAgenticLoop: Self-reflection and improvement
-- SelfAskAgenticLoop: Self-questioning approach
-- SelfAskWithSearchLoop: Self-ask with web search capabilities
-
-Streaming Callback Format:
-The streaming callback receives content as plain text strings. For advanced use cases,
-you can access the raw streaming data through the model's streaming methods.
-
-Error Handling:
-- Automatic fallback to non-streaming mode on errors
-- Proper cleanup of async resources
-- Configurable debug output
-- Iteration limits to prevent infinite loops
-
-Thread Safety:
-This implementation is designed for single-threaded use. For concurrent access,
-create separate agent instances for each thread or process.
+This module provides the foundational classes and mixins that are used
+by all agentic loop implementations. It includes the base agentic loop
+class, function calling mixin, and ReAct mixin.
 """
 
 import json
 import inspect
 import re
+import asyncio
 from typing import Any, Dict, List, Optional, Callable
-from ..prompts import Prompt
-from ..models import Model
+
+from monoai.mcp.mcp_server import McpServer
+from ...prompts import Prompt
+from ...models import Model
+
 
 class _FunctionCallingMixin:
     """Mixin for handling OpenAI function calling tool execution.
@@ -159,6 +73,82 @@ class _FunctionCallingMixin:
             "name": function_name,
             "content": function_response,
         }
+
+    def _call_mcp_tool(self, tool_call: Dict[str, Any]) -> Any:
+        """Execute a MCP tool call.
+        
+        This method executes a MCP tool call based on a structured dictionary
+        containing the tool name and arguments.
+        """
+        try:
+            # Extract server name from tool name (format: mcp_servername_toolname)
+            tool_name_parts = tool_call.function.name.split("_", 2)
+            if len(tool_name_parts) < 3:
+                raise ValueError(f"Invalid MCP tool name format: {tool_call.function.name}")
+            
+            mcp_server_name = tool_name_parts[1]
+            if mcp_server_name not in self._mcp_servers:
+                raise ValueError(f"MCP server '{mcp_server_name}' not found")
+            
+            mcp_server = self._mcp_servers[mcp_server_name]
+            
+            # Run the async operation
+            try:
+                # Try to get the current event loop
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # If we're already in an async context, create a new task
+                    import concurrent.futures
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, ensure_connected_and_call())
+                        mcp_result = future.result()
+                else:
+                    # We can run directly
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
+                    
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+            except RuntimeError:
+                # No event loop exists, create a new one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
+                    
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+                finally:
+                    loop.close()
+            
+            return {
+                "tool_call_id": tool_call.id,
+                "role": "tool",
+                "name": tool_call.function.name,
+                "content": mcp_result.content if hasattr(mcp_result, 'content') else str(mcp_result),
+            }
+        except Exception as e:
+            return {
+                "tool_call_id": tool_call.id,
+                "role": "tool",
+                "name": tool_call.function.name,
+                "content": f"Error executing MCP tool: {str(e)}",
+            }
+
 
 
 class _ReactMixin:
@@ -232,6 +222,74 @@ class _ReactMixin:
         kwargs = list(tool_call["arguments"].values())
         return tool(*kwargs)
 
+    def _call_mcp_tool(self, tool_call: Dict[str, Any]) -> Any:
+        """Execute a MCP tool call.
+        
+        This method executes a MCP tool call based on a structured dictionary
+        containing the tool name and arguments.
+        """
+        try:
+            # Extract server name from tool name (format: mcp_servername_toolname)
+            tool_name_parts = tool_call["name"].split("_", 2)
+            if len(tool_name_parts) < 3:
+                raise ValueError(f"Invalid MCP tool name format: {tool_call['name']}")
+            
+            mcp_server_name = tool_name_parts[1]
+            if mcp_server_name not in self._mcp_servers:
+                raise ValueError(f"MCP server '{mcp_server_name}' not found")
+            
+            mcp_server = self._mcp_servers[mcp_server_name]
+            
+            # Run the async operation
+            try:
+                # Try to get the current event loop
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    # If we're already in an async context, create a new task
+                    import concurrent.futures
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        print("TOOL CALL", tool_call["name"], tool_call["arguments"])
+                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
+                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
+                    
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, ensure_connected_and_call())
+                        mcp_result = future.result()
+                else:
+                    # We can run directly
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
+                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
+                    
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+            except RuntimeError:
+                # No event loop exists, create a new one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                try:
+                    async def ensure_connected_and_call():
+                        # Ensure the server is connected before calling the tool
+                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
+                            await mcp_server.connect()
+                        
+                        kwargs = tool_call["arguments"] if isinstance(tool_call["arguments"], dict) else {}
+                        return await mcp_server.call_tool(tool_call["name"], **kwargs)
+                    
+                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
+                finally:
+                    loop.close()
+            
+            return mcp_result.content if hasattr(mcp_result, 'content') else str(mcp_result)
+        except Exception as e:
+            return f"Error executing MCP tool: {str(e)}"
 
 class _AgenticLoop:
     """Base class for all agentic loop implementations.
@@ -265,7 +323,6 @@ class _AgenticLoop:
         Dictionary of available tools, mapped by name
     """
 
-
     _DEFAULT_PROMPT_PATH = "monoai/agents/prompts/"
     
     def __init__(self, model: Model, agentic_prompt: str=None, debug: bool=False, max_iter: Optional[int]=None, 
@@ -297,7 +354,7 @@ class _AgenticLoop:
         self._stream_callback = stream_callback
         self._human_feedback = human_feedback
         self._tools = {}
-
+        self._mcp_servers = {}
 
     def register_tools(self, tools: List[Any]) -> None:
         """Register tools with the agent.
@@ -310,6 +367,64 @@ class _AgenticLoop:
         """
         for tool in tools:
             self._tools[tool.__name__] = tool
+
+    
+    def register_mcp_servers(self, mcp_servers: List[Any]) -> None:
+        """Register MCP servers with the agent.
+        
+        Parameters
+        ----------
+        mcp_servers : List[Any]
+            List of MCP server instances to register.
+        """
+        async def get_mcp_tools():
+            tools = {}
+            self._mcp_servers = {}
+            for mcp_server in mcp_servers:
+                try:
+                    print(f"Connecting to MCP server: {mcp_server.name}")
+                    # Use context manager for proper connection handling
+                    async with mcp_server.session_context():
+                        self._mcp_servers[mcp_server.name] = mcp_server
+                        server_tools = await mcp_server.get_tools()
+                        print(f"Retrieved {len(server_tools)} tools from {mcp_server.name}")
+                        for tool in server_tools:
+                            # Create a new tool name with MCP prefix
+                            original_name = tool.name
+                            tool.name = f"mcp_{mcp_server.name}_{original_name}"
+                            tools[tool.name] = tool
+                            print(f"Registered tool: {tool.name}")
+                            print(f"Tool schema: {getattr(tool, 'input_schema', 'No schema')}")
+                except Exception as e:
+                    print(f"Warning: Failed to connect to MCP server '{mcp_server.name}': {e}")
+                    # Still add the server to the list for potential later connection
+                    self._mcp_servers[mcp_server.name] = mcp_server
+            return tools
+        
+        # Run the async operation in a new event loop
+        try:
+            # Try to get the current event loop
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If we're already in an async context, create a new task
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(asyncio.run, get_mcp_tools())
+                    tools = future.result()
+            else:
+                # We can run directly
+                tools = loop.run_until_complete(get_mcp_tools())
+        except RuntimeError:
+            # No event loop exists, create a new one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                tools = loop.run_until_complete(get_mcp_tools())
+            finally:
+                loop.close()
+        
+        self._tools.update(tools)
+
     
     def enable_streaming(self, stream_callback: Optional[Callable[[str], None]] = None) -> None:
         """Enable streaming responses for this agent.
@@ -770,7 +885,6 @@ class _AgenticLoop:
             return True
         return False
 
-
     def _pngimagefile_to_base64_data_uri(self, img) -> str:
         """
         Converte un oggetto PIL.PngImageFile in una stringa base64 data URI.
@@ -791,7 +905,6 @@ class _AgenticLoop:
         encoded = base64.b64encode(buffer.read()).decode("utf-8")
 
         return f"data:image/png;base64,{encoded}"
-
 
     def _handle_tool_action(self, iteration: Dict[str, Any], response: Dict[str, Any], messages: List[Dict[str, Any]]) -> None:
         """Handle a tool action execution.
@@ -901,488 +1014,3 @@ class _AgenticLoop:
             This method must be implemented by subclasses
         """
         raise NotImplementedError
-
-
-class FunctionCallingAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
-    """Agent that uses OpenAI's native function calling.
-    
-    This agent implements a loop that leverages OpenAI's native function calling
-    system, allowing the model to directly call available functions without
-    manual response parsing. This approach is more reliable and efficient
-    than text-based tool calling.
-    
-    The agent automatically handles:
-    - Function call detection and execution
-    - Tool result integration into conversation
-    - Iteration limits to prevent infinite loops
-    - Streaming support for real-time responses
-    
-    Attributes
-    ----------
-    _model : Any
-        OpenAI model with function calling support
-    _tools : Dict[str, Any]
-        Available tools for the agent
-    """
-    
-    def _get_base_messages(self, query: str) -> List[Dict[str, Any]]:
-        """Generate base messages for the specific agent type.
-        
-        This method creates the initial message structure for the agent,
-        including the appropriate prompt template and user query. The
-        prompt template is selected based on the agent type and includes
-        information about available tools.
-        
-        Parameters
-        ----------
-        query : str
-            User query to include in the prompt
-        
-        Returns
-        -------
-        List[Dict[str, Any]]
-            List of base messages for the agent, including the prompt and query
-        """
-        messages = []
-        if self._agentic_prompt is not None:
-            if isinstance(self._agentic_prompt, str):
-                if self._agentic_prompt.endswith(".prompt"):
-                    agentic_prompt = Prompt(prompt_id=self._agentic_prompt, is_system=True)
-                else:
-                    agentic_prompt = Prompt(prompt=self._agentic_prompt, is_system=True)
-            else:
-                agentic_prompt = self._agentic_prompt
-            messages.append(agentic_prompt.as_dict())
-                    
-        if isinstance(query, Prompt):
-            messages.append(query.as_dict())
-        else:
-            messages.append({"role": "user", "content": query})
-
-        return messages
-
-
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the agentic loop using function calling.
-        
-        This method processes user queries through OpenAI's function calling
-        system, automatically executing tools when the model determines
-        they are needed.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response containing:
-            - prompt: Original user query
-            - iterations: List of tool calls executed
-            - response: Final model response
-        """
-        self._model._add_tools(list(self._tools.values()))
-        messages = self._get_base_messages(query)
-        response = self._create_base_response(query)
-        current_iter = 0
-        max_iterations = self._max_iter if self._max_iter is not None else 10  # Limite di sicurezza
-        
-        while current_iter < max_iterations:
-            
-            if self._stream_callback is None:
-                resp = self._execute_model_step(messages)
-            else:
-                resp = self._execute_model_step_stream(messages)
-
-            messages.append(resp)
-            content = resp["content"]
-            self._debug_print(content)
-            
-            self._update_usage(response, resp)
-            
-            if resp.get("tool_calls"):
-                for tool_call in resp["tool_calls"]:
-                    # Check if human feedback is required for actions
-                    if self._human_feedback == "actions" or self._human_feedback == "all":
-                        action_data = {
-                            "name": tool_call.function.name,
-                            "arguments": json.loads(tool_call.function.arguments) if tool_call.function.arguments else {}
-                        }
-                        if not self._request_human_feedback("action", f"Function call: {tool_call.function.name}", action_data):
-                            print("Execution stopped by user.")
-                            return response
-                    
-                    tool_result = self._call_tool(tool_call)
-                    iteration_data = {
-                        "name": tool_call.function.name,
-                        "arguments": tool_call.function.arguments,
-                        "result": tool_result["content"]
-                    }
-                    
-                    # Add usage information to the iteration
-                    if "usage" in resp:
-                        iteration_data["usage"] = resp["usage"]
-                    
-                    response["iterations"].append(iteration_data)
-                    messages.append(tool_result)
-            else:
-                # Check if human feedback is required for all steps (non-action responses)
-                if self._human_feedback == "all":
-                    if not self._request_human_feedback("response", content):
-                        print("Execution stopped by user.")
-                        return response
-                
-                response["response"] = content
-                break
-            
-            current_iter += 1
-        
-        # Se arriviamo qui, abbiamo raggiunto il limite di iterazioni
-        if self._debug:
-            print(f"Raggiunto limite di iterazioni ({max_iterations})")
-        
-        return response
-
-
-class _BaseReactLoop(_AgenticLoop, _ReactMixin):
-    """Base class for all ReAct-style agents.
-    
-    This class implements the standard loop for agents that use a ReAct-style
-    approach, where the model produces structured JSON responses that are
-    parsed and handled iteratively. The ReAct pattern combines reasoning
-    and acting in a step-by-step manner.
-    
-    The base loop handles:
-    - Step-based reasoning format parsing
-    - Tool action execution and observation
-    - Final answer detection
-    - Custom iteration handlers
-    - Error handling and fallbacks
-    
-    Attributes
-    ----------
-    _max_iter : Optional[int]
-        Maximum number of iterations allowed
-    """
-    
-    def _run_react_loop(self, query: str, agent_type: str, 
-                        custom_handlers: Optional[Dict[str, callable]] = None) -> Dict[str, Any]:
-        """Execute the standard ReAct loop.
-        
-        This method implements the core ReAct reasoning pattern where the
-        agent alternates between thinking, acting, and observing until it
-        reaches a final answer or hits iteration limits.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        agent_type : str
-            Type of agent to determine which prompt template to use
-        custom_handlers : Optional[Dict[str, callable]], optional
-            Dictionary of custom handlers for specific iteration types.
-            Keys are field names in the iteration, values are functions
-            that handle those iterations.
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response containing:
-            - prompt: Original user query
-            - iterations: List of processed iterations
-            - response: Final response (if present)
-        
-        Notes
-        -----
-        This method automatically handles:
-        - Final answers (final_answer)
-        - Tool actions (action)
-        - Custom cases via custom_handlers
-        - Default cases for unhandled iterations
-        - JSON error handling
-        """
-        messages = self._get_base_messages(agent_type, query)
-
-        current_iter = 0
-        response = self._create_base_response(query)
-        
-        # Handler personalizzati per casi speciali
-        custom_handlers = custom_handlers or {}
-
-        while True:
-            if self._max_iter is not None and current_iter >= self._max_iter:
-                break
-            
-            if self._stream_callback is None:
-                resp = self._execute_model_step(messages)
-            else:
-                resp = self._execute_model_step_stream(messages)
-
-            messages.append(resp)
-            content = resp["content"]
-        
-            self._debug_print(content)
-
-            # Update usage for this iteration
-            self._update_usage(response, resp)
-
-            if content is not None:
-                iteration = self._parse_step_format(content)
-                if iteration:
-                    # Add usage information to the iteration
-                    if "usage" in resp:
-                        iteration["usage"] = resp["usage"]
-                    
-                    # Check if human feedback is required for all steps
-                    if self._human_feedback == "all":
-                        if not self._request_human_feedback(iteration.get("step_type", "unknown"), 
-                                                          iteration.get("content", ""), 
-                                                          iteration.get("action")):
-                            print("Execution stopped by user.")
-                            break
-                    
-                    # Gestione risposta finale
-                    if self._handle_final_answer(iteration, response):
-                        break
-                    
-                    # Gestione azioni di tool
-                    if iteration["step_type"]=="action":
-                        self._handle_tool_action(iteration, response, messages)
-                        continue
-                    
-                    # Gestione casi personalizzati
-                    handled = False
-                    for key, handler in custom_handlers.items():
-                        if iteration["step_type"] == key:
-                            handler(iteration, response, messages)
-                            handled = True
-                            break
-                    
-                    if not handled:
-                        self._handle_default(iteration, response, messages)
-                else:
-                    # Se non riesce a parsare, aggiungi come messaggio utente
-                    messages.append({"role": "user", "content": content})
-
-            current_iter += 1
-
-        return response
-
-
-class ReactAgenticLoop(_BaseReactLoop):
-    """Standard ReAct agent.
-    
-    This agent implements the standard ReAct pattern, where the model
-    produces JSON responses that are parsed and handled iteratively.
-    The ReAct pattern combines reasoning and acting in a structured way.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the ReAct agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the ReAct loop
-        """
-        return self._run_react_loop(query, "react")
-
-
-class ReactWithFCAgenticLoop(_AgenticLoop, _FunctionCallingMixin):
-    """Agent that combines ReAct and Function Calling.
-    
-    This agent combines the ReAct approach with OpenAI's native function
-    calling, allowing for hybrid tool call management. This provides
-    the flexibility of ReAct reasoning with the reliability of function calling.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the hybrid ReAct + Function Calling agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response (to be implemented)
-        
-        Notes
-        -----
-        TODO: Implement combination of ReAct and Function Calling
-        """
-        # TODO: Implement combination of ReAct and Function Calling
-        pass
-
-
-class ProgrammaticAgenticLoop(_BaseReactLoop):
-    """Programmatic agent.
-    
-    This agent implements a programmatic approach where the model
-    produces code or structured instructions that are executed.
-    It's designed for tasks that require code generation and execution.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the programmatic agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the programmatic loop
-        """
-        return self._run_react_loop(query, "programmatic")
-
-
-class PlanAndExecuteAgenticLoop(_BaseReactLoop):
-    """Plan-and-execute agent.
-    
-    This agent implements the plan-and-execute pattern, where the model
-    first plans the actions and then executes them sequentially.
-    This approach is useful for complex tasks that require careful planning.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the plan-and-execute agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the plan-and-execute loop
-        """
-        return self._run_react_loop(query, "plan_and_execute")
-
-
-class ReflexionAgenticLoop(_BaseReactLoop):
-    """Agent with reflection capabilities.
-    
-    This agent implements the reflexion pattern, where the model
-    reflects on its own actions and decisions to improve performance.
-    This self-reflective approach helps the agent learn from mistakes
-    and improve its reasoning over time.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the reflexion agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the reflexion loop
-        """
-        return self._run_react_loop(query, "reflexion")
-
-
-class SelfAskAgenticLoop(_BaseReactLoop):
-    """Self-ask agent.
-    
-    This agent implements the self-ask pattern, where the model
-    asks itself questions to guide the reasoning process.
-    This approach helps break down complex problems into smaller,
-    more manageable questions.
-    """
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the self-ask agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the self-ask loop
-        """
-        return self._run_react_loop(query, "self_ask")
-
-
-class SelfAskWithSearchLoop(_BaseReactLoop):
-    """Self-ask agent with web search capabilities.
-    
-    This agent extends the self-ask pattern with the ability to
-    perform web searches to obtain additional information.
-    It's particularly useful for questions that require current
-    or factual information not available in the model's training data.
-    
-    Attributes
-    ----------
-    _handle_search_query : callable
-        Method for handling web search queries
-    """
-    
-    def _handle_search_query(self, iteration: Dict[str, Any], response: Dict[str, Any], messages: List[Dict[str, Any]]) -> None:
-        """Handle web search queries.
-        
-        This method processes search queries by executing web searches
-        using the Tavily search engine and integrating the results
-        into the conversation flow.
-        
-        Parameters
-        ----------
-        iteration : Dict[str, Any]
-            Current iteration containing the search query
-        response : Dict[str, Any]
-            Response dictionary to update
-        messages : List[Dict[str, Any]]
-            Message list to update with search results
-        
-        Notes
-        -----
-        This method modifies the response and messages objects directly.
-        Uses the Tavily search engine for web searches.
-        """
-        from ..tools.websearch import search_web
-        
-        query = iteration["search_query"]
-        result = search_web(query, engine="tavily")["text"]
-        iteration["search_result"] = result
-        
-        msg = json.dumps({"query_results": result})
-        messages.append({"role": "user", "content": msg})
-        response["iterations"].append(iteration)
-    
-    def start(self, query: str) -> Dict[str, Any]:
-        """Start the self-ask with search agentic loop.
-        
-        Parameters
-        ----------
-        query : str
-            User query to process
-        
-        Returns
-        -------
-        Dict[str, Any]
-            Agent response processed through the self-ask with search loop
-        
-        Notes
-        -----
-        This agent uses a custom handler for web search queries, allowing
-        the model to obtain up-to-date information during the process.
-        """
-        custom_handlers = {"search_query": self._handle_search_query}
-        return self._run_react_loop(query, "self_ask_with_search", custom_handlers)

@@ -133,7 +133,7 @@ curl -X POST "http://localhost:8000/agent/search_agent" \
 
 ## 📗 Conceptual Guide
 
-"MonoAI is based on composable modules that enable the development of sophisticated and scalable AI architectures.
+MonoAI is based on composable modules that enable the development of sophisticated and scalable AI architectures.
 
 ```mermaid
 graph TD

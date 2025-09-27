@@ -18,15 +18,7 @@ class Application:
     This class automatically creates FastAPI endpoints based on the configured
     models and agents, handling request validation, rate limiting, and response
     formatting.
-    
-    Features:
-    - REST API endpoints for models and agents
-    - WebSocket support for real-time streaming
-    - Rate limiting with configurable limits
-    - User validation and authentication
-    - CORS support for cross-origin requests
-    - Health checks and monitoring endpoints
-    
+        
     Examples
     --------
     Basic usage with a model:

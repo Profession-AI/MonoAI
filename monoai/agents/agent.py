@@ -1,15 +1,15 @@
 from ..models import Model
-from .agentic_loop import (
-    FunctionCallingAgenticLoop, 
-    ReactAgenticLoop, 
-    ReactWithFCAgenticLoop,
+from ..mcp.mcp_server import McpServer
+from .agentic_loops._function_calling_agentic_loop import FunctionCallingAgenticLoop
+from .agentic_loops._react_agentic_loop import ReactAgenticLoop, ReactWithFCAgenticLoop
+from .agentic_loops._other_agentic_loops import (
     PlanAndExecuteAgenticLoop,
     ProgrammaticAgenticLoop,
     ReflexionAgenticLoop,
     SelfAskAgenticLoop,
-    SelfAskWithSearchLoop,
-    _AgenticLoop
+    SelfAskWithSearchLoop
 )
+from .agentic_loops._agentic_loop import _AgenticLoop
 
 from ..prompts import Prompt
 
@@ -39,7 +39,7 @@ class Agent:
     """
     
     def __init__(self, model: Model, tools=None, paradigm="function_calling", 
-                 agent_prompt=None, name="", debug=False, max_iter=None, native_web_search=None, 
+                 agent_prompt=None, name="", mcp_servers=None, debug=False, max_iter=None, native_web_search=None, 
                  human_feedback=None):
         """Initialize the agent with the specified model and configuration.
         
@@ -145,6 +145,9 @@ class Agent:
         
         if tools is not None:
             self._loop.register_tools(tools)
+        
+        if mcp_servers is not None:
+            self._loop.register_mcp_servers(mcp_servers)
         
     def run(self, prompt: str | Prompt):
         """Execute the agent with the specified prompt.

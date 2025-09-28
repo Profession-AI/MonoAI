@@ -7,32 +7,17 @@ from ..keys.keys_manager import load_key
 
 class HostedModel(Model, ResponseProcessorMixin, PromptExecutorMixin):
     """
-    Model class for interacting with AI language models.
-
-    This module provides the Model class which serves as the primary interface for interacting
-    with various AI language models (like GPT-4, Claude-3, etc.).
-
+    HostedModel is a class for interacting with self-hosted AI language models.
+    Currently support models deployed with VLLM.
+    
     Examples
     --------
     Basic usage:
     ```
-    model = Model(provider="openai", model="gpt-4")
+    model = HostedModel(url="http://localhost:8000", version=1, provider="openai", model="gpt-4")
     response = model.ask("What is the capital of France?")
     ```
 
-    With prompt:
-    ```
-    model = Model(
-        provider="anthropic",
-        model="claude-3",
-    )
-    prompt = Prompt(
-        prompt="What is the capital of {country}?",
-        prompt_data={"country": "France"},
-        response_type=str
-    )
-    response = model.ask(prompt)
-    ```
     """
 
     def __init__(
@@ -66,12 +51,11 @@ class HostedModel(Model, ResponseProcessorMixin, PromptExecutorMixin):
         """
 
         super().__init__(
-            provider,
-            model,
-            system_prompt, 
-            count_tokens, 
-            count_cost, 
-            max_tokens
+            provider=provider,
+            model=model,
+            count_tokens=count_tokens, 
+            count_cost=count_cost, 
+            max_tokens=max_tokens
         )
         
         self.url = url

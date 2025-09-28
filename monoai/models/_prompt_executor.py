@@ -5,6 +5,7 @@ from ..prompts.prompt_chain import PromptChain
 from ..prompts.iterative_prompt import IterativePrompt
 from ..tools._tool_parser import ToolParser
 from ..mcp._mcp_tool_parser import McpToolParser
+from mcp.types import Tool as MCPTool
 from ..conf import Conf
 import litellm
 
@@ -220,6 +221,19 @@ class PromptExecutorMixin:
                 current_response = self._completion(current_prompt, metadata=metadata)
                 response += current_response
 
+    def _get_tools(self):
+        tools = None
+        if hasattr(self, "_tools") and len(self._tools) > 0:
+            tools = []
+            tp = ToolParser()
+            mcp_tp = McpToolParser()
+            for tool in self._tools:
+                if isinstance(tool, types.FunctionType):
+                    tools.append(tp.parse(tool))      
+                elif isinstance(tool, MCPTool):
+                    tools.append(mcp_tp.parse(tool))
+        return tools
+
     def _completion(self, prompt: Prompt|list, response_type: str = None, metadata: Dict = {}) -> Dict:
 
         self._setup_observability()
@@ -240,24 +254,13 @@ class PromptExecutorMixin:
             url = self.url+"/v"+str(self.version)
             model = "hosted_vllm/"+model
         
-        tools = None
-        from mcp.types import Tool as MCPTool
-
-        if hasattr(self, "_tools") and len(self._tools) > 0:
-            tools = []
-            tp = ToolParser()
-            mcp_tp = McpToolParser()
-            for tool in self._tools:
-                if isinstance(tool, types.FunctionType):
-                    tools.append(tp.parse(tool))      
-                elif isinstance(tool, MCPTool):
-                    tools.append(mcp_tp.parse(tool))
+        tools = self._get_tools()
 
         if isinstance(prompt, Prompt):  
             messages = [prompt.as_dict()]
         else:
             messages = prompt
-            
+        
         """
         if self._web_search:
             web_search_config = {"search_context_size": self._web_search}
@@ -294,15 +297,9 @@ class PromptExecutorMixin:
         model = self.provider+"/"+self.model
         if hasattr(self, "url") and self.url != None:
             url = self.url+"/v"+str(self.version)
-            model = "hosted_vllm/"+self.model
+            model = "hosted_vllm/"+model
         
-        tools = None
-        
-        if hasattr(self, "_tools") and len(self._tools) > 0:
-            tools = []
-            tp = ToolParser()
-            for tool in self._tools:
-                tools.append(tp.parse(tool))
+        tools = self._get_tools()
 
         if isinstance(prompt, str):
             messages = [{ "content": prompt,"role": "user"}]

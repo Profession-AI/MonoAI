@@ -43,7 +43,7 @@ class ResponseProcessorMixin:
             processed_response["usage"]={
                 "completion_tokens":response["usage"]["completion_tokens"],
                 "prompt_tokens":response["usage"]["prompt_tokens"],
-                "total_tokens=": response["usage"]["total_tokens"]
+                "total_tokens": response["usage"]["total_tokens"]
                 }
                         
         return processed_response 

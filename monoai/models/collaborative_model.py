@@ -63,8 +63,8 @@ class CollaborativeModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin)
         )
 
         self._aggregator = Model(
-            aggregator['provider'],
-            aggregator['model'],
+            provider=aggregator['provider'],
+            model=aggregator['model'],
             count_tokens=count_tokens,
             count_cost=count_cost
         )

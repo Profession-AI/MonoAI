@@ -15,81 +15,129 @@ from ..prompts import Prompt
 
 
 class Agent:
-    """AI Agent that implements different reasoning paradigms.
+    """
+    AI Agent that implements different reasoning paradigms for autonomous task execution.
     
-    This class provides a unified interface for creating and using AI agents
-    with different reasoning paradigms. The agent can be configured to use
-    function calling, ReAct, plan-and-execute, and other agentic approaches,
-    or a custom paradigm.
+    The Agent class provides a unified interface for creating and using AI agents
+    with various reasoning paradigms. It acts as a high-level wrapper around
+    specific agentic loop implementations, offering a consistent API regardless
+    of the underlying reasoning pattern.
     
-    The Agent class acts as a high-level wrapper around specific agentic loop
-    implementations, providing a consistent API regardless of the underlying
-    reasoning pattern. It handles paradigm selection, tool registration,
-    and streaming configuration.
+    The agent can be configured with different reasoning approaches, tools,
+    and execution parameters to handle complex tasks autonomously or with
+    human oversight.
     
-    Supported Paradigms:
-    - Function Calling: Native OpenAI function calling
-    - ReAct: Reasoning and Acting pattern
-    - Plan-and-Execute: Planning then execution
-    - Programmatic: Code generation and execution
-    - Reflexion: Self-reflective reasoning
-    - Self-Ask: Self-questioning approach
-    - Self-Ask with Search: Self-ask with web search capabilities
+    Parameters
+    ----------
+    model : Model
+        AI model instance to use for agent execution
+    tools : list, optional
+        List of available tools for the agent. Each tool should be a
+        callable function. Default is None.
+    paradigm : str or _AgenticLoop, optional
+        Reasoning paradigm to use. Default is "function_calling".
+    agent_prompt : str, optional
+        Custom prompt for the agent. If None, uses the default prompt
+        for the chosen paradigm. Default is None.
+    name : str, optional
+        Name identifier for the agent. Default is empty string.
+    mcp_servers : list, optional
+        List of MCP (Model Context Protocol) servers to register.
+        Default is None.
+    debug : bool, optional
+        Flag to enable debug output during execution. Default is False.
+    max_iter : int, optional
+        Maximum number of iterations allowed for the agent.
+        If None, there are no limits. Default is None.
+    native_web_search : str, optional
+        Native web search capability level. Must be one of:
+        "low", "medium", or "high". Default is None.
+    human_feedback : str, optional
+        Human feedback mode for controlling agent execution. Can be:
+        - None: No human feedback required (default)
+        - "actions": Pause and request confirmation before executing tool actions
+        - "all": Pause after every step for human review
+        Default is None.
     
+    Attributes
+    ----------
+    name : str
+        Name identifier for the agent
+    _model : Model
+        The AI model instance used for execution
+    _loop : _AgenticLoop
+        The agentic loop implementation for the chosen paradigm
+        
+    Supported Paradigms
+    -------------------
+    - **function_calling**: Native OpenAI function calling with tool integration
+    - **react**: Reasoning and Acting pattern with iterative problem solving
+    - **react_with_function_calling**: Combines ReAct reasoning with function calling
+    - **plan-and-execute**: Two-phase approach: planning then execution
+    - **programmatic**: Code generation and execution for computational tasks
+    - **reflexion**: Self-reflective reasoning with error correction
+    - **self_ask**: Self-questioning approach for complex reasoning
+    - **self_ask_with_search**: Self-ask with web search capabilities
+    
+    Examples
+    --------
+    Basic function calling agent:
+    >>> from monoai.models import Model
+    >>> from monoai.agents import Agent
+    >>> 
+    >>> model = Model(provider="openai", model="gpt-4")
+    >>> agent = Agent(model=model, paradigm="function_calling")
+    >>> response = agent.run("What's the weather like today?")
+    
+    ReAct agent with custom tools:
+    >>> def calculator(expression: str) -> str:
+    ...     return str(eval(expression))
+    >>> 
+    >>> agent = Agent(
+    ...     model=model,
+    ...     paradigm="react",
+    ...     tools=[calculator],
+    ...     name="MathAgent"
+    ... )
+    >>> response = agent.run("Calculate 15 * 23 + 7")
+    
+    Agent with human feedback:
+    >>> agent = Agent(
+    ...     model=model,
+    ...     paradigm="plan-and-execute",
+    ...     human_feedback="actions",
+    ...     debug=True
+    ... )
+    >>> response = agent.run("Plan and execute a data analysis task")
+    
+    Agent with MCP servers:
+    >>> mcp_server = McpServer("coingecko", "http", server_url="https://mcp.api.coingecko.com/sse")
+    >>> agent = Agent(
+    ...     model=model,
+    ...     paradigm="function_calling",
+    ...     mcp_servers=[mcp_server]
+    ... )
+    >>> response = agent.run("What's the price of Bitcoin?")
+
+    Custom paradigm agent:
+    >>> class CustomLoop(_AgenticLoop):
+    ...     def start(self, prompt):
+    ...         # Custom implementation
+    ...         return {"response": "Custom result"}
+    >>> 
+    >>> custom_loop = CustomLoop()
+    >>> agent = Agent(model=model, paradigm=custom_loop)
+    >>> response = agent.run("Test custom paradigm")
     """
     
     def __init__(self, model: Model, tools=None, paradigm="function_calling", 
                  agent_prompt=None, name="", mcp_servers=None, debug=False, max_iter=None, native_web_search=None, 
                  human_feedback=None):
-        """Initialize the agent with the specified model and configuration.
+        """
+        Initialize the agent with the specified model and configuration.
         
-        This constructor sets up an AI agent with the chosen reasoning paradigm,
-        registers any provided tools, and configures execution parameters.
-        
-        Parameters
-        ----------
-        model : Model
-            AI model instance to use for agent execution
-        tools : list, optional
-            List of available tools for the agent. Each tool should be a
-            callable function. Default is None.
-        paradigm : str or _AgenticLoop, optional
-            Reasoning paradigm to use. Can be:
-            
-            **Predefined strings:**
-            - "function_calling": Uses OpenAI native function calling
-            - "react": Standard ReAct approach
-            - "react_with_function_calling": Combines ReAct and function calling
-            - "plan-and-execute": Plan-and-execute paradigm
-            - "programmatic": Programmatic approach
-            - "reflexion": Reflexion paradigm with self-reflection
-            - "self_ask": Self-ask paradigm
-            - "self_ask_with_search": Self-ask with web search capabilities
-            
-            **Custom object:**
-            - An instance of a class derived from _AgenticLoop
-            
-            Default is "function_calling".
-        agent_prompt : str, optional
-            Custom prompt for the agent. If None, uses the default prompt
-            for the chosen paradigm. Default is None.
-        name : str, optional
-            Name identifier for the agent. Default is empty string.
-        debug : bool, optional
-            Flag to enable debug output during execution.
-            Default is False.
-        max_iter : int, optional
-            Maximum number of iterations allowed for the agent.
-            If None, there are no limits. Default is None.
-        native_web_search : str, optional
-            Native web search capability level. Must be one of:
-            "low", "medium", or "high". Default is None.
-        human_feedback : str, optional
-            Human feedback mode for controlling agent execution. Can be:
-            - None: No human feedback required (default)
-            - "actions": Pause and request confirmation before executing tool actions
-            - "all": Pause after every step for human review
-            Default is None.
+        Sets up an AI agent with the chosen reasoning paradigm, registers
+        any provided tools, and configures execution parameters.
         
         Raises
         ------
@@ -150,11 +198,12 @@ class Agent:
             self._loop.register_mcp_servers(mcp_servers)
         
     def run(self, prompt: str | Prompt):
-        """Execute the agent with the specified prompt.
+        """
+        Execute the agent with the specified prompt.
         
-        This method processes a user prompt through the agent's reasoning
-        paradigm, returning a structured response that includes the reasoning
-        process and final answer.
+        Processes a user prompt through the agent's reasoning paradigm,
+        returning a structured response that includes the reasoning process
+        and final answer.
         
         Parameters
         ----------
@@ -170,27 +219,35 @@ class Agent:
             - response: Final response (if available)
             - metadata: Additional execution metadata (paradigm-specific)
         
+        Examples
+        --------
+        >>> agent = Agent(model=model, paradigm="function_calling")
+        >>> response = agent.run("What's the weather in New York?")
+        >>> print(response['response'])
+        
+        >>> from monoai.prompts import Prompt
+        >>> prompt = Prompt("Analyze this data: [1, 2, 3, 4, 5]")
+        >>> response = agent.run(prompt)
+        >>> print(response['iterations'])
+        
         Notes
         -----
-        This method delegates execution to the specific agentic loop
-        configured during initialization. The exact behavior depends on
-        the chosen paradigm (predefined or custom).
-        
-        The response structure may vary slightly depending on the paradigm:
-        - Function calling: Includes tool call details and function results
-        - ReAct: Includes thought-action-observation cycles
-        - Plan-and-execute: Includes planning and execution phases
-        - Programmatic: Includes code generation and execution results
-        - Reflexion: Includes self-reflection and error correction steps
-        - Self-ask: Includes question-answer reasoning chains
-        - Self-ask with search: Includes web search results and reasoning
-        - Custom paradigms: May include paradigm-specific information
+        The response structure varies by paradigm:
+        - **Function calling**: Includes tool call details and function results
+        - **ReAct**: Includes thought-action-observation cycles
+        - **Plan-and-execute**: Includes planning and execution phases
+        - **Programmatic**: Includes code generation and execution results
+        - **Reflexion**: Includes self-reflection and error correction steps
+        - **Self-ask**: Includes question-answer reasoning chains
+        - **Self-ask with search**: Includes web search results and reasoning
+        - **Custom paradigms**: May include paradigm-specific information
         """
         
         return self._loop.start(prompt)
     
     def enable_streaming(self, stream_callback=None):
-        """Enable streaming responses for this agent.
+        """
+        Enable streaming responses for this agent.
         
         When streaming is enabled, the agent will call the provided callback
         function with each content chunk as it's generated, allowing for
@@ -211,6 +268,15 @@ class Agent:
         AttributeError
             If the current paradigm doesn't support streaming
             
+        Examples
+        --------
+        >>> def my_callback(content):
+        ...     print(f"Streaming: {content}")
+        >>> 
+        >>> agent = Agent(model=model, paradigm="function_calling")
+        >>> agent.enable_streaming(my_callback)
+        >>> response = agent.run("Tell me a story")
+        
         Notes
         -----
         Not all paradigms support streaming. Check the specific paradigm
@@ -222,7 +288,8 @@ class Agent:
             raise AttributeError(f"Paradigm '{self._loop.__class__.__name__}' doesn't support streaming")
     
     def disable_streaming(self):
-        """Disable streaming responses for this agent.
+        """
+        Disable streaming responses for this agent.
         
         After calling this method, the agent will use standard (non-streaming)
         model execution for all subsequent requests.
@@ -232,6 +299,14 @@ class Agent:
         AttributeError
             If the current paradigm doesn't support streaming
             
+        Examples
+        --------
+        >>> agent = Agent(model=model, paradigm="function_calling")
+        >>> agent.enable_streaming()
+        >>> # ... use streaming ...
+        >>> agent.disable_streaming()
+        >>> # Now using standard execution
+        
         Notes
         -----
         Not all paradigms support streaming. Check the specific paradigm

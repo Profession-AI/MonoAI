@@ -55,8 +55,8 @@ class MultiModel(BaseModel, PromptExecutorMixin, ResponseProcessorMixin):
         super().__init__(count_tokens, count_cost)
         self._models = [
             Model(
-                model['provider'],
-                model['model'],
+                provider=model['provider'],
+                model=model['model'],
                 count_tokens=count_tokens,
                 count_cost=count_cost
             ) for model in models

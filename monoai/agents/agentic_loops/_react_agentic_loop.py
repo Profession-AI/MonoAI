@@ -94,7 +94,6 @@ class _BaseReactLoop(_AgenticLoop, _ReactMixin):
 
             if content is not None:
                 iteration = self._parse_step_format(content)
-                print(iteration)
                 if iteration:
                     # Add usage information to the iteration
                     if "usage" in resp:

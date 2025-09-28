@@ -142,6 +142,7 @@ graph TD
         Prompt
         History
         Tools
+        MCP Servers
     end
 
     subgraph Core
@@ -165,6 +166,7 @@ graph TD
     History --> Chat
     Chat --> Application
     Tools --> Agent
+    MCP Servers --> Agent
     Agent --> Application
 ```
 

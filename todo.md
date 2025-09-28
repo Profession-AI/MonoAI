@@ -1,6 +1,7 @@
 # TO-DO
 
 - Agents
+- - Implementing native function calling for other agentic paradigms
 - - Optimize agentic prompts
 - - Multi-agent systems
 - - MCP

@@ -75,78 +75,22 @@ class _FunctionCallingMixin:
         }
 
     def _call_mcp_tool(self, tool_call: Dict[str, Any]) -> Any:
-        """Execute a MCP tool call.
+        """Execute a MCP tool call."""
+        tool_name = tool_call.function.name
+        tool_arguments = json.loads(tool_call.function.arguments) if tool_call.function.arguments else {}
+        tool_call_id = tool_call.id
         
-        This method executes a MCP tool call based on a structured dictionary
-        containing the tool name and arguments.
-        """
-        try:
-            # Extract server name from tool name (format: mcp_servername_toolname)
-            tool_name_parts = tool_call.function.name.split("_", 2)
-            if len(tool_name_parts) < 3:
-                raise ValueError(f"Invalid MCP tool name format: {tool_call.function.name}")
-            
-            mcp_server_name = tool_name_parts[1]
-            if mcp_server_name not in self._mcp_servers:
-                raise ValueError(f"MCP server '{mcp_server_name}' not found")
-            
-            mcp_server = self._mcp_servers[mcp_server_name]
-            
-            # Run the async operation
-            try:
-                # Try to get the current event loop
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # If we're already in an async context, create a new task
-                    import concurrent.futures
-                    async def ensure_connected_and_call():
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
-                    
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(asyncio.run, ensure_connected_and_call())
-                        mcp_result = future.result()
-                else:
-                    # We can run directly
-                    async def ensure_connected_and_call():
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        
-                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
-                    
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
-            except RuntimeError:
-                # No event loop exists, create a new one
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                try:
-                    async def ensure_connected_and_call():
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        
-                        return await mcp_server.call_tool(tool_call.function.name, json.loads(tool_call.function.arguments) or {})
-                    
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call())
-                finally:
-                    loop.close()
-            
-            return {
-                "tool_call_id": tool_call.id,
-                "role": "tool",
-                "name": tool_call.function.name,
-                "content": mcp_result.content if hasattr(mcp_result, 'content') else str(mcp_result),
-            }
-        except Exception as e:
-            return {
-                "tool_call_id": tool_call.id,
-                "role": "tool",
-                "name": tool_call.function.name,
-                "content": f"Error executing MCP tool: {str(e)}",
-            }
+        # Get server name from tool name (format: mcp_servername_toolname)
+        server_name = tool_name.split("_", 2)[1]
+        if server_name not in self._mcp_servers:
+            raise ValueError(f"MCP server '{server_name}' not found")
+        # Simple approach: just return an error for now since MCP is not working
+        return {
+            "tool_call_id": tool_call_id,
+            "role": "tool",
+            "name": tool_name,
+            "content": str(self._mcp_servers[server_name].call_tool(tool_name, tool_arguments))
+        }
 
 
 
@@ -256,69 +200,23 @@ class _ReactMixin:
         This method executes a MCP tool call based on a structured dictionary
         containing the tool name and arguments.
         """
-        print("DEBUG: _call_react_mcp_tool called with tool_call:", tool_call)
-        try:
-            # Extract server name from tool name (format: mcp_servername_toolname)
-            tool_name_parts = tool_call["name"].split("_", 2)
-            if len(tool_name_parts) < 3:
-                raise ValueError(f"Invalid MCP tool name format: {tool_call['name']}")
-            
-            mcp_server_name = tool_name_parts[1]
-            if mcp_server_name not in self._mcp_servers:
-                raise ValueError(f"MCP server '{mcp_server_name}' not found")
-            
-            mcp_server = self._mcp_servers[mcp_server_name]
-            
-            # Run the async operation
-            try:
-                # Try to get the current event loop
-                loop = asyncio.get_event_loop()
-                if loop.is_running():
-                    # If we're already in an async context, create a new task
-                    import concurrent.futures
-                    async def ensure_connected_and_call(tool_call_param):
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        
-                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
-                        return await mcp_server.call_tool(tool_call_param["name"], args)
-                    
-                    with concurrent.futures.ThreadPoolExecutor() as executor:
-                        future = executor.submit(asyncio.run, ensure_connected_and_call(tool_call))
-                        mcp_result = future.result()
-                else:
-                    # We can run directly
-                    async def ensure_connected_and_call(tool_call_param):
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        
-                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
-                        response = await mcp_server.call_tool(tool_call_param["name"], args)
-                        print("RESPONSE TYPE", type(response))
-                        return response
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call(tool_call))
-            except RuntimeError:
-                # No event loop exists, create a new one
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                try:
-                    async def ensure_connected_and_call(tool_call_param):
-                        # Ensure the server is connected before calling the tool
-                        if not hasattr(mcp_server, '_session') or mcp_server._session is None:
-                            await mcp_server.connect()
-                        
-                        args = tool_call_param["arguments"] if isinstance(tool_call_param["arguments"], dict) else {}
-                        response = await mcp_server.call_tool(tool_call_param["name"], args)
-                        return response
-                    mcp_result = loop.run_until_complete(ensure_connected_and_call(tool_call))
-                finally:
-                    loop.close()
-            
-            return mcp_result
-        except Exception as e:
-            return f"Error executing MCP tool: {str(e)}"
+        # Extract server name from tool name (format: mcp_servername_toolname)
+        tool_name_parts = tool_call["name"].split("_", 2)
+        if len(tool_name_parts) < 3:
+            raise ValueError(f"Invalid MCP tool name format: {tool_call['name']}")
+        
+        server_name = tool_name_parts[1]
+        tool_name = tool_name_parts[2]
+        if server_name not in self._mcp_servers:
+            raise ValueError(f"MCP server '{server_name}' not found")
+
+        return {
+            "tool_call_id": tool_name,
+            "role": "tool",
+            "name": tool_name,
+            "content": str(self._mcp_servers[server_name].call_tool(tool_name, tool_call["arguments"]))
+        }
+
 
 class _AgenticLoop:
     """Base class for all agentic loop implementations.
@@ -406,51 +304,21 @@ class _AgenticLoop:
         mcp_servers : List[Any]
             List of MCP server instances to register.
         """
-        async def get_mcp_tools():
-            tools = {}
-            self._mcp_servers = {}
-            for mcp_server in mcp_servers:
-                try:
-                    print(f"Connecting to MCP server: {mcp_server.name}")
-                    # Use context manager for proper connection handling
-                    async with mcp_server.session_context():
-                        self._mcp_servers[mcp_server.name] = mcp_server
-                        server_tools = await mcp_server.get_tools()
-                        print(f"Retrieved {len(server_tools)} tools from {mcp_server.name}")
-                        for tool in server_tools:
-                            # Create a new tool name with MCP prefix
-                            original_name = tool.name
-                            tool.name = f"mcp_{mcp_server.name}_{original_name}"
-                            tools[tool.name] = tool
-                            print(f" - {tool.name}")
-                except Exception as e:
-                    print(f"Warning: Failed to connect to MCP server '{mcp_server.name}': {e}")
-                    # Still add the server to the list for potential later connection
-                    self._mcp_servers[mcp_server.name] = mcp_server
-            return tools
-        
-        # Run the async operation in a new event loop
-        try:
-            # Try to get the current event loop
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                # If we're already in an async context, create a new task
-                import concurrent.futures
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    future = executor.submit(asyncio.run, get_mcp_tools())
-                    tools = future.result()
-            else:
-                # We can run directly
-                tools = loop.run_until_complete(get_mcp_tools())
-        except RuntimeError:
-            # No event loop exists, create a new one
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                tools = loop.run_until_complete(get_mcp_tools())
-            finally:
-                loop.close()
-        
+        tools = {}
+        self._mcp_servers = {}
+        for mcp_server in mcp_servers:
+                self._debug_print(f"Connecting to MCP server: {mcp_server.name}")
+                # Use context manager for proper connection handling
+                self._mcp_servers[mcp_server.name] = mcp_server
+                server_tools =  mcp_server.get_tools()
+                self._debug_print(f"Retrieved {len(server_tools)} tools from {mcp_server.name}")
+                for tool in server_tools:
+                    # Create a new tool name with MCP prefix
+                    original_name = tool.name
+                    tool.name = f"mcp_{mcp_server.name}_{original_name}"
+                    tools[tool.name] = tool
+                    self._debug_print(f" - {tool.name}")
+                
         self._tools.update(tools)
 
     
@@ -677,6 +545,7 @@ class _AgenticLoop:
                 print("\nExecution interrupted by user.")
                 return False
     
+
     def _parse_step_format(self, content: str) -> Optional[Dict[str, Any]]:
         """Parse the step-based format <STEP_TYPE>: <RESULT>.
         
@@ -690,8 +559,9 @@ class _AgenticLoop:
         - Observation: Results from tool executions
         - Final answer: Conclusive responses to user queries
         
-        Special handling: If content contains both "Thought" and "Action", 
-        the Action will be returned with priority.
+        Special handling: 
+        - If content contains both "Thought" and "Action", the Action will be returned with priority.
+        - If content contains both "Thought" and "Final answer", the Final answer will be returned with priority.
         
         Parameters
         ----------
@@ -714,20 +584,56 @@ class _AgenticLoop:
         
         content = content.strip()
         
-        # Check if content contains both Thought and Action
-        # If so, prioritize Action
+        # Check for multiple step types and prioritize accordingly
         lines = content.split('\n')
         action_start = None
         thought_start = None
+        final_answer_start = None
         
-        # Find the start lines for Action and Thought
+        # Find the start lines for Action, Thought, and Final answer
         for i, line in enumerate(lines):
             if re.match(r'^Action(?:\s+\d+)?\s*:', line, re.IGNORECASE):
                 action_start = i
             elif re.match(r'^Thought(?:\s+\d+)?\s*:', line, re.IGNORECASE):
                 thought_start = i
+            elif re.match(r'^Final answer(?:\s+\d+)?\s*:', line, re.IGNORECASE):
+                final_answer_start = i
         
-        if action_start is not None and thought_start is not None:
+        # Priority: Final answer > Action > Thought
+        if final_answer_start is not None:
+            # Final answer has highest priority
+            step_type = "final_answer"
+            
+            # Extract step number from Final answer line
+            final_answer_line = lines[final_answer_start]
+            step_number_match = re.search(r'Final answer\s+(\d+)\s*:', final_answer_line, re.IGNORECASE)
+            step_number = step_number_match.group(1) if step_number_match else None
+            
+            # Extract content from Final answer (everything after the colon on the first line)
+            final_answer_content = final_answer_line.split(':', 1)[1].strip()
+            
+            # Add all subsequent lines until we hit another step type or end
+            i = final_answer_start + 1
+            while i < len(lines):
+                line = lines[i].strip()
+                if re.match(r'^(Thought|Action|Observation|Final answer)(?:\s+\d+)?\s*:', line, re.IGNORECASE):
+                    break
+                if line:  # Only add non-empty lines
+                    final_answer_content += '\n' + line
+                i += 1
+            
+            step_content = final_answer_content.strip().replace("```json", "").replace("```", "")
+            
+            result = {
+                "step_type": step_type,
+                "step_number": step_number,
+                "content": step_content,
+                "final_answer": step_content
+            }
+            
+            return result
+            
+        elif action_start is not None and thought_start is not None:
             # Both Thought and Action present, prioritize Action
             step_type = "action"
             
@@ -792,7 +698,7 @@ class _AgenticLoop:
                     result["action"] = {"raw": step_content}
             
             # Special handling for Final answer steps
-            elif step_type == "final answer":
+            elif step_type == "final_answer":
                 result["final_answer"] = step_content
             
             return result
@@ -866,7 +772,7 @@ class _AgenticLoop:
                     content = chunk["choices"][0]["delta"]["content"]
 
                     if content is not None:
-                        self._stream_callback(content)
+                        self._stream_callback({"type": "text", "delta": content})
 
             finally:
                 if stream is not None:
@@ -898,9 +804,7 @@ class _AgenticLoop:
                 
             return message
         except Exception as e:
-            if self._debug:
-                print(f"Streaming error: {e}, falling back to standard execution")
-            # Fallback al metodo standard
+            print(f"Streaming error: {e}, falling back to standard execution")
             return self._execute_model_step(messages)
             
     def _create_base_response(self, query: str) -> Dict[str, Any]:
@@ -1027,14 +931,15 @@ class _AgenticLoop:
 
         if "action" in iteration and iteration["action"].get("name"):
             tool_call = iteration["action"]
-            print("DEBUG: tool_call from iteration:", tool_call)
             
+            if self._stream_callback is not None:
+                self._stream_callback({"type": "tool_call", "tool_call": tool_call})
+
             if tool_call.get("name").startswith("mcp_"):
                 tool_result = self._call_mcp_tool(tool_call)
             else:
                 tool_result = self._call_tool(tool_call)
 
-            print("TOOL RESULT", tool_result, type(tool_result))
             iteration["observation"] = tool_result
             response["iterations"].append(iteration)
 
@@ -1046,7 +951,6 @@ class _AgenticLoop:
                     messages.append({"role": "user", "content": msg})
                 else:
                     msg = json.dumps({"observation": tool_result})
-                    print("DEBUG: msg", msg)
                     messages.append({"role": "user", "content": msg})
         elif iteration.get("step_type") == "action" and "action" in iteration:
             tool_call = iteration["action"]
@@ -1113,3 +1017,4 @@ class _AgenticLoop:
             This method must be implemented by subclasses
         """
         raise NotImplementedError
+

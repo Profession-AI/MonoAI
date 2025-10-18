@@ -6,6 +6,9 @@ This module provides a command-line interface for MonoAI.
 
 Available Commands:
     serve        Start the API server with configurable options to serve the app defined in main.py.
+    run          Start the Chainlit UI interface for interactive chat.
+    create       Create a new MonoAI project with configuration files.
+    info         Show detailed information about the MonoAI installation.
 
 Examples:
     
@@ -20,6 +23,9 @@ Examples:
     
     # Start server with multiple workers
     monoai serve --workers 4
+    
+    # Start Chainlit UI interface
+    monoai run
 
 """
 import typer
@@ -276,6 +282,39 @@ print(f"Response: {response['response']}")
 
 
 @_cli_app.command()
+def run():
+    """
+    Start the Chainlit UI interface.
+    
+    This command starts the Chainlit web interface for MonoAI,
+    providing an interactive chat interface for users.
+    
+    The UI will be available in your web browser after starting.
+    """
+    print("🚀 Starting MonoAI Chainlit UI...")
+    print("🌐 The UI will open in your web browser")
+    print("📱 Use Ctrl+C to stop the server")
+    
+    try:
+        import subprocess
+        import sys
+        
+        # Run chainlit command
+        cmd = [sys.executable, "-m", "chainlit", "run", "monoai/ui/ui.py", "-w"]
+        subprocess.run(cmd, check=True)
+        
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error running Chainlit: {e}")
+        print("💡 Make sure chainlit is installed: pip install chainlit")
+        raise typer.Exit(1)
+    except KeyboardInterrupt:
+        print("\n🛑 Chainlit UI stopped by user")
+    except Exception as e:
+        print(f"❌ Error starting Chainlit UI: {e}")
+        raise typer.Exit(1)
+
+
+@_cli_app.command()
 def info():
     """
     Show detailed information about the MonoAI installation.
@@ -321,6 +360,7 @@ def info():
     print("\n🔗 Available commands:")
     print("  create    - Create a new MonoAI project")
     print("  serve     - Start the API server")
+    print("  run       - Start the Chainlit UI interface")
     print("  info      - Show detailed information")
     
 # Export cli_app as alias for _cli_app for external imports

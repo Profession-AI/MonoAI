@@ -4,6 +4,37 @@ import uuid
 import sqlite3
 from monoai.models import Model
 import datetime
+from dataclasses import dataclass, asdict
+
+
+@dataclass
+class SystemPrompt:
+    content: str
+    provider: str
+    model: str
+    role: str = "system"
+
+
+@dataclass
+class Message:
+    content: str
+    role: str
+    timestamp: str = None
+    provider: str = None
+    model: str = None
+    
+    def __post_init__(self):
+        if self.timestamp is None:
+            self.timestamp = datetime.datetime.utcnow().isoformat() + 'Z'
+    
+    def to_dict(self):
+        """Convert Message to dictionary for JSON serialization."""
+        return asdict(self)
+    
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Create Message from dictionary."""
+        return cls(**data)
 
 class BaseHistory:
 
@@ -20,12 +51,17 @@ class BaseHistory:
         pass
 
     def store(self, chat_id: str, messages: list):
-        # Aggiungi un timestamp ISO 8601 a ciascun messaggio
-        now = datetime.datetime.utcnow().isoformat() + 'Z'
+        # Ensure all messages are Message dataclass instances
+        processed_messages = []
         for msg in messages:
-            if 'timestamp' not in msg:
-                msg['timestamp'] = now
-        return messages
+            if isinstance(msg, dict):
+                # Convert dictionary to Message dataclass
+                processed_messages.append(Message.from_dict(msg))
+            elif isinstance(msg, Message):
+                processed_messages.append(msg)
+            else:
+                raise ValueError(f"Invalid message type: {type(msg)}")
+        return processed_messages
 
     def clear(self):
         pass
@@ -45,17 +81,29 @@ class JSONHistory(BaseHistory):
         # Ensure proper path construction with os.path.join
         file_path = os.path.join(self._history_path, chat_id + ".json")
         with open(file_path, "r") as f:
-            self.messages = json.load(f)
+            messages_data = json.load(f)
+        
+        # Convert dictionaries to Message dataclasses
+        self.messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in messages_data]
+        
         if self._last_n is not None and len(self.messages) > (self._last_n+1)*2:
             self.messages = [self.messages[0]]+self.messages[-self._last_n*2:]
         return self.messages
     
-    def new(self, system_prompt: str):
+    def new(self, system_prompt: SystemPrompt):
         chat_id = self.generate_chat_id()
         # Ensure directory exists before storing
         if not os.path.exists(self._history_path):
             os.makedirs(self._history_path, exist_ok=True)
-        self.store(chat_id, [{"role": "system", "content": system_prompt}])
+        
+        # Create Message dataclass for system prompt
+        system_message = Message(
+            content=system_prompt.content,
+            role=system_prompt.role,
+            provider=system_prompt.provider,
+            model=system_prompt.model
+        )
+        self.store(chat_id, [system_message])
         return chat_id
 
     def store(self, chat_id: str, messages: list):
@@ -64,15 +112,20 @@ class JSONHistory(BaseHistory):
         file_path = os.path.join(self._history_path, chat_id + ".json")
         try:
             with open(file_path, "r") as f:
-                existing_messages = json.load(f)
+                existing_messages_data = json.load(f)
+                # Convert to Message dataclasses
+                existing_messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in existing_messages_data]
         except FileNotFoundError:
             existing_messages = []
         
-        # Add the new messages (già con timestamp)
+        # Add the new messages (already Message dataclasses)
         new_messages = existing_messages + messages
         
+        # Convert to dictionaries for JSON serialization
+        messages_to_save = [msg.to_dict() for msg in new_messages]
+        
         with open(file_path, "w") as f:
-            json.dump(new_messages, f, indent=4)
+            json.dump(messages_to_save, f, indent=4)
 
 class SQLiteHistory(BaseHistory):
     
@@ -115,22 +168,35 @@ class SQLiteHistory(BaseHistory):
                     """,
                     (chat_id, self._last_n * 2)
                 )
-                last_messages = [{"role": role, "content": content} for role, content in cursor]
-                last_messages.reverse()  # Reverse to get correct order
+                last_messages_data = [{"role": role, "content": content} for role, content in cursor]
+                last_messages_data.reverse()  # Reverse to get correct order
+                
+                # Convert to Message dataclasses
+                system_msg = Message(content=system_message[1], role=system_message[0]) if system_message else None
+                last_messages = [Message.from_dict(msg) for msg in last_messages_data]
                 
                 # Combine system message with last N messages
-                self.messages = [{"role": system_message[0], "content": system_message[1]}] + last_messages
+                self.messages = ([system_msg] if system_msg else []) + last_messages
             else:
                 cursor = conn.execute(
                     "SELECT role, content FROM messages WHERE chat_id = ? ORDER BY order_index",
                     (chat_id,)
                 )
-                self.messages = [{"role": role, "content": content} for role, content in cursor]
+                messages_data = [{"role": role, "content": content} for role, content in cursor]
+                self.messages = [Message.from_dict(msg) for msg in messages_data]
         return self.messages
     
-    def new(self, system_prompt: str):
+    def new(self, system_prompt: SystemPrompt):
         chat_id = self.generate_chat_id()
-        self.store(chat_id, [{"role": "system", "content": system_prompt, "order_index": 0}])
+        
+        # Create Message dataclass for system prompt
+        system_message = Message(
+            content=system_prompt.content,
+            role=system_prompt.role,
+            provider=system_prompt.provider,
+            model=system_prompt.model
+        )
+        self.store(chat_id, [system_message])
         return chat_id
 
     def store(self, chat_id: str, messages: list):
@@ -147,11 +213,11 @@ class SQLiteHistory(BaseHistory):
             if last_index is None:
                 last_index = -1
             
-            # Insert the new messages con timestamp
+            # Insert the new messages (Message dataclasses)
             for i, message in enumerate(messages, start=last_index + 1):
                 conn.execute(
                     "INSERT INTO messages (chat_id, order_index, role, content) VALUES (?, ?, ?, ?)",
-                    (chat_id, i, message["role"], message["content"])
+                    (chat_id, i, message.role, message.content)
                 )
                 conn.commit()
         
@@ -175,13 +241,21 @@ class DictHistory(BaseHistory):
         if self._last_n is not None and len(messages) > (self._last_n + 1) * 2:
             messages = [messages[0]] + messages[-self._last_n * 2:]
         
-        self.messages = messages
+        # Ensure all messages are Message dataclasses
+        self.messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in messages]
         return self.messages
     
-    def new(self, system_prompt: str):
+    def new(self, system_prompt: SystemPrompt):
         chat_id = self.generate_chat_id()
-        messages = [{"role": "system", "content": system_prompt}]
-        self.store(chat_id, messages)
+        
+        # Create Message dataclass for system prompt
+        system_message = Message(
+            content=system_prompt.content,
+            role=system_prompt.role,
+            provider=system_prompt.provider,
+            model=system_prompt.model
+        )
+        self.store(chat_id, [system_message])
         return chat_id
     
     def store(self, chat_id: str, messages: list):
@@ -190,7 +264,7 @@ class DictHistory(BaseHistory):
         if chat_id not in self._histories:
             self._histories[chat_id] = []
         
-        # Add the new messages (già con timestamp)
+        # Add the new messages (Message dataclasses)
         self._histories[chat_id].extend(messages)
     
     def clear(self, chat_id: str):
@@ -232,30 +306,45 @@ class MongoDBHistory(BaseHistory):
         if not doc:
             self.messages = []
             return self.messages
-        messages = doc.get("messages", [])
-        if self._last_n is not None and len(messages) > (self._last_n + 1) * 2:
-            messages = [messages[0]] + messages[-self._last_n * 2:]
-        self.messages = messages
+        messages_data = doc.get("messages", [])
+        if self._last_n is not None and len(messages_data) > (self._last_n + 1) * 2:
+            messages_data = [messages_data[0]] + messages_data[-self._last_n * 2:]
+        
+        # Convert to Message dataclasses
+        self.messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in messages_data]
         return self.messages
 
-    def new(self, system_prompt: str):
+    def new(self, system_prompt: SystemPrompt):
         chat_id = self.generate_chat_id()
-        messages = [{"role": "system", "content": system_prompt}]
-        self.store(chat_id, messages)
+        
+        # Create Message dataclass for system prompt
+        system_message = Message(
+            content=system_prompt.content,
+            role=system_prompt.role,
+            provider=system_prompt.provider,
+            model=system_prompt.model
+        )
+        self.store(chat_id, [system_message])
         return chat_id
 
     def store(self, chat_id: str, messages: list):
         messages = super().store(chat_id, messages)
         # Get existing messages
         doc = self._collection.find_one({"chat_id": chat_id})
-        existing_messages = doc.get("messages", []) if doc else []
+        existing_messages_data = doc.get("messages", []) if doc else []
         
-        # Add the new messages (già con timestamp)
+        # Convert existing messages to Message dataclasses
+        existing_messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in existing_messages_data]
+        
+        # Add the new messages (Message dataclasses)
         new_messages = existing_messages + messages
+        
+        # Convert to dictionaries for MongoDB storage
+        messages_to_store = [msg.to_dict() for msg in new_messages]
         
         self._collection.update_one(
             {"chat_id": chat_id},
-            {"$set": {"messages": new_messages}},
+            {"$set": {"messages": messages_to_store}},
             upsert=True
         )
 
@@ -349,13 +438,14 @@ class FirestoreHistory(BaseHistory):
                 return self.messages
             
             data = doc.to_dict()
-            messages = data.get("messages", [])
+            messages_data = data.get("messages", [])
             
             # Apply last_n filter if specified
-            if self._last_n is not None and len(messages) > (self._last_n + 1) * 2:
-                messages = [messages[0]] + messages[-self._last_n * 2:]
+            if self._last_n is not None and len(messages_data) > (self._last_n + 1) * 2:
+                messages_data = [messages_data[0]] + messages_data[-self._last_n * 2:]
             
-            self.messages = messages
+            # Convert to Message dataclasses
+            self.messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in messages_data]
             return self.messages
             
         except Exception as e:
@@ -364,12 +454,12 @@ class FirestoreHistory(BaseHistory):
             self.messages = []
             return self.messages
     
-    def new(self, system_prompt: str):
+    def new(self, system_prompt: SystemPrompt):
         """Create a new chat with system prompt.
         
         Parameters
         ----------
-        system_prompt : str
+        system_prompt : SystemPrompt
             System prompt for the new chat
             
         Returns
@@ -378,8 +468,15 @@ class FirestoreHistory(BaseHistory):
             Generated chat ID
         """
         chat_id = self.generate_chat_id()
-        messages = [{"role": "system", "content": system_prompt}]
-        self.store(chat_id, messages)
+        
+        # Create Message dataclass for system prompt
+        system_message = Message(
+            content=system_prompt.content,
+            role=system_prompt.role,
+            provider=system_prompt.provider,
+            model=system_prompt.model
+        )
+        self.store(chat_id, [system_message])
         return chat_id
     
 
@@ -401,21 +498,27 @@ class FirestoreHistory(BaseHistory):
             
             # Get existing messages
             doc = doc_ref.get()
-            existing_messages = []
+            existing_messages_data = []
             
             if doc.exists:
                 data = doc.to_dict()
-                existing_messages = data.get("messages", [])
+                existing_messages_data = data.get("messages", [])
             
-            # Add new messages
+            # Convert existing messages to Message dataclasses
+            existing_messages = [Message.from_dict(msg) if isinstance(msg, dict) else msg for msg in existing_messages_data]
+            
+            # Add new messages (Message dataclasses)
             new_messages = existing_messages + messages
+            
+            # Convert to dictionaries for Firestore storage
+            messages_to_store = [msg.to_dict() for msg in new_messages]
             
             # Update document with new messages
             doc_ref.set({
                 "chat_id": chat_id,
-                "messages": new_messages,
+                "messages": messages_to_store,
                 "last_updated": datetime.datetime.utcnow().isoformat() + 'Z',
-                "message_count": len(new_messages)
+                "message_count": len(messages_to_store)
             }, merge=True)
             
         except Exception as e:

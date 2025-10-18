@@ -19,7 +19,11 @@
 
 - Model
 - - Reasoning Models
+- - Avatar Models
 
 - Prompts
 - - Prompt hacking protection
 - - Prompt engineering techniques
+
+- UI
+- - Integrate chainlit

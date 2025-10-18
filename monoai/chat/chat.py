@@ -8,10 +8,38 @@ import base64
 import logging
 from typing import Union, Optional, AsyncGenerator, List, Dict, Any
 from pathlib import Path
+from dataclasses import dataclass
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ModelInfo:
+    """Information about the model used."""
+    provider: str
+    name: str
+
+
+@dataclass
+class ChatResponse:
+    """Response from a chat request."""
+    chat_id: str
+    response: str
+    model: ModelInfo
+    history: Optional[List[Message]] = None
+
+
+@dataclass
+class ChatInfo:
+    """Information about the current chat."""
+    chat_id: str
+    provider: str
+    model: str
+    max_tokens: Optional[int]
+    has_history_summarizer: bool
+
 
 class ChatError(Exception):
     """Custom exception for Chat-related errors."""
@@ -108,7 +136,7 @@ class Chat():
 
     def __init__(self, 
                  model,
-                 system_prompt: Optional[Union[Prompt, str]] = None,
+                 system_prompt: Optional[Union[SystemPrompt, str]] = None,
                  max_tokens: Optional[int] = None,
                  history: Union[str, BaseHistory] = "dict", 
                  history_last_n: Optional[int] = None,
@@ -172,7 +200,6 @@ class Chat():
 
             # Process system prompt
             processed_system_prompt = self._process_system_prompt(system_prompt)
-            print(processed_system_prompt)
             # Initialize chat
             if chat_id is None:
                 self.chat_id = self._history.new(processed_system_prompt)
@@ -186,14 +213,14 @@ class Chat():
             logger.error(f"Failed to initialize Chat: {e}")
             raise ChatError(f"Chat initialization failed: {e}")
 
-    def _initialize_or_create_chat(self, chat_id: str, system_prompt: str) -> str:
+    def _initialize_or_create_chat(self, chat_id: str, system_prompt: SystemPrompt) -> str:
         """Initialize existing chat or create new one with specified ID.
         
         Parameters
         ----------
         chat_id : str
             The chat ID to check/create
-        system_prompt : str
+        system_prompt : SystemPrompt
             System prompt to use if creating new chat
             
         Returns
@@ -219,14 +246,14 @@ class Chat():
             logger.info(f"Failed to load chat {chat_id}, creating new one: {e}")
             return self._create_chat_with_id(chat_id, system_prompt)
     
-    def _create_chat_with_id(self, chat_id: str, system_prompt: str) -> str:
+    def _create_chat_with_id(self, chat_id: str, system_prompt: SystemPrompt) -> str:
         """Create a new chat with a specific ID.
         
         Parameters
         ----------
         chat_id : str
             The specific chat ID to use
-        system_prompt : str
+        system_prompt : SystemPrompt
             System prompt for the new chat
             
         Returns
@@ -235,8 +262,13 @@ class Chat():
             The chat ID
         """
         try:
-            # Create system message
-            system_message = {"role": "system", "content": system_prompt}
+            # Create Message dataclass for system prompt
+            system_message = Message(
+                content=system_prompt.content,
+                role=system_prompt.role,
+                provider=system_prompt.provider,
+                model=system_prompt.model
+            )
             
             # Store the system message with the specific chat_id
             self._history.store(chat_id, [system_message])
@@ -297,7 +329,7 @@ class Chat():
             except Exception as e:
                 logger.warning(f"Failed to initialize history summarizer: {e}")
 
-    def _process_system_prompt(self, system_prompt: Optional[Union[Prompt, str]]) -> str:
+    def _process_system_prompt(self, system_prompt: Optional[Union[Prompt, str]]) -> SystemPrompt:
         """Process and load the system prompt.
         
         Parameters
@@ -307,21 +339,23 @@ class Chat():
             
         Returns
         -------
-        str
-            Processed system prompt string
+        SystemPrompt
+            Processed system prompt object
         """
         try:
             if system_prompt is None:
-                return self._load_default_system_prompt()
+                system_prompt = self._load_default_system_prompt()
             elif isinstance(system_prompt, str) and system_prompt.endswith(".prompt"):
-                return self._load_prompt_file(system_prompt)
+                system_prompt = self._load_prompt_file(system_prompt)
             elif isinstance(system_prompt, Prompt):
-                return str(system_prompt)
+                system_prompt = str(system_prompt)
             else:
-                return system_prompt
+                system_prompt = str(system_prompt)
         except Exception as e:
             logger.warning(f"Failed to process system prompt: {e}")
-            return ""
+            system_prompt = ""
+
+        return SystemPrompt(content=system_prompt, provider=self._model.provider, model=self._model.model)
 
     def _load_default_system_prompt(self) -> str:
         """Load the default system prompt from file.
@@ -523,15 +557,16 @@ class Chat():
         """
         try:
             messages = self._history.load(self.chat_id)
-            messages = [{'role': d.get('role'), 'content': d.get('content')} for d in messages]
+            # Convert Message dataclasses to dictionaries for API call
+            messages_dict = [{'role': msg.role, 'content': msg.content} for msg in messages]
 
-            messages.append({"role": "user", "content": prompt})
+            messages_dict.append({"role": "user", "content": prompt})
 
             # Apply history summarization if enabled
             if self._history_summarizer is not None:
-                return self._apply_history_summarization(messages)
+                return self._apply_history_summarization(messages_dict)
             else:
-                return messages
+                return messages_dict
                 
         except Exception as e:
             raise ChatError(f"Failed to prepare messages: {e}")
@@ -569,13 +604,27 @@ class Chat():
             Assistant response content
         """
         try:
-            messages.append({"role": "assistant", "content": response_content})
-            self._history.store(self.chat_id, messages[-2:])
+            # Create Message dataclasses for the last two messages (user + assistant)
+            user_message = Message(
+                content=messages[-1]["content"],
+                role=messages[-1]["role"],
+                provider=self._model.provider,
+                model=self._model.model
+            )
+            
+            assistant_message = Message(
+                content=response_content,
+                role="assistant",
+                provider=self._model.provider,
+                model=self._model.model
+            )
+            
+            self._history.store(self.chat_id, [user_message, assistant_message])
         except Exception as e:
             logger.error(f"Failed to store messages: {e}")
 
 
-    def ask(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, return_history: bool = False, metadata: Optional[Dict[str, Any]] = {}) -> Union[str, List[Dict[str, Any]]]:
+    def ask(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, return_history: bool = False, metadata: Optional[Dict[str, Any]] = {}) -> ChatResponse:
         """
         Ask the model a question.
 
@@ -594,12 +643,12 @@ class Chat():
 
         Returns
         -------
-        Dict[str, Any]
-            Dictionary containing:
+        ChatResponse
+            ChatResponse dataclass containing:
             - chat_id: str - The chat identifier
             - response: str - The model response
-            - model: Dict[str, str] - Model provider and name
-            - history: List[Dict[str, Any]], optional - Full chat history if return_history is True
+            - model: ModelInfo - Model provider and name
+            - history: Optional[List[Message]] - Full chat history if return_history is True
 
         Raises
         ------
@@ -623,25 +672,29 @@ class Chat():
             # Store messages
             self._store_messages(messages, response_content)
             
-            response = {
-                "chat_id": self.chat_id,
-                "response": response_content,
-                "model": {
-                    "provider": self._model.provider,
-                    "name": self._model.model
-                }
-            }
-
-            if return_history:
-                response["history"] = messages
+            # Create model info
+            model_info = ModelInfo(
+                provider=self._model.provider,
+                name=self._model.model
+            )
             
-            return response
+            # Get history if requested
+            history = None
+            if return_history:
+                history = self._history.load(self.chat_id)
+            
+            return ChatResponse(
+                chat_id=self.chat_id,
+                response=response_content,
+                model=model_info,
+                history=history
+            )
                 
         except Exception as e:
             logger.error(f"Ask request failed: {e}")
             raise ChatError(f"Ask request failed: {e}")
 
-    async def ask_stream(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> AsyncGenerator[str, None]:
+    async def ask_stream(self, prompt: str, file: Optional[Union[str, bytes]] = None, file_type: Optional[str] = None, metadata: Optional[Dict[str, Any]] = {}) -> AsyncGenerator[Dict[str, Any], None]:
         """
         Ask the model a question and stream the response.
 
@@ -670,6 +723,7 @@ class Chat():
             If the request fails or parameters are invalid
         """
 
+        print(self._metadata, metadata)
         metadata = self._metadata | metadata
 
         try:
@@ -688,7 +742,7 @@ class Chat():
                     response_text += chunk["delta"]
                 yield chunk
 
-            # Store messages
+            # Store messages using Message dataclasses
             self._store_messages(messages, response_text)
             
         except Exception as e:
@@ -745,29 +799,29 @@ class Chat():
                 response_text += content
                 yield content
                 
-            # Store messages
+            # Store messages using Message dataclasses
             self._store_messages(messages, response_text)
             
         except Exception as e:
             logger.error(f"Async request failed: {e}")
             raise ChatError(f"Async request failed: {e}")
 
-    def get_chat_info(self) -> Dict[str, Any]:
+    def get_chat_info(self) -> ChatInfo:
         """
         Get information about the current chat.
 
         Returns
         -------
-        Dict[str, Any]
-            Dictionary containing chat information
+        ChatInfo
+            ChatInfo dataclass containing chat information
         """
-        return {
-            "chat_id": self.chat_id,
-            "provider": self._model.provider,
-            "model": self._model.model,
-            "max_tokens": self._max_tokens,
-            "has_history_summarizer": self._history_summarizer is not None
-        }
+        return ChatInfo(
+            chat_id=self.chat_id,
+            provider=self._model.provider,
+            model=self._model.model,
+            max_tokens=self._max_tokens,
+            has_history_summarizer=self._history_summarizer is not None
+        )
 
     def clear_history(self) -> None:
         """

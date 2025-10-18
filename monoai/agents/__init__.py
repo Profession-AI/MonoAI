@@ -96,7 +96,7 @@ This implementation is designed for single-threaded use. For concurrent access,
 create separate agent instances for each thread or process.
 """
 
-from .agentic_loops._agentic_loop import _AgenticLoop, _FunctionCallingMixin, _ReactMixin
+from .agentic_loops._agentic_loop import _AgenticLoop
 from .agentic_loops._function_calling_agentic_loop import FunctionCallingAgenticLoop
 from .agentic_loops._react_agentic_loop import ReactAgenticLoop, ReactWithFCAgenticLoop, _BaseReactLoop
 from .agentic_loops._other_agentic_loops import (
@@ -113,8 +113,6 @@ from .agent import Agent
 __all__ = [
     # Base classes
     '_AgenticLoop',
-    '_FunctionCallingMixin', 
-    '_ReactMixin',
     '_BaseReactLoop',
     
     # Agent implementations

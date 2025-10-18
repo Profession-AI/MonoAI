@@ -7,11 +7,90 @@ class, function calling mixin, and ReAct mixin.
 """
 
 import json
+import inspect
 import re
+import asyncio
 from typing import Any, Dict, List, Optional, Callable
 
+from monoai.mcp.mcp_server import McpServer
 from ...prompts import Prompt
 from ...models import Model
+
+
+class _FunctionCallingMixin:
+    """Mixin for handling OpenAI function calling tool execution.
+    
+    This mixin provides methods for managing tool calls in OpenAI's native
+    function calling format, converting tool responses into standardized messages
+    that can be used in the conversation flow.
+    
+    The mixin handles the execution of tools registered with the agent and
+    formats their responses according to OpenAI's message format specification.
+    """
+    
+    def _call_tool(self, tool_call: Any) -> Dict[str, str]:
+        """Execute a tool call and return the formatted response.
+        
+        This method takes a tool call object from the AI model's response,
+        executes the corresponding tool function, and returns a properly
+        formatted message that can be added to the conversation history.
+        
+        Parameters
+        ----------
+        tool_call : Any
+            Tool call object containing function execution details.
+            Must have attributes:
+            - function.name: Name of the function to call
+            - function.arguments: JSON string of function arguments
+            - id: Unique identifier for this tool call
+        
+        Returns
+        -------
+        Dict[str, str]
+            Formatted tool response message containing:
+            - tool_call_id: ID of the original tool call
+            - role: Message role (always "tool")
+            - name: Name of the executed function
+            - content: Tool execution result as string
+        
+        Raises
+        ------
+        KeyError
+            If the tool function is not registered with the agent
+        json.JSONDecodeError
+            If the function arguments are not valid JSON
+        Exception
+            If the tool function execution fails
+        """
+
+        function_name = tool_call.function.name
+        function_to_call = self._tools[function_name]
+        function_args = json.loads(tool_call.function.arguments)                
+        function_response = str(function_to_call(**function_args))
+        return {
+            "tool_call_id": tool_call.id,
+            "role": "tool",
+            "name": function_name,
+            "content": function_response,
+        }
+
+    def _call_mcp_tool(self, tool_call: Dict[str, Any]) -> Any:
+        """Execute a MCP tool call."""
+        tool_name = tool_call.function.name
+        tool_arguments = json.loads(tool_call.function.arguments) if tool_call.function.arguments else {}
+        tool_call_id = tool_call.id
+        
+        # Get server name from tool name (format: mcp_servername_toolname)
+        server_name = tool_name.split("_", 2)[1]
+        if server_name not in self._mcp_servers:
+            raise ValueError(f"MCP server '{server_name}' not found")
+        # Simple approach: just return an error for now since MCP is not working
+        return {
+            "tool_call_id": tool_call_id,
+            "role": "tool",
+            "name": tool_name,
+            "content": str(self._mcp_servers[server_name].call_tool(tool_name, tool_arguments))
+        }
 
 
 class _AgenticLoop:
@@ -813,3 +892,4 @@ class _AgenticLoop:
             This method must be implemented by subclasses
         """
         raise NotImplementedError
+

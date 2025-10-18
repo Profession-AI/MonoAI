@@ -5,9 +5,134 @@ This module provides ReAct-style agent implementations that use structured
 JSON responses for reasoning and tool execution.
 """
 
-import json
-from typing import Any, Dict, List, Optional, Callable
-from ._agentic_loop import _AgenticLoop, _ReactMixin, _FunctionCallingMixin
+from typing import Any, Dict, Optional, Callable
+import inspect
+from ._agentic_loop import _AgenticLoop
+from ._function_calling_agentic_loop import _FunctionCallingMixin
+
+
+class _ReactMixin:
+    """Mixin for handling ReAct-style tool calls with JSON format.
+    
+    This mixin provides methods for managing tool calls in structured JSON format,
+    typical of ReAct-style approaches for AI agents. It handles the encoding
+    of tool functions and execution of tool calls based on parsed JSON responses.
+    
+    The ReAct (Reasoning and Acting) pattern allows agents to reason about
+    problems step-by-step and take actions using tools when needed.
+    """
+    
+    def _encode_tool(self, func: Any) -> str:
+        """Encode a function into a descriptive string format.
+        
+        This method creates a human-readable description of a tool function
+        that can be included in prompts to help the AI model understand
+        what tools are available and how to use them.
+        
+        Parameters
+        ----------
+        func : Any
+            Function to encode. Must have attributes:
+            - __name__: Function name
+            - __doc__: Function documentation
+        
+        Returns
+        -------
+        str
+            Descriptive string in the format:
+            "function_name(signature): documentation"
+            Newlines are replaced with spaces for single-line format.
+        """
+        sig = inspect.signature(func)
+        doc = inspect.getdoc(func)
+        encoded = func.__name__ + str(sig) + ": " + doc
+        encoded = encoded.replace("\n", " ")
+        return encoded
+    
+    def _encode_mcp_tool(self, tool: dict) -> str:
+        """Converte uno schema tipo JSON Schema in sezione Args Google style."""
+        schema = tool.inputSchema
+        if schema.get("type") != "object":
+            raise ValueError("Lo schema radice deve avere type=object")
+
+        args = []
+        args_doc = ["Args:"]
+        properties = schema.get("properties", {})
+        required = set(schema.get("required", []))
+
+        for name, spec in properties.items():
+            args.append(name)
+            typ = spec.get("type", "Any")
+            desc = spec.get("description", "").strip().replace("\n", " ")
+            title = spec.get("title", "")
+            default_info = "" if name in required else " Defaults to None."
+
+            arg_line = f"    {name} ({typ}): {desc}{default_info}"
+            if title:
+                arg_line = f"    {name} ({typ}): {title}. {desc}{default_info}"
+            args_doc.append(arg_line)
+
+        encoded = tool.name + "(" + ", ".join(args) + "): "
+        encoded += tool.description
+        encoded += ". ".join(args_doc)
+        return encoded
+
+    
+    def _call_tool(self, tool_call: Dict[str, Any]) -> Any:
+        """Execute a tool call in ReAct format.
+        
+        This method executes a tool call based on a structured dictionary
+        containing the tool name and arguments. It's designed to work with
+        the ReAct pattern where tools are called through JSON-formatted
+        action specifications.
+        
+        Parameters
+        ----------
+        tool_call : Dict[str, Any]
+            Tool call specification containing:
+            - name: Name of the tool to call
+            - arguments: Dictionary of tool arguments
+        
+        Returns
+        -------
+        Any
+            Result of the tool execution
+        
+        Raises
+        ------
+        KeyError
+            If the tool is not registered with the agent
+        TypeError
+            If the tool arguments don't match the function signature
+        Exception
+            If the tool execution fails
+        """
+        tool = self._tools[tool_call["name"]]
+        kwargs = list(tool_call["arguments"].values())
+        return tool(*kwargs)
+
+    def _call_mcp_tool(self, tool_call: Dict[str, Any]) -> Any:
+        """Execute a MCP tool call.
+        
+        This method executes a MCP tool call based on a structured dictionary
+        containing the tool name and arguments.
+        """
+        # Extract server name from tool name (format: mcp_servername_toolname)
+        tool_name_parts = tool_call["name"].split("_", 2)
+        if len(tool_name_parts) < 3:
+            raise ValueError(f"Invalid MCP tool name format: {tool_call['name']}")
+        
+        server_name = tool_name_parts[1]
+        tool_name = tool_name_parts[2]
+        if server_name not in self._mcp_servers:
+            raise ValueError(f"MCP server '{server_name}' not found")
+
+        return {
+            "tool_call_id": tool_name,
+            "role": "tool",
+            "name": tool_name,
+            "content": str(self._mcp_servers[server_name].call_tool(tool_name, tool_call["arguments"]))
+        }
 
 
 class _BaseReactLoop(_AgenticLoop, _ReactMixin):
